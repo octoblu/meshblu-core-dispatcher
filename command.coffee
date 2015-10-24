@@ -1,7 +1,7 @@
 commander = require 'commander'
 async = require 'async'
 packageJSON = require './package.json'
-Worker = require './src/worker'
+Dispatcher = require './src/dispatcher'
 
 class Command
   parseOptions: =>
@@ -17,10 +17,10 @@ class Command
   run: =>
     @parseOptions()
 
-    worker = new Worker namespace: @namespace, timeout: @timeout
+    dispatcher = new Dispatcher namespace: @namespace, timeout: @timeout
 
-    return worker.work(@panic) if @singleRun
-    async.forever worker.work, @panic
+    return dispatcher.work(@panic) if @singleRun
+    async.forever dispatcher.dispatch, @panic
 
   panic: (error) =>
     console.error error.stack

@@ -1,14 +1,14 @@
 {
-  "name": "meshblu-core-request-router",
+  "name": "meshblu-core-dispatcher",
   "version": "1.0.0",
-  "description": "Meshblu Core Request Router",
+  "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover _mocha -- -R spec"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/octoblu/meshblu-core-request-router.git"
+    "url": "git+https://github.com/octoblu/meshblu-core-dispatcher.git"
   },
   "keywords": [
     "meshblu",
@@ -17,9 +17,9 @@
   "author": "Octoblu, Inc.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/octoblu/meshblu-core-request-router/issues"
+    "url": "https://github.com/octoblu/meshblu-core-dispatcher/issues"
   },
-  "homepage": "https://github.com/octoblu/meshblu-core-request-router#readme",
+  "homepage": "https://github.com/octoblu/meshblu-core-dispatcher#readme",
   "devDependencies": {
     "chai": "^3.4.0",
     "coffee-coverage": "^0.6.3",
@@ -32,6 +32,11 @@
   },
   "dependencies": {
     "async": "^1.4.2",
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "lodash": "^3.10.1",
+    "redis": "^2.2.5"
+  },
+  "optionalDependencies": {
+    "hiredis": "^0.4.1"
   }
 }
