@@ -5,7 +5,6 @@ _ = require 'lodash'
 
 describe 'Dispatcher', ->
   beforeEach (done) ->
-    @sut = new Dispatcher namespace: 'test'
     @client = redis.createClient process.env.REDIS_URI
     @client = _.bindAll @client
 
@@ -21,7 +20,11 @@ describe 'Dispatcher', ->
     beforeEach (done) ->
       response = [{jobType: 'authenticate', responseUuid: 'a-response-uuid'}, {authenticated: true}]
       @doAuthenticateJob = sinon.stub().yields null, response
-      Dispatcher.JOBS['authenticate'] = @doAuthenticateJob
+
+      @sut = new Dispatcher
+        namespace: 'test'
+        jobHandlers:
+          authenticate: @doAuthenticateJob
 
       @sut.dispatch done
 

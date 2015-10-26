@@ -1,14 +1,10 @@
 redis = require 'redis'
 http = require 'http'
 
-doAuthenticateJob = require './jobs/do-authenticate-job'
-
 class Dispatcher
-  @JOBS:
-    'authenticate': doAuthenticateJob
-
   constructor: (options={}) ->
     {@namespace} = options
+    {@jobHandlers} = options
     @namespace ?= 'meshblu'
     @redis = redis.createClient process.env.REDIS_URI
 
@@ -31,6 +27,6 @@ class Dispatcher
   doJob: (request, callback) =>
     [metadata] = request
     type = metadata.jobType
-    Dispatcher.JOBS[type] request, callback
+    @jobHandlers[type] request, callback
 
 module.exports = Dispatcher
