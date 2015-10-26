@@ -1,9 +1,10 @@
-commander   = require 'commander'
-async       = require 'async'
-redis       = require 'redis'
-redisMock   = require 'redis-js'
-packageJSON = require './package.json'
-Dispatcher  = require './src/dispatcher'
+commander    = require 'commander'
+async        = require 'async'
+redis        = require 'redis'
+redisMock    = require 'fakeredis'
+packageJSON  = require './package.json'
+Dispatcher   = require './src/dispatcher'
+JobAssembler = require './src/job-assembler'
 
 class Command
   parseOptions: =>
