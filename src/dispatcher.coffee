@@ -3,14 +3,17 @@ http = require 'http'
 
 class Dispatcher
   constructor: (options={}) ->
-    {@namespace} = options
+    {@namespace,@timeout} = options
     {@jobHandlers} = options
+    @timeout ?= 1
     @namespace ?= 'meshblu'
-    @redis = redis.createClient process.env.REDIS_URI
+    @redis = redis.createClient options.redisUri
 
   dispatch: (callback) =>
-    @redis.brpop "#{@namespace}:request:queue", 1, (error, result) =>
+    @redis.brpop "#{@namespace}:request:queue", @timeout, (error, result) =>
       return callback error if error?
+      return callback() unless result?
+
       [channel,requestStr] = result
       request = JSON.parse requestStr
 
@@ -19,10 +22,10 @@ class Dispatcher
 
   sendResponse: (response, callback) =>
     [metadata]     = response
-    {responseUuid} = metadata
+    {responseId} = metadata
 
     responseStr = JSON.stringify(response)
-    @redis.lpush "#{@namespace}:response:#{responseUuid}", responseStr, callback
+    @redis.lpush "#{@namespace}:response:#{responseId}", responseStr, callback
 
   doJob: (request, callback) =>
     [metadata] = request

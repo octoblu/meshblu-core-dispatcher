@@ -28,11 +28,13 @@
     "mocha": "^2.3.3",
     "mocha-istanbul": "^0.2.0",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "uuid": "^2.0.1"
   },
   "dependencies": {
     "async": "^1.4.2",
     "commander": "^2.9.0",
+    "fakeredis": "^0.3.4",
     "lodash": "^3.10.1",
     "redis": "^2.2.5"
   },
