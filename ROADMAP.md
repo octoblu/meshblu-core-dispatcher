@@ -2,15 +2,17 @@
 
 1. Request and response should have the same format `[metadata, data]`
   e.g.
-  ```
-[{
+```js
+[
+  {
     jobType: "sendMessage",
     requestId: "425e451f-bcc0-4762-b0a1-f6077b820459",
     options: {
       devices: ["*"],
       topic: "blah"
     }
-},
+  },
+  // payload
   "IyBSb2FkbWFwIGZvciBNZXNoYmx1IENvcmUgRGlzcGF0Y2hlixvYWQ6IHt9CiAgfV0KYGBgCg=="
 ]
 ```
