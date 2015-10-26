@@ -1,7 +1,8 @@
 redis = require 'redis'
 http = require 'http'
+{EventEmitter2} = require 'eventemitter2'
 
-class Dispatcher
+class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
     {@namespace,@timeout} = options
     {@jobHandlers} = options
@@ -17,12 +18,13 @@ class Dispatcher
       [channel,requestStr] = result
       request = JSON.parse requestStr
 
+      @emit 'job', request
       @doJob request, (error, response) =>
         @sendResponse response, callback
 
   sendResponse: (response, callback) =>
     [metadata]     = response
-    {responseId} = metadata
+    {responseId}   = metadata
 
     responseStr = JSON.stringify(response)
     @redis.lpush "#{@namespace}:response:#{responseId}", responseStr, callback

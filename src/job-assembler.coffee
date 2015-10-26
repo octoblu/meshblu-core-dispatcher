@@ -1,4 +1,6 @@
-class JobAssembler
+{EventEmitter2} = require 'eventemitter2'
+
+class JobAssembler extends EventEmitter2
   constructor: (options={}) ->
     {@namespace,@localClient,@remoteClient,@timeout} = options
     {@localHandlers,@remoteHandlers} = options
@@ -29,6 +31,7 @@ class JobAssembler
       return callback new Error('Timed out waiting for response') unless result?
       [channel,responseStr] = result
       response = JSON.parse responseStr
+      @emit 'response', response
       return callback null, response
 
 

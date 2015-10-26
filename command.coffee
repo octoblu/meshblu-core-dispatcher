@@ -35,6 +35,10 @@ class Command
       redisUri:  @redisUri
       jobHandlers: @assembleJobHandlers()
 
+    dispatcher.on 'job', (job) =>
+      [metadata, data] = job
+      console.log 'doing a job: ', metadata.jobType
+
     return dispatcher.work(@panic) if @singleRun
     async.forever dispatcher.dispatch, @panic
 
@@ -48,6 +52,9 @@ class Command
       remoteClient: @remoteClient
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
+
+    jobAssembler.on 'response', (response) =>
+      console.log 'response', response
 
     jobHandlers = jobAssembler.assemble()
 
