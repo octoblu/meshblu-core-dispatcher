@@ -51,7 +51,7 @@ class JobAssembler extends EventEmitter2
 
   waitForResponse: (jobType, responseId, callback) =>
     jobManager = @getJobManager jobType
-    jobManager.getResponse "#{@namespace}:authenticate:#{responseId}", (error, response) =>
+    jobManager.getResponse responseId, (error, response) =>
       return callback error if error?
       return callback new Error('Timed out waiting for response') unless response?
       @emit 'response', response

@@ -2,6 +2,7 @@ async     = require 'async'
 redisMock = require 'fakeredis'
 uuid      = require 'uuid'
 _         = require 'lodash'
+JobManager = require 'meshblu-core-job-manager'
 JobAssembler = require '../src/job-assembler'
 
 describe 'JobAssembler', ->
@@ -11,6 +12,16 @@ describe 'JobAssembler', ->
 
     @localClient = _.bindAll redisMock.createClient @localClientId
     @remoteClient = _.bindAll redisMock.createClient @remoteClientId
+
+    @localJobManager = new JobManager
+      client: @localClient
+      namespace: 'test:internal'
+      timeoutSeconds: 1
+
+    @remoteJobManager = new JobManager
+      client: @remoteClient
+      namespace: 'test'
+      timeoutSeconds: 1
 
   describe '->assemble', ->
     context 'when authenticate is in remoteHandlers', ->
