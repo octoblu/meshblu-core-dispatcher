@@ -17,6 +17,8 @@ describe 'JobAssembler', ->
       client: @localClient
       namespace: 'test:internal'
       timeoutSeconds: 1
+      responseQueue: 'authenticate'
+      requestQueue: 'authenticate'
 
     @remoteJobManager = new JobManager
       client: @remoteClient
@@ -111,42 +113,52 @@ describe 'JobAssembler', ->
 
         context 'when authenticate responds', ->
           beforeEach (done) ->
+            metadata =
+              responseId: 'r-id'
+            data =
+              authenticated: true
+
+            options =
+              responseId: 'r-id'
+              metadata: metadata
+              data: data
+
+            @localJobManager.createResponse options, done
+
             metadataStr = '{"responseId": "r-id"}'
             dataStr     = '{"authenticated": true}'
-
-            async.series [
-              async.apply @localClient.hset,  'test:internal:r-id', 'response:metadata', metadataStr
-              async.apply @localClient.hset,  'test:internal:r-id', 'response:data',     dataStr
-              async.apply @localClient.lpush, 'test:internal:authenticate:r-id', 'test:internal:r-id'
-            ], done
 
           it 'should call the callback with the response', (done) ->
             setTimeout =>
               expectedResponse =
                 metadata:
                   responseId: 'r-id'
-                rawData: '{"authenticated": true}'
+                rawData: '{"authenticated":true}'
               expect(@callback).to.have.been.calledWith null, expectedResponse
               done()
             , 1000
 
         context 'when authenticate responds differently', ->
           beforeEach (done) ->
-            metadataStr = '{"responseId": "r-id"}'
-            dataStr     = '{"authenticated": false}'
+            metadata =
+              responseId: 'r-id'
+            data =
+              authenticated: false
 
-            async.series [
-              async.apply @localClient.hset,  'test:internal:r-id', 'response:metadata', metadataStr
-              async.apply @localClient.hset,  'test:internal:r-id', 'response:data',     dataStr
-              async.apply @localClient.lpush, 'test:internal:authenticate:r-id', 'test:internal:r-id'
-            ], done
+            options =
+              responseId: 'r-id'
+              metadata: metadata
+              data: data
+
+            @localJobManager.createResponse options, done
 
           it 'should call the callback with the response', (done) ->
             setTimeout =>
               expectedResponse =
                 metadata:
                   responseId: 'r-id'
-                rawData: '{"authenticated": false}'
+                rawData: '{"authenticated":false}'
+
               expect(@callback).to.have.been.calledWith null, expectedResponse
               done()
             , 1000
