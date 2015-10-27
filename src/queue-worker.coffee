@@ -2,11 +2,11 @@ _          = require 'lodash'
 async      = require 'async'
 configJobs = require './config/jobs'
 JobManager = require 'meshblu-core-job-manager'
-
+debug      = require('debug')('meshblu-core-dispatcher:queue-worker')
 
 class QueueWorker
   constructor: (options={}) ->
-    {localClient,remoteClient,@namespace,@timeout,@jobs,@tasks} = options
+    {localClient,remoteClient,@namespace,@timeout,@tasks} = options
     @localClient  = _.bindAll localClient
     @remoteClient = _.bindAll remoteClient
 
@@ -16,6 +16,7 @@ class QueueWorker
 
   getJobManager: (jobType) =>
     if jobType in @localHandlers
+      debug 'using local job queue'
       return new JobManager
         timeoutSeconds: @timeout
         client: @localClient
@@ -23,6 +24,7 @@ class QueueWorker
         requestQueue: jobType
         responseQueue: jobType
     else
+      debug 'using remote job queue'
       return new JobManager
         timeoutSeconds: @timeout
         client: @remoteClient
@@ -30,32 +32,47 @@ class QueueWorker
         requestQueue: jobType
         responseQueue: jobType
 
-  run: =>
-    _.each @jobs, (jobType) =>
+  run: (callback=->) =>
+    debug 'running'
+    handledJobs = _.union @localHandlers, @remoteHandlers
+    handleJob = (jobType, done) =>
+      debug 'running for jobType', jobType
       jobManager = @getJobManager jobType
       jobManager.getResponse "queue", (error, job) =>
-        return console.error error if error?
-        @runJob job
+        debug 'got job', error: error, job: job
+        return callback error if error?
+        return callback null unless job?
+        @runJob job, done
+    async.each handledJobs, handleJob, callback
 
   runJob: (job, callback=->) =>
     {jobType,responseId} = job.metadata
+    debug 'running job', job.metadata
     tasks = configJobs[jobType]
     asyncTasks = _.map tasks, (task) =>
-      return @runTask task
+      return @runTask task, job
 
     async.waterfall asyncTasks, (error, finishedJob) =>
-      return console.error error if error?
+      debug 'finished job'
+      return callback error if error?
       jobManager = @getJobManager jobType
       response =
         metadata: finishedJob.metadata
         responseId: responseId
         rawData: finishedJob.rawData
-      jobManager.createResponse response, callback
+      jobManager.createResponse response, (error) =>
+        return callback error if error?
+        debug 'created response'
 
-  runTask: (task) =>
+  runTask: (task, originalJob) =>
     return (job, callback=->) =>
-      callback = job if _.isFunction job
-      return callback new Error("missing task") unless @tasks[task]?
-      @tasks[task] job, callback
+      if _.isFunction job
+        callback = job
+        job = originalJob
+      taskFunction = @tasks[task]
+      try taskFunction = require task unless taskFunction?
+      return callback new Error("missing task") unless taskFunction?
+      debug 'running task function'
+      taskFunction job, callback
 
 module.exports = QueueWorker

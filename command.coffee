@@ -6,6 +6,7 @@ debug        = require('debug')('meshblu-core-dispatcher:command')
 packageJSON  = require './package.json'
 Dispatcher   = require './src/dispatcher'
 JobAssembler = require './src/job-assembler'
+QueueWorker  = require './src/queue-worker'
 
 class Command
   parseOptions: =>
@@ -39,6 +40,17 @@ class Command
 
     dispatcher.on 'job', (job) =>
       debug 'doing a job: ', JSON.stringify job
+
+    queueWorker = new QueueWorker
+      timeout: 30
+      namespace: @internalNamespace
+      localClient: @localClient
+      remoteClient: @remoteClient
+      localHandlers: @localHandlers
+      remoteHandlers: @remoteHandlers
+
+    return queueWorker.run() if @singleRun
+    async.forever queueWorker.run, @panic
 
     return dispatcher.work(@panic) if @singleRun
     async.forever dispatcher.dispatch, @panic
