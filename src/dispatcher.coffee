@@ -1,37 +1,55 @@
-redis = require 'redis'
+_ = require 'lodash'
 http = require 'http'
+async = require 'async'
 {EventEmitter2} = require 'eventemitter2'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {@namespace,@timeout} = options
+    {client,@namespace,@timeout} = options
+    @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 1
     @namespace ?= 'meshblu'
-    @redis = redis.createClient options.redisUri
 
   dispatch: (callback) =>
-    @redis.brpop "#{@namespace}:request:queue", @timeout, (error, result) =>
+    @client.brpop "#{@namespace}:request:queue", @timeout, (error, result) =>
       return callback error if error?
       return callback() unless result?
+      [channel,responseKey] = result
 
-      [channel,requestStr] = result
-      request = JSON.parse requestStr
+      @doJob responseKey, (error, response) =>
 
-      @emit 'job', request
-      @doJob request, (error, response) =>
         @sendResponse response, callback
 
   sendResponse: (response, callback) =>
-    [metadata]     = response
+    {metadata,rawData} = response
     {responseId}   = metadata
 
-    responseStr = JSON.stringify(response)
-    @redis.lpush "#{@namespace}:response:#{responseId}", responseStr, callback
+    metadataStr = JSON.stringify metadata
 
-  doJob: (request, callback) =>
-    [metadata] = request
-    type = metadata.jobType
-    @jobHandlers[type] request, callback
+    async.series [
+      async.apply @client.hset, "#{@namespace}:#{responseId}", "response:metadata", metadataStr
+      async.apply @client.hset, "#{@namespace}:#{responseId}", "response:data", rawData
+      async.apply @client.lpush, "#{@namespace}:response:#{responseId}", "#{@namespace}:#{responseId}"
+    ], callback
+
+  doJob: (responseKey, callback) =>
+    async.parallel
+      metadata: async.apply @client.hget, responseKey, 'request:metadata'
+      data: async.apply @client.hget, responseKey, 'request:data'
+    , (error, result) =>
+      return callback error if error?
+
+      metadata = JSON.parse result.metadata
+
+      request = {
+        metadata: metadata
+        rawData: result.data
+      }
+
+      @emit 'job', request
+
+      type = metadata.jobType
+      @jobHandlers[type] request, callback
 
 module.exports = Dispatcher

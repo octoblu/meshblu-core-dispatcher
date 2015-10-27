@@ -4,46 +4,65 @@ uuid = require 'uuid'
 
 describe 'JobAssembler', ->
   beforeEach ->
-    @localClient = redisMock.createClient("local-#{uuid.v4()}")
-    @remoteClient = redisMock.createClient("remote-#{uuid.v4()}")
+    @localClientId  = "local-#{uuid.v4()}"
+    @remoteClientId = "remote-#{uuid.v4()}"
 
-  describe '->assemble', ->
+    @localClient = redisMock.createClient @localClientId
+    @remoteClient = redisMock.createClient @remoteClientId
+
+  describe.only '->assemble', ->
     context 'when authenticate is in remoteHandlers', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
-          namespace: 'test'
-          localClient: @localClient
-          remoteClient: @remoteClient
+          namespace: 'test:internal'
+          localClient: redisMock.createClient @localClientId
+          remoteClient: redisMock.createClient @remoteClientId
           localHandlers: []
           remoteHandlers: ['authenticate']
 
         @result = @sut.assemble()
 
       context 'when authenticate is called', ->
-        beforeEach ->
-          @result.authenticate ["duel: i'm just in it for the glove slapping"], ->
+        beforeEach (done) ->
+          responseKey = 'test:internal:some-response'
+          @remoteClient.lpush 'test:internal:authenticate:some-response', responseKey, done
+
+        beforeEach (done) ->
+          request =
+            metadata:
+              duel: "i'm just in it for the glove slapping"
+              responseId: 'some-response'
+            rawData: null
+          @result.authenticate request, done
 
         it 'should place the job in a queue', (done) ->
           @timeout 3000
-          @remoteClient.brpop 'test:authenticate:queue', 1, (error, result) =>
+          @remoteClient.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
             return done(error) if error?
-            [channel, requestStr] = result
-            request = JSON.parse requestStr
-            expect(request).to.deep.equal ["duel: i'm just in it for the glove slapping"]
+            [channel, responseKey] = result
+            expect(responseKey).to.deep.equal 'test:internal:some-response'
+            done()
+
+        it 'should put the metadata in its place', (done) ->
+          @remoteClient.hget 'test:internal:some-response', 'request:metadata', (error, metadataStr) =>
+            metadata = JSON.parse metadataStr
+            expect(metadata).to.deep.equal
+              duel: "i'm just in it for the glove slapping"
+              responseId: 'some-response'
             done()
 
         it 'should not place the job in the local queue', (done) ->
-          @localClient.llen 'test:authenticate:queue', (error, result) =>
+          @localClient.llen 'test:internal:authenticate:queue', (error, result) =>
             return done(error) if error?
             expect(result).to.equal 0
             done()
 
-    context 'when authenticate is in localHandlers', ->
+    xcontext 'when authenticate is in localHandlers', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
-          namespace: 'test'
+          namespace: 'test:internal'
           localClient: @localClient
           remoteClient: @remoteClient
           localHandlers: ['authenticate']

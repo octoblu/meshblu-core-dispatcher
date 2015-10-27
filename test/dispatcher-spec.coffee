@@ -1,15 +1,24 @@
 Dispatcher = require '../src/dispatcher'
 async = require 'async'
-redis = require 'redis'
+redis = require 'fakeredis'
+uuid = require 'uuid'
 _ = require 'lodash'
 
 describe 'Dispatcher', ->
   describe '-> dispatch', ->
     beforeEach ->
-      response = [{jobType: 'authenticate', responseId: 'a-response-id'}, {authenticated: true}]
+      response =
+        metadata:
+          jobType: 'authenticate'
+          responseId: 'a-response-id'
+        rawData: '{"authenticated":true}'
+
       @doAuthenticateJob = sinon.stub().yields null, response
+      @client = redis.createClient uuid.v1()
+      @client = _.bindAll @client
 
       @sut = new Dispatcher
+        client: @client
         namespace: 'test'
         timeout: 1
         jobHandlers:
@@ -17,15 +26,13 @@ describe 'Dispatcher', ->
 
     context 'when the queue contains a request', ->
       beforeEach (done) ->
-        @client = redis.createClient process.env.REDIS_URI
-        @client = _.bindAll @client
-
-        request = [{jobType: 'authenticate', responseId: 'a-response-id'}]
+        metadata =
+          jobType: 'authenticate'
+          responseId: 'a-response-id'
 
         async.series [
-          async.apply @client.del, 'test:request:queue'
-          async.apply @client.del, 'test:response:a-response-id'
-          async.apply @client.lpush, 'test:request:queue', JSON.stringify(request)
+          async.apply @client.hset, 'test:a-response-id', 'request:metadata', JSON.stringify(metadata)
+          async.apply @client.lpush, 'test:request:queue', 'test:a-response-id'
         ], done
 
       beforeEach (done) ->
@@ -45,22 +52,25 @@ describe 'Dispatcher', ->
 
         @client.brpop 'test:response:a-response-id', 1, (error, result) =>
           return done error if error?
-          expect(result).to.exist
-          [channel,response] = result
+          [channel,responseKey] = result
 
-          expectedResponse = [
-            {jobType: 'authenticate', responseId: 'a-response-id'}
-            {authenticated: true}
-          ]
+          expect(responseKey).to.deep.equal 'test:a-response-id'
+          done()
 
-          expect(JSON.parse(response)).to.deep.equal expectedResponse
+      it 'should set the response:metadata hkey', (done) ->
+        @client.hget 'test:a-response-id', 'response:metadata', (error, metadataStr) =>
+          expect(metadataStr).to.exist
+          expect(JSON.parse(metadataStr)).to.deep.equal jobType: 'authenticate', responseId: 'a-response-id'
+          done()
+
+      it 'should set the response:data hkey', (done) ->
+        @client.hget 'test:a-response-id', 'response:data', (error, dataStr) =>
+          expect(dataStr).to.exist
+          expect(JSON.parse(dataStr)).to.deep.equal authenticated: true
           done()
 
     context 'when the queue is empty', ->
       beforeEach (done) ->
-        @client = redis.createClient process.env.REDIS_URI
-        @client = _.bindAll @client
-
         async.series [
           async.apply @client.del, 'test:request:queue'
           async.apply @client.del, 'test:response:a-response-id'
