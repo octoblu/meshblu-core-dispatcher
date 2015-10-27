@@ -17,7 +17,6 @@ class Command
       .version packageJSON.version
       .option '--namespace <meshblu>', 'request/response queue namespace.', 'meshblu'
       .option '--internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
-      .option '-d, --dispatch', 'read from queue and dispatch jobs, required for outsource'
       .option '-i, --insource <job1,job2>', 'jobs for internal workers', @parseList
       .option '-o, --outsource <job1,job2>', 'jobs for external workers', @parseList
       .option '-s, --single-run', 'perform only one job.'
