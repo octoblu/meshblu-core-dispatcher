@@ -6,44 +6,28 @@ debug      = require('debug')('meshblu-core-dispatcher:queue-worker')
 
 class QueueWorker
   constructor: (options={}) ->
-    {localClient,remoteClient,@namespace,@timeout,@tasks} = options
-    @localClient  = _.bindAll localClient
-    @remoteClient = _.bindAll remoteClient
-
-    {@localHandlers,@remoteHandlers} = options
+    {client,@namespace,@timeout,@tasks,@jobs} = options
+    @client = _.bindAll client
     @timeout ?= 30
     @namespace ?= 'meshblu:internal'
 
-  getJobManager: (jobType) =>
-    if jobType in @localHandlers
-      debug 'using local job queue'
-      return new JobManager
-        timeoutSeconds: @timeout
-        client: @localClient
-        namespace: @namespace
-        requestQueue: jobType
-        responseQueue: jobType
-    else
-      debug 'using remote job queue'
-      return new JobManager
-        timeoutSeconds: @timeout
-        client: @remoteClient
-        namespace: @namespace
-        requestQueue: jobType
-        responseQueue: jobType
+    @jobManager = new JobManager
+      timeoutSeconds: @timeout
+      client: @client
+      namespace: @namespace
+      requestQueue: 'authenticate'
+      responseQueue: 'authenticate'
 
   run: (callback=->) =>
     debug 'running'
-    handledJobs = _.union @localHandlers, @remoteHandlers
     handleJob = (jobType, done) =>
       debug 'running for jobType', jobType
-      jobManager = @getJobManager jobType
-      jobManager.getResponse "queue", (error, job) =>
+      @jobManager.getRequest (error, job) =>
         debug 'got job', error: error, job: job
         return callback error if error?
         return callback null unless job?
         @runJob job, done
-    async.each handledJobs, handleJob, callback
+    async.each @jobs, handleJob, callback
 
   runJob: (job, callback=->) =>
     {jobType,responseId} = job.metadata
@@ -55,12 +39,11 @@ class QueueWorker
     async.waterfall asyncTasks, (error, finishedJob) =>
       debug 'finished job'
       return callback error if error?
-      jobManager = @getJobManager jobType
       response =
         metadata: finishedJob.metadata
         responseId: responseId
         rawData: finishedJob.rawData
-      jobManager.createResponse response, (error) =>
+      @jobManager.createResponse response, (error) =>
         return callback error if error?
         debug 'created response'
 
