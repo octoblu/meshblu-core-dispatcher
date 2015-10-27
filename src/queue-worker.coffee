@@ -1,47 +1,61 @@
-_ = require 'lodash'
-async = require 'async'
+_          = require 'lodash'
+async      = require 'async'
 configJobs = require './config/jobs'
+JobManager = require 'meshblu-core-job-manager'
+
 
 class QueueWorker
   constructor: (options={}) ->
     {localClient,remoteClient,@namespace,@timeout,@jobs,@tasks} = options
     @localClient  = _.bindAll localClient
     @remoteClient = _.bindAll remoteClient
-    {@localHandlers,@remoteHandlers} = options
-    @timeout ?= 1
-    @namespace ?= 'meshblu'
 
-  getClient: (jobType) =>
-    return @localClient if jobType in @localHandlers
-    return @remoteClient
+    {@localHandlers,@remoteHandlers} = options
+    @timeout ?= 30
+    @namespace ?= 'meshblu:internal'
+
+  getJobManager: (jobType) =>
+    if jobType in @localHandlers
+      return new JobManager
+        timeoutSeconds: @timeout
+        client: @localClient
+        namespace: @namespace
+        requestQueue: jobType
+        responseQueue: jobType
+    else
+      return new JobManager
+        timeoutSeconds: @timeout
+        client: @remoteClient
+        namespace: @namespace
+        requestQueue: jobType
+        responseQueue: jobType
 
   run: =>
     _.each @jobs, (jobType) =>
-      client = @getClient jobType
-      client.brpop "#{@namespace}:#{jobType}:queue", @timeout, (error, result) =>
+      jobManager = @getJobManager jobType
+      jobManager.getResponse "queue", (error, job) =>
         return console.error error if error?
-        [channel, responseKey] = result
-        @getResponse jobType, responseKey, (error, job) =>
-          return console.error error if error?
-          @runJob job
+        @runJob job
 
-  runJob: (job) =>
-    {metadata} = job
-    client = @getClient metadata.jobType
-    tasks = configJobs[metadata.jobType]
-    async.each tasks, @runTask, (error) =>
-      console.log 'done with tasks'
+  runJob: (job, callback=->) =>
+    {jobType,responseId} = job.metadata
+    tasks = configJobs[jobType]
+    asyncTasks = _.map tasks, (task) =>
+      return @runTask task
 
-  getResponse: (jobType, responseKey, callback) =>
-    client = @getClient jobType
-    async.parallel
-      metadata: async.apply client.hget, responseKey, 'response:metadata'
-      data:     async.apply client.hget, responseKey, 'response:data'
-    , (error, result) =>
+    async.waterfall asyncTasks, (error, finishedJob) =>
+      return console.error error if error?
+      jobManager = @getJobManager jobType
       response =
-        metadata: JSON.parse result.metadata
-        rawData: result.data
+        metadata: finishedJob.metadata
+        responseId: responseId
+        rawData: finishedJob.rawData
+      jobManager.createResponse response, callback
 
-      return callback null, response
+  runTask: (task) =>
+    return (job, callback=->) =>
+      callback = job if _.isFunction job
+      return callback new Error("missing task") unless @tasks[task]?
+      @tasks[task] job, callback
 
 module.exports = QueueWorker
