@@ -35,7 +35,7 @@ describe 'JobAssembler', ->
             metadata:
               duel: "i'm just in it for the glove slapping"
               responseId: 'some-response'
-            rawData: ""
+            rawData: "null"
           @result.authenticate request, done
 
         it 'should place the job in a queue', (done) ->
@@ -78,7 +78,7 @@ describe 'JobAssembler', ->
             metadata:
               misfiled: "paperwork"
               responseId: 'r-id'
-            rawData: ""
+            rawData: "null"
 
           @callback = sinon.spy()
           @result.authenticate request, @callback

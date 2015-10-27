@@ -18,7 +18,7 @@ class Dispatcher extends EventEmitter2
       [channel,responseKey] = result
 
       @doJob responseKey, (error, response) =>
-
+        return @sendError responseKey, error, callback if error?
         @sendResponse response, callback
 
   sendResponse: (response, callback) =>
@@ -33,6 +33,23 @@ class Dispatcher extends EventEmitter2
       async.apply @client.lpush, "#{@namespace}:response:#{responseId}", "#{@namespace}:#{responseId}"
     ], callback
 
+  sendError: (responseKey, upstreamError, callback) =>
+    @client.hget responseKey, "request:metadata", (error, metadataStr) =>
+      return callback error if error?
+      metadata = JSON.parse metadataStr
+      {responseId} = metadata
+
+      errorMetadataStr =
+        responseId: responseId
+        code: 504
+        status: upstreamError.message
+
+      async.series [
+        async.apply @client.hset, "#{@namespace}:#{responseId}", "response:metadata", errorMetadataStr
+        async.apply @client.hset, "#{@namespace}:#{responseId}", "response:data", "null"
+        async.apply @client.lpush, "#{@namespace}:response:#{responseId}", "#{@namespace}:#{responseId}"
+      ], callback
+
   doJob: (responseKey, callback) =>
     async.parallel
       metadata: async.apply @client.hget, responseKey, 'request:metadata'
@@ -44,7 +61,7 @@ class Dispatcher extends EventEmitter2
 
       request = {
         metadata: metadata
-        rawData: result.data ? ""
+        rawData: result.data ? "null"
       }
 
       @emit 'job', request

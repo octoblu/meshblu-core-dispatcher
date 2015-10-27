@@ -11,12 +11,13 @@ class Command
     commander
       .version packageJSON.version
       .option '-n, --namespace <meshblu>', 'request/response queue namespace.', 'meshblu'
+      .option '-i, --internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <n>', 'seconds to wait for a next job.', parseInt, 30
       .option '-a, --all', 'run all workers in process'
       .parse process.argv
 
-    {@namespace,@singleRun,@timeout,@all} = commander
+    {@namespace,@internalNamespace,@singleRun,@timeout,@all} = commander
     @redisUri = process.env.REDIS_URI
 
     if @all
@@ -30,14 +31,13 @@ class Command
     @parseOptions()
 
     dispatcher = new Dispatcher
+      client:  redis.createClient @redisUri
       namespace: @namespace
       timeout:   @timeout
-      redisUri:  @redisUri
       jobHandlers: @assembleJobHandlers()
 
-    dispatcher.on 'job', (job) =>
-      [metadata, data] = job
-      console.log 'doing a job: ', metadata.jobType
+    dispatcher.on 'job', (key) =>
+      console.log 'doing a job: ', key
 
     return dispatcher.work(@panic) if @singleRun
     async.forever dispatcher.dispatch, @panic
@@ -48,6 +48,7 @@ class Command
 
     jobAssembler = new JobAssembler
       timeout: @timeout
+      namespace: @internalNamespace
       localClient: @localClient
       remoteClient: @remoteClient
       localHandlers: @localHandlers
