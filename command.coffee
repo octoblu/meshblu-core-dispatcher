@@ -2,6 +2,7 @@ commander    = require 'commander'
 async        = require 'async'
 redis        = require 'redis'
 redisMock    = require 'fakeredis'
+debug        = require('debug')('meshblu-core-dispatcher:command')
 packageJSON  = require './package.json'
 Dispatcher   = require './src/dispatcher'
 JobAssembler = require './src/job-assembler'
@@ -36,8 +37,8 @@ class Command
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
 
-    dispatcher.on 'job', (key) =>
-      console.log 'doing a job: ', key
+    dispatcher.on 'job', (job) =>
+      debug 'doing a job: ', JSON.stringify job
 
     return dispatcher.work(@panic) if @singleRun
     async.forever dispatcher.dispatch, @panic
@@ -55,9 +56,9 @@ class Command
       remoteHandlers: @remoteHandlers
 
     jobAssembler.on 'response', (response) =>
-      console.log 'response', response
+      debug 'response', JSON.stringify response
 
-    jobHandlers = jobAssembler.assemble()
+    jobAssembler.assemble()
 
   panic: (error) =>
     console.error error.stack

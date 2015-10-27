@@ -20,7 +20,6 @@ class JobAssembler extends EventEmitter2
       client = @getClient 'authenticate'
 
       metadataStr = JSON.stringify metadata
-      console.log "async.apply client.lpush", "#{@namespace}:authenticate:queue", "#{@namespace}:#{responseId}"
       async.series [
         async.apply client.hset, "#{@namespace}:#{responseId}", "request:metadata", metadataStr
         async.apply client.hset, "#{@namespace}:#{responseId}", "request:data", rawData
