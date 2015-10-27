@@ -63,6 +63,7 @@ class QueueWorker
       jobManager.createResponse response, (error) =>
         return callback error if error?
         debug 'created response'
+        callback()
 
   runTask: (task, originalJob) =>
     return (job, callback=->) =>
