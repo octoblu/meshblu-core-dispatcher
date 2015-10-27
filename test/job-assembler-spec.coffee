@@ -1,16 +1,18 @@
-JobAssembler = require '../src/job-assembler'
+async     = require 'async'
 redisMock = require 'fakeredis'
-uuid = require 'uuid'
+uuid      = require 'uuid'
+_         = require 'lodash'
+JobAssembler = require '../src/job-assembler'
 
 describe 'JobAssembler', ->
   beforeEach ->
     @localClientId  = "local-#{uuid.v4()}"
     @remoteClientId = "remote-#{uuid.v4()}"
 
-    @localClient = redisMock.createClient @localClientId
-    @remoteClient = redisMock.createClient @remoteClientId
+    @localClient = _.bindAll redisMock.createClient @localClientId
+    @remoteClient = _.bindAll redisMock.createClient @remoteClientId
 
-  describe.only '->assemble', ->
+  describe '->assemble', ->
     context 'when authenticate is in remoteHandlers', ->
       beforeEach ->
         @sut = new JobAssembler
@@ -33,7 +35,7 @@ describe 'JobAssembler', ->
             metadata:
               duel: "i'm just in it for the glove slapping"
               responseId: 'some-response'
-            rawData: null
+            rawData: ""
           @result.authenticate request, done
 
         it 'should place the job in a queue', (done) ->
@@ -58,59 +60,82 @@ describe 'JobAssembler', ->
             expect(result).to.equal 0
             done()
 
-    xcontext 'when authenticate is in localHandlers', ->
+    context 'when authenticate is in localHandlers', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
           namespace: 'test:internal'
-          localClient: @localClient
-          remoteClient: @remoteClient
+          localClient: redisMock.createClient @localClientId
+          remoteClient: redisMock.createClient @remoteClientId
           localHandlers: ['authenticate']
           remoteHandlers: []
 
         @result = @sut.assemble()
 
-      it 'should return a map of jobHandlers', ->
-        expect(@result).to.be.an 'object'
-
       context 'when authenticate is called', ->
         beforeEach ->
-          @callback = sinon.spy()
-          @result.authenticate [{responseId: 'r-id'}, "duel: i'm just in it for the glove slapping"], @callback
+          request =
+            metadata:
+              misfiled: "paperwork"
+              responseId: 'r-id'
+            rawData: ""
 
-        it 'should place the job in a queue', (done) ->
+          @callback = sinon.spy()
+          @result.authenticate request, @callback
+
+        it 'should place the jobKey in a queue', (done) ->
           @timeout 3000
-          @localClient.brpop 'test:authenticate:queue', 1, (error, result) =>
+          @localClient.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
             return done(error) if error?
-            [channel, requestStr] = result
-            request = JSON.parse requestStr
-            expect(request).to.deep.equal [{responseId: 'r-id'}, "duel: i'm just in it for the glove slapping"]
+            [channel,jobKey] = result
+            expect(jobKey).to.deep.equal 'test:internal:r-id'
             done()
 
         it 'should not place the job in the remote queue', (done) ->
-          @remoteClient.llen 'test:authenticate:queue', (error, result) =>
+          @timeout 3000
+          @remoteClient.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
             return done(error) if error?
-            expect(result).to.equal 0
+            expect(result).not.to.exist
             done()
 
         context 'when authenticate responds', ->
           beforeEach (done) ->
-            response = JSON.stringify [{responseId: 'r-id'}, {authenticated: true}]
-            @localClient.lpush 'test:authenticate:r-id', response, done
+            metadataStr = '{"responseId": "r-id"}'
+            dataStr     = '{"authenticated": true}'
+
+            async.series [
+              async.apply @localClient.hset,  'test:internal:r-id', 'response:metadata', metadataStr
+              async.apply @localClient.hset,  'test:internal:r-id', 'response:data',     dataStr
+              async.apply @localClient.lpush, 'test:internal:authenticate:r-id', 'test:internal:r-id'
+            ], done
 
           it 'should call the callback with the response', (done) ->
             setTimeout =>
-              expect(@callback).to.have.been.calledWith null, [{responseId: 'r-id'}, {authenticated: true}]
+              expectedResponse =
+                metadata:
+                  responseId: 'r-id'
+                rawData: '{"authenticated": true}'
+              expect(@callback).to.have.been.calledWith null, expectedResponse
               done()
             , 1000
 
         context 'when authenticate responds differently', ->
           beforeEach (done) ->
-            response = JSON.stringify [{responseId: 'r-id'}, {authenticated: false}]
-            @localClient.lpush 'test:authenticate:r-id', response, done
+            metadataStr = '{"responseId": "r-id"}'
+            dataStr     = '{"authenticated": false}'
+
+            async.series [
+              async.apply @localClient.hset,  'test:internal:r-id', 'response:metadata', metadataStr
+              async.apply @localClient.hset,  'test:internal:r-id', 'response:data',     dataStr
+              async.apply @localClient.lpush, 'test:internal:authenticate:r-id', 'test:internal:r-id'
+            ], done
 
           it 'should call the callback with the response', (done) ->
             setTimeout =>
-              expect(@callback).to.have.been.calledWith null, [{responseId: 'r-id'}, {authenticated: false}]
+              expectedResponse =
+                metadata:
+                  responseId: 'r-id'
+                rawData: '{"authenticated": false}'
+              expect(@callback).to.have.been.calledWith null, expectedResponse
               done()
             , 1000

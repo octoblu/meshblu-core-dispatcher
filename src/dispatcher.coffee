@@ -44,7 +44,7 @@ class Dispatcher extends EventEmitter2
 
       request = {
         metadata: metadata
-        rawData: result.data
+        rawData: result.data ? ""
       }
 
       @emit 'job', request
