@@ -38,6 +38,7 @@
     "eventemitter2": "^0.4.14",
     "fakeredis": "^0.3.4",
     "lodash": "^3.10.1",
+    "meshblu-core-job-manager": "^1.0.0",
     "redis": "^2.2.5"
   },
   "optionalDependencies": {

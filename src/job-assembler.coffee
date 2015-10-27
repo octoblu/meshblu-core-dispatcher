@@ -1,6 +1,7 @@
 async = require 'async'
 _ = require 'lodash'
 {EventEmitter2} = require 'eventemitter2'
+JobManager = require 'meshblu-core-job-manager'
 
 class JobAssembler extends EventEmitter2
   constructor: (options={}) ->
@@ -12,47 +13,48 @@ class JobAssembler extends EventEmitter2
     @namespace ?= 'meshblu:internal'
     @timeout ?= 30
 
+    @localJobManager = new JobManager
+      timeoutSeconds: @timeout
+      client: @localClient
+      namespace: @namespace
+      requestQueue: 'authenticate'
+      responseQueue: 'authenticate'
+
+    @remoteJobManager = new JobManager
+      timeoutSeconds: @timeout
+      client: @remoteClient
+      namespace: @namespace
+      requestQueue: 'authenticate'
+      responseQueue: 'authenticate'
+
   assemble: =>
     authenticate: (request, callback) =>
       {metadata,rawData} = request
       {responseId}       = metadata
 
-      client = @getClient 'authenticate'
+      jobManager = @getJobManager 'authenticate'
 
-      metadataStr = JSON.stringify metadata
-      async.series [
-        async.apply client.hset, "#{@namespace}:#{responseId}", "request:metadata", metadataStr
-        async.apply client.hset, "#{@namespace}:#{responseId}", "request:data", rawData
-        async.apply client.lpush, "#{@namespace}:authenticate:queue", "#{@namespace}:#{responseId}"
-      ], (error) =>
+      options =
+        responseId: responseId
+        metadata: metadata
+        rawData: rawData
+
+      jobManager.createRequest options, (error) =>
         return callback error if error?
         @waitForResponse 'authenticate', responseId, callback
 
-  getClient: (jobType) =>
+  getJobManager: (jobType) =>
     if jobType in @localHandlers
-      @localClient
+      @localJobManager
     else
-      @remoteClient
+      @remoteJobManager
 
   waitForResponse: (jobType, responseId, callback) =>
-    client = @getClient jobType
-    client.brpop "#{@namespace}:#{jobType}:#{responseId}", @timeout, (error, result) =>
+    jobManager = @getJobManager jobType
+    jobManager.getResponse "#{@namespace}:authenticate:#{responseId}", (error, response) =>
       return callback error if error?
-      return callback new Error('Timed out waiting for response') unless result?
-      [channel,responseKey] = result
-      @emit 'response', responseKey
-      @getResponse jobType, responseKey, callback
-
-  getResponse: (jobType, responseKey, callback) =>
-    client = @getClient jobType
-    async.parallel
-      metadata: async.apply client.hget, responseKey, 'response:metadata'
-      data:     async.apply client.hget, responseKey, 'response:data'
-    , (error, result) =>
-      response =
-        metadata: JSON.parse result.metadata
-        rawData: result.data
-
-      return callback null, response
+      return callback new Error('Timed out waiting for response') unless response?
+      @emit 'response', response
+      callback null, response
 
 module.exports = JobAssembler
