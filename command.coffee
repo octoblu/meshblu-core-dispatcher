@@ -49,10 +49,12 @@ class Command
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
-    return queueWorker.run() if @singleRun
+    if @singleRun
+      dispatcher.work(@panic)
+      queueWorker.run()
+      return
+      
     async.forever queueWorker.run, @panic
-
-    return dispatcher.work(@panic) if @singleRun
     async.forever dispatcher.dispatch, @panic
 
   assembleJobHandlers: =>

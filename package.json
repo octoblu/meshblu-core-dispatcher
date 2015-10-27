@@ -39,6 +39,7 @@
     "fakeredis": "^0.3.4",
     "lodash": "^3.10.1",
     "meshblu-core-job-manager": "^1.1.0",
+    "meshblu-task-authenticate": "^1.0.1",
     "redis": "^2.2.5"
   },
   "optionalDependencies": {
