@@ -13,6 +13,7 @@ class QueueWorker
     {@localHandlers,@remoteHandlers} = options
     @timeout ?= 30
     @namespace ?= 'meshblu:internal'
+    debug 'timeout', @timeout, @namespace
 
   getJobManager: (jobType) =>
     if jobType in @localHandlers
@@ -38,14 +39,15 @@ class QueueWorker
     handleJob = (jobType, done) =>
       debug 'running for jobType', jobType
       jobManager = @getJobManager jobType
-      jobManager.getResponse "queue", (error, job) =>
+      jobManager.getRequest (error, job) =>
         debug 'got job', error: error, job: job
         return callback error if error?
         return callback null unless job?
         @runJob job, done
     async.each handledJobs, handleJob, callback
 
-  runJob: (job, callback=->) =>
+  runJob: (job={}, callback=->) =>
+    return callback new Error("Missing metadata") unless job.metadata?
     {jobType,responseId} = job.metadata
     debug 'running job', job.metadata
     tasks = configJobs[jobType]

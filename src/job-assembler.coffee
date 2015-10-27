@@ -29,6 +29,7 @@ class JobAssembler extends EventEmitter2
 
   assemble: =>
     authenticate: (request, callback) =>
+      console.log 'authenticate'
       {metadata,rawData} = request
       {responseId}       = metadata
 
