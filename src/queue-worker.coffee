@@ -10,6 +10,8 @@ class QueueWorker
     @client = _.bindAll client
     @timeout ?= 30
     @namespace ?= 'meshblu:internal'
+    @tasks ?= {}
+    @tasks['meshblu-task-authenticate'] ?= require('meshblu-task-authenticate')
     debug 'timeout', @timeout, @namespace
 
     @jobManager = new JobManager
@@ -21,34 +23,25 @@ class QueueWorker
 
   run: (callback=->) =>
     debug 'running'
-    handleJob = (jobType, done) =>
-      debug 'running for jobType', jobType
-      @jobManager.getRequest (error, job) =>
-        debug 'got job', error: error, job: job
-        return callback error if error?
-        return callback null unless job?
-        @runJob job, done
-    async.each @jobs, handleJob, callback
+    async.each @jobs, @handleJob, callback
+
+  handleJob: (jobType, callback) =>
+    debug 'running for jobType', jobType
+    @jobManager.getRequest (error, job) =>
+      debug 'got job', error: error, job: job
+      return callback error if error?
+      return callback null unless job?
+      @runJob job, callback
 
   runJob: (job={}, callback=->) =>
     return callback new Error("Missing metadata") unless job.metadata?
     {jobType,responseId} = job.metadata
-    debug 'running job', job.metadata
-    tasks = configJobs[jobType]
-    asyncTasks = _.map tasks, (task) =>
-      return @runTask task, job
 
-    async.waterfall asyncTasks, (error, finishedJob) =>
+    task = @tasks['meshblu-task-authenticate']
+    task job, (error, finishedJob) =>
       debug 'finished job'
       return callback error if error?
-      response =
-        metadata: finishedJob.metadata
-        responseId: responseId
-        rawData: finishedJob.rawData
-      @jobManager.createResponse response, (error) =>
-        return callback error if error?
-        debug 'created response'
-        callback()
+      @sendResponse finishedJob, callback
 
   runTask: (task, originalJob) =>
     return (job, callback=->) =>
@@ -56,9 +49,19 @@ class QueueWorker
         callback = job
         job = originalJob
       taskFunction = @tasks[task]
-      try taskFunction = require task unless taskFunction?
+
       return callback new Error("missing task") unless taskFunction?
-      debug 'running task function'
       taskFunction job, callback
+
+  sendResponse: (job, callback) =>
+    response =
+      metadata:   job.metadata
+      responseId: job.metadata.responseId
+      rawData:    job.rawData
+
+    @jobManager.createResponse response, (error) =>
+      return callback error if error?
+      debug 'created response'
+      callback()
 
 module.exports = QueueWorker

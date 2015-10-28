@@ -1,3 +1,4 @@
+_            = require 'lodash'
 commander    = require 'commander'
 async        = require 'async'
 redis        = require 'redis'
@@ -8,30 +9,28 @@ Dispatcher   = require './src/dispatcher'
 JobAssembler = require './src/job-assembler'
 QueueWorker  = require './src/queue-worker'
 
-class Command
+class CommandDispatch
+  @ALL_JOBS: ['authenticate']
+
   parseList: (val) =>
     val.split ','
 
   parseOptions: =>
     commander
       .version packageJSON.version
-      .option '--namespace <meshblu>', 'request/response queue namespace.', 'meshblu'
-      .option '--internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
-      .option '-i, --insource <job1,job2>', 'jobs for internal workers', @parseList
-      .option '-o, --outsource <job1,job2>', 'jobs for external workers', @parseList
+      .usage 'Run the dispatch worker. All jobs not outsourced will be run in-process.'
+      .option '-n, --namespace <meshblu>', 'request/response queue namespace.', 'meshblu'
+      .option '-i, --internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
+      .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', @parseList
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <n>', 'seconds to wait for a next job.', parseInt, 30
       .parse process.argv
 
-    {@namespace,@internalNamespace,@singleRun,@timeout,@all} = commander
+    {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
     @redisUri = process.env.REDIS_URI
 
-    if @all
-      @localHandlers  = ['authenticate']
-      @remoteHandlers = []
-    else
-      @localHandlers  = []
-      @remoteHandlers = ['authenticate']
+    @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
+    @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
 
   run: =>
     @parseOptions()
@@ -46,30 +45,30 @@ class Command
       debug 'doing a job: ', JSON.stringify job
 
     queueWorker = new QueueWorker
-      timeout: 30
+      timeout:   @timeout
       namespace: @internalNamespace
-      localClient: @localClient
-      remoteClient: @remoteClient
-      localHandlers: @localHandlers
-      remoteHandlers: @remoteHandlers
+      client:    redisMock.createClient(@internalNamespace)
+      jobs:      @localHandlers
 
     if @singleRun
-      dispatcher.work(@panic)
-      queueWorker.run()
+      async.parallel [
+        async.apply dispatcher.dispatch
+        async.apply queueWorker.run
+      ], @tentativePanic
       return
 
     async.forever queueWorker.run, @panic
     async.forever dispatcher.dispatch, @panic
 
   assembleJobHandlers: =>
-    @localClient = redisMock.createClient()
-    @remoteClient = redis.createClient @redisUri
+    localClient = redisMock.createClient(@internalNamespace)
+    remoteClient = redis.createClient @redisUri
 
     jobAssembler = new JobAssembler
       timeout: @timeout
       namespace: @internalNamespace
-      localClient: @localClient
-      remoteClient: @remoteClient
+      localClient: localClient
+      remoteClient: remoteClient
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
@@ -82,5 +81,10 @@ class Command
     console.error error.stack
     process.exit 1
 
-command = new Command()
-command.run()
+  tentativePanic: (error) =>
+    return process.exit(0) unless error?
+    console.error error.stack
+    process.exit 1
+
+commandDispatch = new CommandDispatch()
+commandDispatch.run()

@@ -5,14 +5,14 @@ debug        = require('debug')('meshblu-core-dispatcher:command')
 packageJSON  = require './package.json'
 QueueWorker  = require './src/queue-worker'
 
-class Command
+class CommandWork
   parseList: (val) =>
     val.split ','
 
   parseOptions: =>
     commander
       .version packageJSON.version
-      .option '--internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
+      .option '-i, --internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
       .option '-j, --jobs <job1,job2>', 'jobs this worker is willing to do', @parseList
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <n>', 'seconds to wait for a next job.', parseInt, 30
@@ -40,5 +40,5 @@ class Command
     console.error error.stack
     process.exit 1
 
-command = new Command()
-command.run()
+commandWork = new CommandWork()
+commandWork.run()
