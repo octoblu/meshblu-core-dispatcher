@@ -4,19 +4,20 @@ cson       = require 'cson'
 JobManager = require 'meshblu-core-job-manager'
 debug      = require('debug')('meshblu-core-dispatcher:queue-worker')
 path       = require 'path'
-configJobs = cson.parseFile path.join(__dirname, '../job-registry.cson')
+jobRegistry = cson.parseFile path.join(__dirname, '../job-registry.cson')
 TaskRunner = require './task-runner'
 
 # lowercase all job names
-configJobs = _.mapKeys configJobs, (value, key) =>
+jobRegistry = _.mapKeys jobRegistry, (value, key) =>
   key.toLocaleLowerCase()
 
 class QueueWorker
   constructor: (options={}) ->
-    {client,@namespace,@timeout,@tasks,@jobs} = options
+    {client,@namespace,@timeout,@tasks,@jobs,@jobRegistry} = options
     @client = _.bindAll client
     @timeout ?= 30
     @namespace ?= 'meshblu:internal'
+    @jobRegistry = jobRegistry
 
     @jobManager = new JobManager
       timeoutSeconds: @timeout
@@ -41,10 +42,15 @@ class QueueWorker
     return callback new Error("Missing metadata") unless job.metadata?
     {jobType,responseId} = job.metadata
 
-    jobDef = configJobs[jobType.toLocaleLowerCase()]
+    jobTypeLower = jobType.toLocaleLowerCase()
+    jobDef = jobRegistry[jobTypeLower]
     return callback new Error "jobType '#{jobType}' not found" unless jobDef?
 
-    taskRunner = new TaskRunner config: jobDef, tasks: @tasks, data: job
+    taskRunner = new TaskRunner
+      config: jobDef
+      tasks: @tasks
+      data: job
+      
     taskRunner.run (error, finishedJob) =>
       return callback error if error?
       @sendResponse finishedJob, callback
