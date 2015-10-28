@@ -1,2 +1,2 @@
 module.exports =
-  'authenticate': ['meshblu-task-authenticate']
+  'authenticate': ['meshblu-core-task-authenticate']

@@ -11,8 +11,7 @@ class QueueWorker
     @timeout ?= 30
     @namespace ?= 'meshblu:internal'
     @tasks ?= {}
-    @tasks['meshblu-task-authenticate'] ?= require('meshblu-task-authenticate')
-    debug 'timeout', @timeout, @namespace
+    @tasks['meshblu-core-task-authenticate'] ?= require('meshblu-core-task-authenticate')
 
     @jobManager = new JobManager
       timeoutSeconds: @timeout
@@ -22,7 +21,7 @@ class QueueWorker
       responseQueue: 'authenticate'
 
   run: (callback=->) =>
-    debug 'running'
+    debug 'running...'
     async.each @jobs, @handleJob, callback
 
   handleJob: (jobType, callback) =>
@@ -37,7 +36,7 @@ class QueueWorker
     return callback new Error("Missing metadata") unless job.metadata?
     {jobType,responseId} = job.metadata
 
-    task = @tasks['meshblu-task-authenticate']
+    task = @tasks['meshblu-core-task-authenticate']
     task job, (error, finishedJob) =>
       debug 'finished job'
       return callback error if error?

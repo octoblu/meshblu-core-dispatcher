@@ -17,7 +17,7 @@ describe 'QueueWorker', ->
       requestQueue: 'authenticate'
 
     @tasks =
-      'meshblu-task-authenticate': sinon.stub().yields null, {}
+      'meshblu-core-task-authenticate': sinon.stub().yields null, {}
 
   describe '->run', ->
     describe 'when using client', ->
@@ -127,7 +127,7 @@ describe 'QueueWorker', ->
             responseId: 'cool-beans'
           rawData: 'bacon is good'
 
-        @tasks['meshblu-task-authenticate'] = sinon.stub().yields null, response
+        @tasks['meshblu-core-task-authenticate'] = sinon.stub().yields null, response
 
         @sut.runJob job, (error) =>
           return done error if error?
@@ -146,10 +146,14 @@ describe 'QueueWorker', ->
     describe 'when called with a different authenticate job', ->
       beforeEach (done) ->
         @timeout 3000
-        metadata = uuid: 'crazy', token: 'business', jobType: 'authenticate', responseId: 'create-madness'
+        metadata =
+          uuid: 'crazy'
+          token: 'business'
+          jobType: 'authenticate'
+          responseId: 'create-madness'
         job = metadata: metadata, rawData: 'null'
 
-        @tasks['meshblu-task-authenticate'] = (job, callback) =>
+        @tasks['meshblu-core-task-authenticate'] = (job, callback) =>
           callback null, metadata: metadata, rawData: 'something is neat'
 
         @sut.runJob job, =>
