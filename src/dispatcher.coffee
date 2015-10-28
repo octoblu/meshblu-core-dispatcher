@@ -2,6 +2,7 @@ _ = require 'lodash'
 http = require 'http'
 async = require 'async'
 {EventEmitter2} = require 'eventemitter2'
+JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
@@ -11,62 +12,52 @@ class Dispatcher extends EventEmitter2
     @timeout ?= 1
     @namespace ?= 'meshblu'
 
-  dispatch: (callback) =>
-    @client.brpop "#{@namespace}:request:queue", @timeout, (error, result) =>
-      return callback error if error?
-      return callback() unless result?
-      [channel,responseKey] = result
+    @jobManager = new JobManager
+      client: @client
+      timeoutSeconds: @timeout
+      namespace: @namespace
+      requestQueue: 'request'
+      responseQueue: 'response'
 
-      @doJob responseKey, (error, response) =>
-        return @sendError responseKey, error, callback if error?
+  dispatch: (callback) =>
+    @jobManager.getRequest (error, request) =>
+      return callback error if error?
+      return callback() unless request?
+
+      @doJob request, (error, response) =>
+        return @sendError request.metadata, error, callback if error?
         @sendResponse response, callback
 
   sendResponse: (response, callback) =>
     {metadata,rawData} = response
     {responseId}   = metadata
 
-    metadataStr = JSON.stringify metadata
+    options =
+      responseId: responseId
+      metadata: metadata
+      rawData: rawData
 
-    async.series [
-      async.apply @client.hset, "#{@namespace}:#{responseId}", "response:metadata", metadataStr
-      async.apply @client.hset, "#{@namespace}:#{responseId}", "response:data", rawData
-      async.apply @client.lpush, "#{@namespace}:response:#{responseId}", "#{@namespace}:#{responseId}"
-    ], callback
+    @jobManager.createResponse options, callback
 
-  sendError: (responseKey, upstreamError, callback) =>
-    @client.hget responseKey, "request:metadata", (error, metadataStr) =>
-      return callback error if error?
-      metadata = JSON.parse metadataStr
-      {responseId} = metadata
+  sendError: (metadata, upstreamError, callback) =>
+    {responseId} = metadata
 
-      errorMetadataStr =
-        responseId: responseId
-        code: 504
-        status: upstreamError.message
+    errorMetadata =
+      responseId: responseId
+      code: 504
+      status: upstreamError.message
 
-      async.series [
-        async.apply @client.hset, "#{@namespace}:#{responseId}", "response:metadata", errorMetadataStr
-        async.apply @client.hset, "#{@namespace}:#{responseId}", "response:data", "null"
-        async.apply @client.lpush, "#{@namespace}:response:#{responseId}", "#{@namespace}:#{responseId}"
-      ], callback
+    options =
+      responseId: responseId
+      metadata: errorMetadata
 
-  doJob: (responseKey, callback) =>
-    async.parallel
-      metadata: async.apply @client.hget, responseKey, 'request:metadata'
-      data: async.apply @client.hget, responseKey, 'request:data'
-    , (error, result) =>
-      return callback error if error?
+    @jobManager.createResponse options, callback
 
-      metadata = JSON.parse result.metadata
+  doJob: (request, callback) =>
+    {metadata} = request
+    @emit 'job', request
 
-      request = {
-        metadata: metadata
-        rawData: result.data ? "null"
-      }
-
-      @emit 'job', request
-
-      type = metadata.jobType
-      @jobHandlers[type] request, callback
+    type = metadata.jobType
+    @jobHandlers[type] request, callback
 
 module.exports = Dispatcher
