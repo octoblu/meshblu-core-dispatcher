@@ -18,6 +18,7 @@ describe 'QueueWorker', ->
 
     @tasks =
       'meshblu-core-task-authenticate': sinon.stub().yields null, {}
+      'meshblu-core-task-get-subscriptions': sinon.stub().yields null, {}
 
   describe '->run', ->
     describe 'when using client', ->
@@ -40,19 +41,6 @@ describe 'QueueWorker', ->
             return done error if error?
             [channel, responseKey] = result
             expect(responseKey).to.equal 'test:internal:sometin'
-            done()
-
-      describe 'when called and different job is pushed into queue', ->
-        beforeEach (done) ->
-          @sut.run()
-          responseKey = 'test:internal:sometin-cool'
-          @client.lpush 'test:internal:authenticate:sometin-cool', responseKey, done
-
-        it 'should place the job in the queue', (done) ->
-          @client.brpop 'test:internal:authenticate:sometin-cool', 1, (error, result) =>
-            return done error if error?
-            [channel, responseKey] = result
-            expect(responseKey).to.equal 'test:internal:sometin-cool'
             done()
 
     describe 'when using client', ->
@@ -113,16 +101,18 @@ describe 'QueueWorker', ->
 
         job =
           metadata:
-            uuid: 'uuid'
-            token: 'token'
+            auth:
+              uuid: 'uuid'
+              token: 'token'
             jobType: 'authenticate'
             responseId: 'cool-beans'
           rawData: 'null'
 
         response =
           metadata:
-            uuid: 'uuid'
-            token: 'token'
+            auth:
+              uuid: 'uuid'
+              token: 'token'
             jobType: 'authenticate'
             responseId: 'cool-beans'
           rawData: 'bacon is good'
@@ -135,36 +125,51 @@ describe 'QueueWorker', ->
 
       it 'should have the original metadata', ->
         expect(@job.metadata).to.deep.equal
-          uuid: 'uuid'
-          token: 'token'
+          auth:
+            uuid: 'uuid'
+            token: 'token'
           jobType: 'authenticate'
           responseId: 'cool-beans'
 
       it 'should have the new rawData', ->
         expect(@job.rawData).to.equal 'bacon is good'
 
-    describe 'when called with a different authenticate job', ->
+    describe 'when called with an SubscriptionList job', ->
       beforeEach (done) ->
         @timeout 3000
-        metadata =
-          uuid: 'crazy'
-          token: 'business'
-          jobType: 'authenticate'
-          responseId: 'create-madness'
-        job = metadata: metadata, rawData: 'null'
 
-        @tasks['meshblu-core-task-authenticate'] = (job, callback) =>
-          callback null, metadata: metadata, rawData: 'something is neat'
+        job =
+          metadata:
+            auth:
+              uuid: 'uuid'
+              token: 'token'
+            jobType: 'SubscriptionList'
+            responseId: 'cool-beans'
+          rawData: 'null'
 
-        @sut.runJob job, =>
-          @jobManager.getResponse 'create-madness', (error, @job) => done error
+        authenticateResponse =
+          metadata:
+            responseId: 'cool-beans'
+            code: 200
+
+        getSubscriptionsResponse =
+          metadata:
+            responseId: 'cool-beans'
+            code: 200
+          rawData: '[]'
+
+        @tasks['meshblu-core-task-authenticate'] = sinon.stub().yields null, authenticateResponse
+        @tasks['meshblu-core-task-get-subscriptions'] = sinon.stub().yields null, getSubscriptionsResponse
+
+        @sut.runJob job, (error) =>
+          return done error if error?
+          @jobManager.getResponse 'cool-beans', (error, @job) =>
+            done error
 
       it 'should have the original metadata', ->
         expect(@job.metadata).to.deep.equal
-          uuid: 'crazy'
-          token: 'business'
-          jobType: 'authenticate'
-          responseId: 'create-madness'
+          responseId: 'cool-beans'
+          code: 200
 
       it 'should have the new rawData', ->
-        expect(@job.rawData).to.equal 'something is neat'
+        expect(@job.rawData).to.equal '[]'
