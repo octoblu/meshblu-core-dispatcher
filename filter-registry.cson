@@ -3,18 +3,23 @@ Authenticate:
   tasks:
     'check-token-black-list':
       task: 'meshblu-core-task-check-token-black-list'
+      cacheNamespace: 'meshblu-token-black-list'
       on:
         204: 'check-token-cache'
     'check-token-cache':
       task: 'meshblu-core-task-check-token-cache'
+      cacheNamespace: 'meshblu-token-cache'
       on:
         204: 'check-token-expensive-way'
     'check-token-expensive-way':
-      task: 'meshblu-core-task-authenticate'
+      task: 'meshblu-core-task-check-token'
+      datastoreCollection: 'devices'
       on:
         204: 'cache-token'
         401: 'black-list-token'
     'cache-token':
       task: 'meshblu-core-task-cache-token'
+      cacheNamespace: 'meshblu-token-cache'
     'black-list-token':
       task: 'meshblu-core-task-black-list-token'
+      cacheNamespace: 'meshblu-token-black-list'

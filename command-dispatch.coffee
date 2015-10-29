@@ -7,6 +7,7 @@ debug        = require('debug')('meshblu-core-dispatcher:command')
 packageJSON  = require './package.json'
 Dispatcher   = require './src/dispatcher'
 JobAssembler = require './src/job-assembler'
+JobRegistry  = require './src/job-registry'
 QueueWorker  = require './src/queue-worker'
 
 class CommandDispatch
@@ -44,11 +45,17 @@ class CommandDispatch
     dispatcher.on 'job', (job) =>
       debug 'doing a job: ', JSON.stringify job
 
+
+    # cacheFactory = new CacheFactory client: redis.createClient(@redisUri)
+    # jobRegistry  = new JobRegistry cacheFactory: cacheFactory
+    jobRegistry  = new JobRegistry
+
     queueWorker = new QueueWorker
       timeout:   @timeout
       namespace: @internalNamespace
       client:    redisMock.createClient(@internalNamespace)
       jobs:      @localHandlers
+      jobRegistry: jobRegistry.toJSON()
 
     if @singleRun
       async.parallel [
