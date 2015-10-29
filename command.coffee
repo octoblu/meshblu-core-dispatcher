@@ -7,6 +7,7 @@ class Command
       .version packageJSON.version
       .parse process.argv
       .command 'dispatch', 'run the dispatch worker'
+      .command 'jobs',     'list compiled jobs from the registry'
       .command 'work',     'run the job worker'
       .parse process.argv
 
