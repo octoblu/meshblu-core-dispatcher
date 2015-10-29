@@ -1,0 +1,20 @@
+Authenticate:
+  start: 'check-token-black-list'
+  tasks:
+    'check-token-black-list':
+      task: 'meshblu-core-task-check-token-black-list'
+      on:
+        204: 'check-token-cache'
+    'check-token-cache':
+      task: 'meshblu-core-task-check-token-cache'
+      on:
+        204: 'check-token-expensive-way'
+    'check-token-expensive-way':
+      task: 'meshblu-core-task-authenticate'
+      on:
+        204: 'cache-token'
+        401: 'black-list-token'
+    'cache-token':
+      task: 'meshblu-core-task-cache-token'
+    'black-list-token':
+      task: 'meshblu-core-task-black-list-token'

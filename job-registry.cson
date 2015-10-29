@@ -2,13 +2,13 @@ Authenticate:
   start: 'authenticate'
   tasks:
     'authenticate':
-      task: 'meshblu-core-task-authenticate'
+      filter: 'Authenticate'
 SubscriptionList:
   start: 'authenticate'
   tasks:
     'authenticate':
-      task: 'meshblu-core-task-authenticate'
+      filter: 'Authenticate'
       on:
-        200: 'get-subscriptions'
+        204: 'get-subscriptions'
     'get-subscriptions':
       task: 'meshblu-core-task-get-subscriptions'
