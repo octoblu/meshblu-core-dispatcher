@@ -8,25 +8,34 @@ class JobRegistry
     @filters ?= cson.parseFile path.join(__dirname, '../filter-registry.cson')
 
   toJSON: =>
-    _.each @jobs, (job) =>
-      tasks = job.tasks
-      tasksWithFilters = _.pick tasks, (task) => task.filter?
+    _.mapValues @jobs, @buildJob
 
-      _.each tasksWithFilters, (task,taskName) =>
-        filter = @filters[task.filter]
+  buildJob: (job) =>
+    job = _.cloneDeep job
 
-        _.each filter.tasks, (filterTask, filterTaskName) =>
-          filterTask.on = _.defaults {}, filterTask.on, task.on
-          job.tasks[filterTaskName] = filterTask
+    tasksWithFilters = _.pick job.tasks, (task) => task.filter?
 
-        newStartTask =
-          task: 'meshblu-core-task-no-content'
-          on:
-            204: filter.start
-        job.tasks[taskName] = newStartTask
+    _.each tasksWithFilters, (task) =>
+      _.extend job.tasks, @tasksFromFilter(task)
 
+    _.each tasksWithFilters, (task, taskName) =>
+      job.tasks[taskName] = @newStartTask task
 
-    @jobs
+    job
 
+  tasksFromFilter: (task) =>
+    filter = _.cloneDeep @filters[task.filter]
+    _.mapValues filter.tasks, (filterTask, filterTaskName) =>
+      filterTask.on = _.defaults {}, filterTask.on, task.on
+      filterTask
+
+  newStartTask: (task) =>
+    filterStart = @filters[task.filter].start
+
+    return {
+      task: 'meshblu-core-task-no-content'
+      on:
+        204: filterStart
+    }
 
 module.exports = JobRegistry

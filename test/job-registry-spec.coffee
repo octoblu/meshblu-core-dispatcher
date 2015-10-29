@@ -1,6 +1,6 @@
 JobRegistry = require '../src/job-registry'
 
-describe.only 'JobRegistry', ->
+describe 'JobRegistry', ->
   context "one", ->
     beforeEach ->
       @sut = new JobRegistry
