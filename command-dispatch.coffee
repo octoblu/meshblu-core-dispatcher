@@ -49,12 +49,14 @@ class CommandDispatch
     dispatcher.on 'job', (job) =>
       debug 'doing a job: ', JSON.stringify job
 
+    localClient = redis.createClient @redisUri
+
     queueWorker = new QueueWorker
       pepper:    @pepper
       timeout:   @timeout
       namespace: @internalNamespace
       jobs:      @localHandlers
-      client:       redisMock.createClient(@internalNamespace)
+      client:       localClient
       jobRegistry:  (new JobRegistry).toJSON()
       cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
       datastoreFactory: new DatastoreFactory database: @mongoDBUri
@@ -70,7 +72,7 @@ class CommandDispatch
     async.forever dispatcher.dispatch, @panic
 
   assembleJobHandlers: =>
-    localClient = redisMock.createClient(@internalNamespace)
+    localClient = redis.createClient @redisUri
     remoteClient = redis.createClient @redisUri
 
     jobAssembler = new JobAssembler
