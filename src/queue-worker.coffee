@@ -6,29 +6,20 @@ TaskRunner = require './task-runner'
 
 class QueueWorker
   constructor: (options={}) ->
-    {client,@namespace,@timeout,@jobs,@jobRegistry,@pepper} = options
+    {client,@timeout,@jobs,@jobRegistry,@pepper} = options
     {@datastoreFactory,@cacheFactory} = options
     @client = _.bindAll client
     @timeout ?= 30
-    @namespace ?= 'meshblu:internal'
+    @jobManager = new JobManager timeoutSeconds: @timeout, client: @client
 
   run: (callback=->) =>
     debug 'running...'
     async.each @jobs, @handleJob, callback
 
-  getJobManager: (jobType) =>
-    new JobManager
-      timeoutSeconds: @timeout
-      client: @client
-      namespace: @namespace
-      requestQueue: jobType
-      responseQueue: jobType
-
   handleJob: (jobType, callback) =>
     debug 'running for jobType', jobType
 
-    jobManager = @getJobManager jobType
-    jobManager.getRequest (error, job) =>
+    @jobManager.getRequest [jobType], (error, job) =>
       debug 'got job', error: error, job: job
       return callback error if error?
       return callback null unless job?
@@ -53,8 +44,6 @@ class QueueWorker
       @sendResponse jobType, finishedJob, callback
 
   sendResponse: (jobType, response, callback) =>
-    jobManager = @getJobManager jobType
-
     {metadata,rawData} = response
     {responseId} = metadata
 
@@ -63,6 +52,6 @@ class QueueWorker
       responseId: responseId
       rawData:    rawData
 
-    jobManager.createResponse newResponse, callback
+    @jobManager.createResponse jobType, newResponse, callback
 
 module.exports = QueueWorker

@@ -15,14 +15,6 @@ describe 'JobAssembler', ->
 
     @localJobManager = new JobManager
       client: @localClient
-      namespace: 'test:internal'
-      timeoutSeconds: 1
-      responseQueue: 'Authenticate'
-      requestQueue: 'Authenticate'
-
-    @remoteJobManager = new JobManager
-      client: @remoteClient
-      namespace: 'test'
       timeoutSeconds: 1
 
   describe '->assemble', ->
@@ -30,7 +22,6 @@ describe 'JobAssembler', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
-          namespace: 'test:internal'
           localClient: redisMock.createClient @localClientId
           remoteClient: redisMock.createClient @remoteClientId
           localHandlers: []
@@ -40,8 +31,8 @@ describe 'JobAssembler', ->
 
       context 'when authenticate is called', ->
         beforeEach (done) ->
-          responseKey = 'test:internal:some-response'
-          @remoteClient.lpush 'test:internal:Authenticate:some-response', responseKey, done
+          responseKey = 'some-response'
+          @remoteClient.lpush 'Authenticate:some-response', responseKey, done
 
         beforeEach (done) ->
           request =
@@ -53,14 +44,14 @@ describe 'JobAssembler', ->
 
         it 'should place the job in a queue', (done) ->
           @timeout 3000
-          @remoteClient.brpop 'test:internal:Authenticate:queue', 1, (error, result) =>
+          @remoteClient.brpop 'Authenticate:queue', 1, (error, result) =>
             return done(error) if error?
             [channel, responseKey] = result
-            expect(responseKey).to.deep.equal 'test:internal:some-response'
+            expect(responseKey).to.deep.equal 'some-response'
             done()
 
         it 'should put the metadata in its place', (done) ->
-          @remoteClient.hget 'test:internal:some-response', 'request:metadata', (error, metadataStr) =>
+          @remoteClient.hget 'some-response', 'request:metadata', (error, metadataStr) =>
             metadata = JSON.parse metadataStr
             expect(metadata).to.deep.equal
               duel: "i'm just in it for the glove slapping"
@@ -68,7 +59,7 @@ describe 'JobAssembler', ->
             done()
 
         it 'should not place the job in the local queue', (done) ->
-          @localClient.llen 'test:internal:Authenticate:queue', (error, result) =>
+          @localClient.llen 'Authenticate:queue', (error, result) =>
             return done(error) if error?
             expect(result).to.equal 0
             done()
@@ -77,7 +68,6 @@ describe 'JobAssembler', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
-          namespace: 'test:internal'
           localClient: redisMock.createClient @localClientId
           remoteClient: redisMock.createClient @remoteClientId
           localHandlers: ['Authenticate']
@@ -98,15 +88,15 @@ describe 'JobAssembler', ->
 
         it 'should place the jobKey in a queue', (done) ->
           @timeout 3000
-          @localClient.brpop 'test:internal:Authenticate:queue', 1, (error, result) =>
+          @localClient.brpop 'Authenticate:queue', 1, (error, result) =>
             return done(error) if error?
             [channel,jobKey] = result
-            expect(jobKey).to.deep.equal 'test:internal:r-id'
+            expect(jobKey).to.deep.equal 'r-id'
             done()
 
         it 'should not place the job in the remote queue', (done) ->
           @timeout 3000
-          @remoteClient.brpop 'test:internal:Authenticate:queue', 1, (error, result) =>
+          @remoteClient.brpop 'Authenticate:queue', 1, (error, result) =>
             return done(error) if error?
             expect(result).not.to.exist
             done()
@@ -123,7 +113,7 @@ describe 'JobAssembler', ->
               metadata: metadata
               data: data
 
-            @localJobManager.createResponse options, done
+            @localJobManager.createResponse 'Authenticate', options, done
 
             metadataStr = '{"responseId": "r-id"}'
             dataStr     = '{"authenticated": true}'
@@ -150,7 +140,7 @@ describe 'JobAssembler', ->
               metadata: metadata
               data: data
 
-            @localJobManager.createResponse options, done
+            @localJobManager.createResponse 'Authenticate', options, done
 
           it 'should call the callback with the response', (done) ->
             setTimeout =>

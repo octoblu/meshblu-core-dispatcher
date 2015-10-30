@@ -3,7 +3,11 @@ async        = require 'async'
 redis        = require 'redis'
 debug        = require('debug')('meshblu-core-dispatcher:command')
 packageJSON  = require './package.json'
-QueueWorker  = require './src/queue-worker'
+CacheFactory     = require './src/cache-factory'
+DatastoreFactory = require './src/datastore-factory'
+JobAssembler     = require './src/job-assembler'
+JobRegistry      = require './src/job-registry'
+QueueWorker      = require './src/queue-worker'
 
 class CommandWork
   parseList: (val) =>
@@ -21,14 +25,22 @@ class CommandWork
     {@internalNamespace,@singleRun,@timeout,@jobs} = commander
     @client = redis.createClient process.env.REDIS_URI
 
+    @redisUri   = process.env.REDIS_URI
+    @mongoDBUri = process.env.MONGODB_URI
+    @pepper     = process.env.TOKEN
+
   run: =>
     @parseOptions()
 
     queueWorker = new QueueWorker
+      pepper:    @pepper
       timeout:   @timeout
       namespace: @internalNamespace
-      client:    @client
       jobs:      @jobs
+      client:       @client
+      jobRegistry:  (new JobRegistry).toJSON()
+      cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
+      datastoreFactory: new DatastoreFactory database: @mongoDBUri
 
     if @singleRun
       queueWorker.run(@panic)

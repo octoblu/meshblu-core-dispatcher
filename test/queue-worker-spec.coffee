@@ -27,7 +27,6 @@ describe 'QueueWorker', ->
         new Cache
           client: client
 
-
   describe '->run', ->
     describe 'when using client', ->
       beforeEach ->
@@ -44,7 +43,6 @@ describe 'QueueWorker', ->
           localHandlers: ['CheckToken']
           remoteHandlers: []
           tasks: @tasks
-          namespace: 'test:internal'
           timeout: 1
           datastoreFactory: @datastoreFactory
           jobRegistry: jobRegistry
@@ -52,32 +50,32 @@ describe 'QueueWorker', ->
       describe 'when called and job is pushed into queue', ->
         beforeEach (done) ->
           @sut.run()
-          responseKey = 'test:internal:sometin'
-          @client.lpush 'test:internal:CheckToken:sometin', responseKey, done
+          responseKey = 'sometin'
+          @client.lpush 'CheckToken:sometin', responseKey, done
 
         it 'should place the job in the queue', (done) ->
-          @client.brpop 'test:internal:CheckToken:sometin', 1, (error, result) =>
+          @client.brpop 'CheckToken:sometin', 1, (error, result) =>
             return done error if error?
             [channel, responseKey] = result
-            expect(responseKey).to.equal 'test:internal:sometin'
+            expect(responseKey).to.equal 'sometin'
             done()
 
       describe 'when called and different job is pushed into queue', ->
         beforeEach (done) ->
           @sut.run()
-          responseKey = 'test:internal:sometin-cool'
-          @client.lpush 'test:internal:CheckToken:sometin-cool', responseKey, done
+          responseKey = 'sometin-cool'
+          @client.lpush 'CheckToken:sometin-cool', responseKey, done
 
         it 'should place the job in the queue', (done) ->
-          @client.brpop 'test:internal:CheckToken:sometin-cool', 1, (error, result) =>
+          @client.brpop 'CheckToken:sometin-cool', 1, (error, result) =>
             return done error if error?
             [channel, responseKey] = result
-            expect(responseKey).to.equal 'test:internal:sometin-cool'
+            expect(responseKey).to.equal 'sometin-cool'
             done()
 
         it 'should not place the job in the remote queue', (done) ->
           @timeout 3000
-          @client.brpop 'test:internal:CheckToken:queue', 1, (error, result) =>
+          @client.brpop 'CheckToken:queue', 1, (error, result) =>
             return done(error) if error?
             expect(result).not.to.exist
             done()
@@ -97,7 +95,6 @@ describe 'QueueWorker', ->
         localHandlers: ['CheckToken']
         remoteHandlers: []
         tasks: @tasks
-        namespace: 'test:internal'
         timeout: 1
         datastoreFactory: @datastoreFactory
         jobRegistry: jobRegistry
@@ -136,11 +133,9 @@ describe 'QueueWorker', ->
 
           jobManager = new JobManager
             client: redis.createClient @clientId
-            namespace: 'test:internal'
             timeoutSeconds: 1
-            responseQueue:    'CheckToken'
-            requestQueue:     'CheckToken'
-          jobManager.getResponse 'tragic-flaw', (error, @response) =>
+
+          jobManager.getResponse 'CheckToken', 'tragic-flaw', (error, @response) =>
             done error
 
       it 'should have a valid response', ->
@@ -166,7 +161,6 @@ describe 'QueueWorker', ->
         localHandlers: ['CheckBlackList']
         remoteHandlers: []
         tasks: @tasks
-        namespace: 'test:internal'
         timeout: 1
         cacheFactory: @cacheFactory
         jobRegistry: jobRegistry
@@ -175,7 +169,6 @@ describe 'QueueWorker', ->
     describe 'when called with an CheckBlackList job', ->
       beforeEach (done) ->
         cacheClient = _.bindAll new RedisNS 'black-list', redis.createClient @cacheClientId
-
         cacheClient.set 'things-go-wrong:but-didnt-it-feel-so-right', '', done
 
       beforeEach (done) ->
@@ -193,17 +186,14 @@ describe 'QueueWorker', ->
           return done error if error?
           jobManager = new JobManager
             client: redis.createClient @clientId
-            namespace: 'test:internal'
             timeoutSeconds: 1
-            responseQueue:    'CheckBlackList'
-            requestQueue:     'CheckBlackList'
-          jobManager.getResponse 'roasted', (error, @response) =>
+          jobManager.getResponse 'CheckBlackList', 'roasted', (error, @response) =>
             done error
 
       it 'should have a valid response', ->
         expect(@response).to.deep.equal
           metadata:
             responseId: 'roasted'
-            code: 204
-            status: 'No Content'
+            code: 403
+            status: 'Forbidden'
           rawData: 'null'

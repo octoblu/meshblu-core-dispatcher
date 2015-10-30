@@ -6,21 +6,17 @@ JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@namespace,@timeout} = options
+    {client,@timeout} = options
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 1
-    @namespace ?= 'meshblu'
 
     @jobManager = new JobManager
       client: @client
       timeoutSeconds: @timeout
-      namespace: @namespace
-      requestQueue: 'request'
-      responseQueue: 'response'
 
   dispatch: (callback) =>
-    @jobManager.getRequest (error, request) =>
+    @jobManager.getRequest ['request'], (error, request) =>
       return callback error if error?
       return callback() unless request?
 
@@ -37,7 +33,7 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
-    @jobManager.createResponse options, callback
+    @jobManager.createResponse 'response', options, callback
 
   sendError: (metadata, upstreamError, callback) =>
     {responseId} = metadata
@@ -51,7 +47,7 @@ class Dispatcher extends EventEmitter2
       responseId: responseId
       metadata: errorMetadata
 
-    @jobManager.createResponse options, callback
+    @jobManager.createResponse 'response', options, callback
 
   doJob: (request, callback) =>
     {metadata} = request

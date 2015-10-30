@@ -5,27 +5,20 @@ JobManager = require 'meshblu-core-job-manager'
 
 class JobAssembler extends EventEmitter2
   constructor: (options={}) ->
-    {@namespace,localClient,remoteClient,@timeout} = options
+    {localClient,remoteClient,@timeout} = options
     @localClient  = _.bindAll localClient
     @remoteClient = _.bindAll remoteClient
 
     {@localHandlers,@remoteHandlers} = options
-    @namespace ?= 'meshblu:internal'
     @timeout ?= 30
 
     @localJobManager = new JobManager
       timeoutSeconds: @timeout
       client: @localClient
-      namespace: @namespace
-      requestQueue: 'Authenticate'
-      responseQueue: 'Authenticate'
 
     @remoteJobManager = new JobManager
       timeoutSeconds: @timeout
       client: @remoteClient
-      namespace: @namespace
-      requestQueue: 'Authenticate'
-      responseQueue: 'Authenticate'
 
   assemble: =>
     Authenticate: (request, callback) =>
@@ -39,7 +32,7 @@ class JobAssembler extends EventEmitter2
         metadata: metadata
         rawData: rawData
 
-      jobManager.createRequest options, (error) =>
+      jobManager.createRequest 'Authenticate', options, (error) =>
         return callback error if error?
         @waitForResponse 'Authenticate', responseId, callback
 
@@ -51,7 +44,7 @@ class JobAssembler extends EventEmitter2
 
   waitForResponse: (jobType, responseId, callback) =>
     jobManager = @getJobManager jobType
-    jobManager.getResponse responseId, (error, response) =>
+    jobManager.getResponse 'Authenticate', responseId, (error, response) =>
       return callback error if error?
       return callback new Error('Timed out waiting for response') unless response?
       @emit 'response', response

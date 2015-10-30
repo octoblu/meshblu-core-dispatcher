@@ -13,7 +13,7 @@ JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
 
 class CommandDispatch
-  @ALL_JOBS: ['Authenticate']
+  @ALL_JOBS: ['Authenticate', 'Idle']
 
   parseList: (val) =>
     val.split ','
