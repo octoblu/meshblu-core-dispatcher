@@ -1,6 +1,7 @@
 commander    = require 'commander'
 async        = require 'async'
 redis        = require 'redis'
+RedisNS      = require '@octoblu/redis-ns'
 debug        = require('debug')('meshblu-core-dispatcher:command')
 packageJSON  = require './package.json'
 CacheFactory     = require './src/cache-factory'
@@ -23,7 +24,7 @@ class CommandWork
       .parse process.argv
 
     {@internalNamespace,@singleRun,@timeout,@jobs} = commander
-    @client = redis.createClient process.env.REDIS_URI
+    @client = new RedisNS @internalNamespace, redis.createClient(process.env.REDIS_URI)
 
     @redisUri   = process.env.REDIS_URI
     @mongoDBUri = process.env.MONGODB_URI
@@ -32,14 +33,15 @@ class CommandWork
   run: =>
     @parseOptions()
 
+    cacheClient = new RedisNS @internalNamespace, redis.createClient(@redisUri)
+
     queueWorker = new QueueWorker
       pepper:    @pepper
       timeout:   @timeout
-      namespace: @internalNamespace
       jobs:      @jobs
-      client:       @client
+      client:    @client
       jobRegistry:  (new JobRegistry).toJSON()
-      cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
+      cacheFactory:     new CacheFactory client: cacheClient
       datastoreFactory: new DatastoreFactory database: @mongoDBUri
 
     if @singleRun

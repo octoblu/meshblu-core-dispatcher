@@ -52,7 +52,7 @@
     "meshblu-core-task-forbidden": "^1.0.0",
     "meshblu-core-task-no-content": "^1.0.1",
     "redis": "^2.2.5",
-    "redis-ns": "^0.1.1"
+    "@octoblu/redis-ns": "^0.1.1"
   },
   "optionalDependencies": {
     "hiredis": "^0.4.1"

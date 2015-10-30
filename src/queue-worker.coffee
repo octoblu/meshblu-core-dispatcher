@@ -14,12 +14,8 @@ class QueueWorker
 
   run: (callback=->) =>
     debug 'running...'
-    async.each @jobs, @handleJob, callback
 
-  handleJob: (jobType, callback) =>
-    debug 'running for jobType', jobType
-
-    @jobManager.getRequest [jobType], (error, job) =>
+    @jobManager.getRequest @jobs, (error, job) =>
       debug 'got job', error: error, job: job
       return callback error if error?
       return callback null unless job?

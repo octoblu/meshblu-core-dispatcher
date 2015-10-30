@@ -2,7 +2,7 @@ _                = require 'lodash'
 commander        = require 'commander'
 async            = require 'async'
 redis            = require 'redis'
-redisMock        = require 'fakeredis'
+RedisNS          = require '@octoblu/redis-ns'
 debug            = require('debug')('meshblu-core-dispatcher:command')
 packageJSON      = require './package.json'
 CacheFactory     = require './src/cache-factory'
@@ -41,22 +41,18 @@ class CommandDispatch
     @parseOptions()
 
     dispatcher = new Dispatcher
-      client:  redis.createClient @redisUri
-      namespace: @namespace
+      client:  @getDispatchClient()
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
 
     dispatcher.on 'job', (job) =>
       debug 'doing a job: ', JSON.stringify job
 
-    localClient = redis.createClient @redisUri
-
     queueWorker = new QueueWorker
       pepper:    @pepper
       timeout:   @timeout
-      namespace: @internalNamespace
       jobs:      @localHandlers
-      client:       localClient
+      client:    @getLocalClient()
       jobRegistry:  (new JobRegistry).toJSON()
       cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
       datastoreFactory: new DatastoreFactory database: @mongoDBUri
@@ -72,14 +68,10 @@ class CommandDispatch
     async.forever dispatcher.dispatch, @panic
 
   assembleJobHandlers: =>
-    localClient = redis.createClient @redisUri
-    remoteClient = redis.createClient @redisUri
-
     jobAssembler = new JobAssembler
       timeout: @timeout
-      namespace: @internalNamespace
-      localClient: localClient
-      remoteClient: remoteClient
+      localClient: @getLocalClient()
+      remoteClient: @getRemoteClient()
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
@@ -87,6 +79,15 @@ class CommandDispatch
       debug 'response', JSON.stringify response
 
     jobAssembler.assemble()
+
+  getDispatchClient: =>
+    new RedisNS @namespace, redis.createClient(@redisUri)
+
+  getLocalClient: =>
+    new RedisNS @internalNamespace, redis.createClient @redisUri
+
+  getRemoteClient: =>
+    new RedisNS @internalNamespace, redis.createClient @redisUri
 
   panic: (error) =>
     console.error error.stack

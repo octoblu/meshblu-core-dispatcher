@@ -6,7 +6,7 @@ async       = require 'async'
 uuid        = require 'uuid'
 Cache       = require 'meshblu-core-cache'
 Datastore   = require 'meshblu-core-datastore'
-RedisNS     = require 'redis-ns'
+RedisNS     = require '@octoblu/redis-ns'
 
 describe 'QueueWorker', ->
   beforeEach ->

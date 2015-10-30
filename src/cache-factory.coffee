@@ -1,5 +1,5 @@
 Cache   = require 'meshblu-core-cache'
-RedisNS = require 'redis-ns'
+RedisNS = require '@octoblu/redis-ns'
 
 class CacheFactory
   constructor: ({@client}) ->
