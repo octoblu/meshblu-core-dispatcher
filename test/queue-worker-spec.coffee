@@ -92,7 +92,7 @@ describe 'QueueWorker', ->
           tasks:
             'check-token':
               task: 'meshblu-core-task-check-token'
-              datastoreCollection: 'devices'
+              datastoreCollection: 'theDevices'
 
       @sut = new QueueWorker
         client: redis.createClient @clientId
@@ -108,7 +108,7 @@ describe 'QueueWorker', ->
       beforeEach (done) ->
         datastore = new Datastore
           database: @databaseUri
-          collection: 'devices'
+          collection: 'theDevices'
 
         record =
           uuid: 'it-takes-a-real-hero-to-admit-when'

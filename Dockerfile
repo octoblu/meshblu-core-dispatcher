@@ -1,3 +1,3 @@
-FROM node:0.10-onbuild
+FROM node:4-onbuild
 MAINTAINER Octoblu, Inc. <docker@octoblu.com>
 
