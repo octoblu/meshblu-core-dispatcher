@@ -11,6 +11,7 @@ class TaskRunner
     'meshblu-core-task-check-token-black-list': require('meshblu-core-task-check-token-black-list')
     'meshblu-core-task-check-token-cache'     : require('meshblu-core-task-check-token-cache')
     'meshblu-core-task-no-content'            : require('meshblu-core-task-no-content')
+    'meshblu-core-task-forbidden'             : require('meshblu-core-task-forbidden')
 
   run: (callback) =>
     @_doTask @config.start, callback
@@ -32,6 +33,7 @@ class TaskRunner
       cache: cache
       pepper: @pepper
 
+    console.log '@request', @request
     task.do @request, (error, response) =>
       return callback error if error?
       debug taskName, response

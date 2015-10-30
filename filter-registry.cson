@@ -23,3 +23,7 @@ Authenticate:
     'black-list-token':
       task: 'meshblu-core-task-black-list-token'
       cacheNamespace: 'meshblu-token-black-list'
+      on:
+        204: 'forbid'
+    'forbid':
+      task: 'meshblu-core-task-forbidden'

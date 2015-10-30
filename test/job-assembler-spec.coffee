@@ -17,8 +17,8 @@ describe 'JobAssembler', ->
       client: @localClient
       namespace: 'test:internal'
       timeoutSeconds: 1
-      responseQueue: 'authenticate'
-      requestQueue: 'authenticate'
+      responseQueue: 'Authenticate'
+      requestQueue: 'Authenticate'
 
     @remoteJobManager = new JobManager
       client: @remoteClient
@@ -34,14 +34,14 @@ describe 'JobAssembler', ->
           localClient: redisMock.createClient @localClientId
           remoteClient: redisMock.createClient @remoteClientId
           localHandlers: []
-          remoteHandlers: ['authenticate']
+          remoteHandlers: ['Authenticate']
 
         @result = @sut.assemble()
 
       context 'when authenticate is called', ->
         beforeEach (done) ->
           responseKey = 'test:internal:some-response'
-          @remoteClient.lpush 'test:internal:authenticate:some-response', responseKey, done
+          @remoteClient.lpush 'test:internal:Authenticate:some-response', responseKey, done
 
         beforeEach (done) ->
           request =
@@ -49,11 +49,11 @@ describe 'JobAssembler', ->
               duel: "i'm just in it for the glove slapping"
               responseId: 'some-response'
             rawData: "null"
-          @result.authenticate request, done
+          @result.Authenticate request, done
 
         it 'should place the job in a queue', (done) ->
           @timeout 3000
-          @remoteClient.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
+          @remoteClient.brpop 'test:internal:Authenticate:queue', 1, (error, result) =>
             return done(error) if error?
             [channel, responseKey] = result
             expect(responseKey).to.deep.equal 'test:internal:some-response'
@@ -68,7 +68,7 @@ describe 'JobAssembler', ->
             done()
 
         it 'should not place the job in the local queue', (done) ->
-          @localClient.llen 'test:internal:authenticate:queue', (error, result) =>
+          @localClient.llen 'test:internal:Authenticate:queue', (error, result) =>
             return done(error) if error?
             expect(result).to.equal 0
             done()
@@ -80,7 +80,7 @@ describe 'JobAssembler', ->
           namespace: 'test:internal'
           localClient: redisMock.createClient @localClientId
           remoteClient: redisMock.createClient @remoteClientId
-          localHandlers: ['authenticate']
+          localHandlers: ['Authenticate']
           remoteHandlers: []
 
         @result = @sut.assemble()
@@ -94,11 +94,11 @@ describe 'JobAssembler', ->
             rawData: "null"
 
           @callback = sinon.spy()
-          @result.authenticate request, @callback
+          @result.Authenticate request, @callback
 
         it 'should place the jobKey in a queue', (done) ->
           @timeout 3000
-          @localClient.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
+          @localClient.brpop 'test:internal:Authenticate:queue', 1, (error, result) =>
             return done(error) if error?
             [channel,jobKey] = result
             expect(jobKey).to.deep.equal 'test:internal:r-id'
@@ -106,7 +106,7 @@ describe 'JobAssembler', ->
 
         it 'should not place the job in the remote queue', (done) ->
           @timeout 3000
-          @remoteClient.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
+          @remoteClient.brpop 'test:internal:Authenticate:queue', 1, (error, result) =>
             return done(error) if error?
             expect(result).not.to.exist
             done()

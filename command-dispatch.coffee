@@ -13,7 +13,7 @@ JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
 
 class CommandDispatch
-  @ALL_JOBS: ['authenticate']
+  @ALL_JOBS: ['Authenticate']
 
   parseList: (val) =>
     val.split ','
@@ -32,6 +32,7 @@ class CommandDispatch
     {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
     @redisUri   = process.env.REDIS_URI
     @mongoDBUri = process.env.MONGODB_URI
+    @pepper     = process.env.TOKEN
 
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
@@ -49,6 +50,7 @@ class CommandDispatch
       debug 'doing a job: ', JSON.stringify job
 
     queueWorker = new QueueWorker
+      pepper:    @pepper
       timeout:   @timeout
       namespace: @internalNamespace
       jobs:      @localHandlers

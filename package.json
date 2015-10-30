@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "istanbul": "^0.4.0",
     "mocha": "^2.3.3",
     "mocha-istanbul": "^0.2.0",
+    "mongojs": "^1.4.1",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "uuid": "^2.0.1"
@@ -47,7 +48,8 @@
     "meshblu-core-task-cache-token": "^1.0.1",
     "meshblu-core-task-check-token": "^1.0.0",
     "meshblu-core-task-check-token-black-list": "^1.0.2",
-    "meshblu-core-task-check-token-cache": "^1.0.2",
+    "meshblu-core-task-check-token-cache": "^1.0.4",
+    "meshblu-core-task-forbidden": "^1.0.0",
     "meshblu-core-task-no-content": "^1.0.1",
     "redis": "^2.2.5",
     "redis-ns": "^0.1.1"

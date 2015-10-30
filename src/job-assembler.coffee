@@ -17,22 +17,22 @@ class JobAssembler extends EventEmitter2
       timeoutSeconds: @timeout
       client: @localClient
       namespace: @namespace
-      requestQueue: 'authenticate'
-      responseQueue: 'authenticate'
+      requestQueue: 'Authenticate'
+      responseQueue: 'Authenticate'
 
     @remoteJobManager = new JobManager
       timeoutSeconds: @timeout
       client: @remoteClient
       namespace: @namespace
-      requestQueue: 'authenticate'
-      responseQueue: 'authenticate'
+      requestQueue: 'Authenticate'
+      responseQueue: 'Authenticate'
 
   assemble: =>
-    authenticate: (request, callback) =>
+    Authenticate: (request, callback) =>
       {metadata,rawData} = request
       {responseId}       = metadata
 
-      jobManager = @getJobManager 'authenticate'
+      jobManager = @getJobManager 'Authenticate'
 
       options =
         responseId: responseId
@@ -41,7 +41,7 @@ class JobAssembler extends EventEmitter2
 
       jobManager.createRequest options, (error) =>
         return callback error if error?
-        @waitForResponse 'authenticate', responseId, callback
+        @waitForResponse 'Authenticate', responseId, callback
 
   getJobManager: (jobType) =>
     if jobType in @localHandlers
