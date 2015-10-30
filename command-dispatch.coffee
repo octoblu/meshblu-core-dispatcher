@@ -24,7 +24,7 @@ class CommandDispatch
       .option '-i, --internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
       .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', @parseList
       .option '-s, --single-run', 'perform only one job.'
-      .option '-t, --timeout <n>', 'seconds to wait for a next job.', parseInt, 30
+      .option '-t, --timeout <30>', 'seconds to wait for a next job.', parseInt, 30
       .parse process.argv
 
     {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
