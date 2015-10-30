@@ -47,7 +47,7 @@
     "meshblu-core-task-black-list-token": "^1.0.0",
     "meshblu-core-task-cache-token": "^1.0.1",
     "meshblu-core-task-check-token": "^1.0.0",
-    "meshblu-core-task-check-token-black-list": "^1.0.2",
+    "meshblu-core-task-check-token-black-list": "^1.0.3",
     "meshblu-core-task-check-token-cache": "^1.0.4",
     "meshblu-core-task-forbidden": "^1.0.0",
     "meshblu-core-task-no-content": "^1.0.1",

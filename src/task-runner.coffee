@@ -33,7 +33,6 @@ class TaskRunner
       cache: cache
       pepper: @pepper
 
-    console.log '@request', @request
     task.do @request, (error, response) =>
       return callback error if error?
       debug taskName, response
