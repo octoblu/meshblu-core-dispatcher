@@ -1,14 +1,16 @@
-_            = require 'lodash'
-commander    = require 'commander'
-async        = require 'async'
-redis        = require 'redis'
-redisMock    = require 'fakeredis'
-debug        = require('debug')('meshblu-core-dispatcher:command')
-packageJSON  = require './package.json'
-Dispatcher   = require './src/dispatcher'
-JobAssembler = require './src/job-assembler'
-JobRegistry  = require './src/job-registry'
-QueueWorker  = require './src/queue-worker'
+_                = require 'lodash'
+commander        = require 'commander'
+async            = require 'async'
+redis            = require 'redis'
+redisMock        = require 'fakeredis'
+debug            = require('debug')('meshblu-core-dispatcher:command')
+packageJSON      = require './package.json'
+CacheFactory     = require './src/cache-factory'
+DatastoreFactory = require './src/datastore-factory'
+Dispatcher       = require './src/dispatcher'
+JobAssembler     = require './src/job-assembler'
+JobRegistry      = require './src/job-registry'
+QueueWorker      = require './src/queue-worker'
 
 class CommandDispatch
   @ALL_JOBS: ['authenticate']
@@ -28,7 +30,8 @@ class CommandDispatch
       .parse process.argv
 
     {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
-    @redisUri = process.env.REDIS_URI
+    @redisUri   = process.env.REDIS_URI
+    @mongoDBUri = process.env.MONGODB_URI
 
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
@@ -45,17 +48,14 @@ class CommandDispatch
     dispatcher.on 'job', (job) =>
       debug 'doing a job: ', JSON.stringify job
 
-
-    # cacheFactory = new CacheFactory client: redis.createClient(@redisUri)
-    # jobRegistry  = new JobRegistry cacheFactory: cacheFactory
-    jobRegistry  = new JobRegistry
-
     queueWorker = new QueueWorker
       timeout:   @timeout
       namespace: @internalNamespace
-      client:    redisMock.createClient(@internalNamespace)
       jobs:      @localHandlers
-      jobRegistry: jobRegistry.toJSON()
+      client:       redisMock.createClient(@internalNamespace)
+      jobRegistry:  (new JobRegistry).toJSON()
+      cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
+      datastoreFactory: new DatastoreFactory database: @mongoDBUri
 
     if @singleRun
       async.parallel [

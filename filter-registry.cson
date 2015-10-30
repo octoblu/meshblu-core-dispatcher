@@ -10,13 +10,13 @@ Authenticate:
       task: 'meshblu-core-task-check-token-cache'
       cacheNamespace: 'meshblu-token-cache'
       on:
-        204: 'check-token-expensive-way'
+        404: 'check-token-expensive-way'
     'check-token-expensive-way':
       task: 'meshblu-core-task-check-token'
       datastoreCollection: 'devices'
       on:
         204: 'cache-token'
-        401: 'black-list-token'
+        403: 'black-list-token'
     'cache-token':
       task: 'meshblu-core-task-cache-token'
       cacheNamespace: 'meshblu-token-cache'

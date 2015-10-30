@@ -1,66 +1,62 @@
 QueueWorker = require '../src/queue-worker'
 JobManager  = require 'meshblu-core-job-manager'
-redisMock   = require 'fakeredis'
+redis   = require 'fakeredis'
 _           = require 'lodash'
+async       = require 'async'
 uuid        = require 'uuid'
+Cache       = require 'meshblu-core-cache'
+Datastore   = require 'meshblu-core-datastore'
+RedisNS     = require 'redis-ns'
 
 describe 'QueueWorker', ->
   beforeEach ->
     @clientId = uuid.v1()
-    @client = _.bindAll redisMock.createClient @clientId
+    @cacheClientId = uuid.v1()
+    @client = _.bindAll redis.createClient @clientId
 
-    @jobManager = new JobManager
-      client: redisMock.createClient @clientId
-      namespace: 'test:internal'
-      timeoutSeconds: 1
-      responseQueue: 'authenticate'
-      requestQueue: 'authenticate'
+    @datastoreFactory =
+      build: (collection) =>
+        new Datastore
+          database: 'meshblu-core-test'
+          collection: collection
 
-    @tasks =
-      'meshblu-core-task-authenticate': sinon.stub().yields null, {}
-      'meshblu-core-task-get-subscriptions': sinon.stub().yields null, {}
+    @cacheFactory =
+      build: (namespace) =>
+        rawClient = redis.createClient @cacheClientId
+        client = new RedisNS namespace, rawClient
+        new Cache
+          client: client
+
 
   describe '->run', ->
     describe 'when using client', ->
       beforeEach ->
+        jobRegistry =
+          CheckToken:
+            start: 'check-token'
+            tasks:
+              'check-token':
+                task: 'meshblu-core-task-check-token'
+                datastoreCollection: 'devices'
+
         @sut = new QueueWorker
-          client: redisMock.createClient @clientId
-          jobs: ['authenticate']
-          tasks: @tasks
-          namespace: 'test:internal'
-          timeout: 1
-
-      describe 'when called and job is pushed into queue', ->
-        beforeEach (done) ->
-          @sut.run()
-          responseKey = 'test:internal:sometin'
-          @client.lpush 'test:internal:authenticate:sometin', responseKey, done
-
-        it 'should place the job in the queue', (done) ->
-          @client.brpop 'test:internal:authenticate:sometin', 1, (error, result) =>
-            return done error if error?
-            [channel, responseKey] = result
-            expect(responseKey).to.equal 'test:internal:sometin'
-            done()
-
-    describe 'when using client', ->
-      beforeEach ->
-        @sut = new QueueWorker
-          client: redisMock.createClient @clientId
-          localHandlers: ['authenticate']
+          client: redis.createClient @clientId
+          localHandlers: ['CheckToken']
           remoteHandlers: []
           tasks: @tasks
           namespace: 'test:internal'
           timeout: 1
+          datastoreFactory: @datastoreFactory
+          jobRegistry: jobRegistry
 
       describe 'when called and job is pushed into queue', ->
         beforeEach (done) ->
           @sut.run()
           responseKey = 'test:internal:sometin'
-          @client.lpush 'test:internal:authenticate:sometin', responseKey, done
+          @client.lpush 'test:internal:CheckToken:sometin', responseKey, done
 
         it 'should place the job in the queue', (done) ->
-          @client.brpop 'test:internal:authenticate:sometin', 1, (error, result) =>
+          @client.brpop 'test:internal:CheckToken:sometin', 1, (error, result) =>
             return done error if error?
             [channel, responseKey] = result
             expect(responseKey).to.equal 'test:internal:sometin'
@@ -70,10 +66,10 @@ describe 'QueueWorker', ->
         beforeEach (done) ->
           @sut.run()
           responseKey = 'test:internal:sometin-cool'
-          @client.lpush 'test:internal:authenticate:sometin-cool', responseKey, done
+          @client.lpush 'test:internal:CheckToken:sometin-cool', responseKey, done
 
         it 'should place the job in the queue', (done) ->
-          @client.brpop 'test:internal:authenticate:sometin-cool', 1, (error, result) =>
+          @client.brpop 'test:internal:CheckToken:sometin-cool', 1, (error, result) =>
             return done error if error?
             [channel, responseKey] = result
             expect(responseKey).to.equal 'test:internal:sometin-cool'
@@ -81,95 +77,133 @@ describe 'QueueWorker', ->
 
         it 'should not place the job in the remote queue', (done) ->
           @timeout 3000
-          @client.brpop 'test:internal:authenticate:queue', 1, (error, result) =>
+          @client.brpop 'test:internal:CheckToken:queue', 1, (error, result) =>
             return done(error) if error?
             expect(result).not.to.exist
             done()
 
   describe '->runJob', ->
     beforeEach ->
+      jobRegistry =
+        CheckToken:
+          start: 'check-token'
+          tasks:
+            'check-token':
+              task: 'meshblu-core-task-check-token'
+              datastoreCollection: 'devices'
+
       @sut = new QueueWorker
-        client: redisMock.createClient @clientId
-        jobs: ['authenticate']
+        client: redis.createClient @clientId
+        localHandlers: ['CheckToken']
+        remoteHandlers: []
         tasks: @tasks
         namespace: 'test:internal'
         timeout: 1
+        datastoreFactory: @datastoreFactory
+        jobRegistry: jobRegistry
+        pepper: 'super-duper-secret'
 
-    describe 'when called with an authenticate job', ->
+    describe 'when called with an CheckToken job', ->
+      beforeEach (done) ->
+        datastore = new Datastore
+          database: 'meshblu-core-test'
+          collection: 'devices'
+
+        record =
+          uuid: 'it-takes-a-real-hero-to-admit-when'
+          token: 'doesn-t-matter-something'
+          meshblu:
+            tokens: 'YowbIFbhW/guS26YHIiQ8M83IjIiZYKKUd491+lY88g=': {}
+
+        async.series [
+          async.apply datastore.remove
+          async.apply datastore.insert, record
+        ], done
+
       beforeEach (done) ->
         @timeout 3000
 
-        job =
+        request =
           metadata:
+            jobType: 'CheckToken'
+            responseId: 'tragic-flaw'
             auth:
-              uuid: 'uuid'
-              token: 'token'
-            jobType: 'authenticate'
-            responseId: 'cool-beans'
-          rawData: 'null'
+              uuid: 'it-takes-a-real-hero-to-admit-when'
+              token: 'they-re-wrong'
 
-        response =
-          metadata:
-            auth:
-              uuid: 'uuid'
-              token: 'token'
-            jobType: 'authenticate'
-            responseId: 'cool-beans'
-          rawData: 'bacon is good'
-
-        @tasks['meshblu-core-task-authenticate'] = sinon.stub().yields null, response
-
-        @sut.runJob job, (error) =>
+        @sut.runJob request, (error) =>
           return done error if error?
-          @jobManager.getResponse 'cool-beans', (error, @job) => done error
 
-      it 'should have the original metadata', ->
-        expect(@job.metadata).to.deep.equal
-          auth:
-            uuid: 'uuid'
-            token: 'token'
-          jobType: 'authenticate'
-          responseId: 'cool-beans'
-
-      it 'should have the new rawData', ->
-        expect(@job.rawData).to.equal 'bacon is good'
-
-    describe 'when called with an SubscriptionList job', ->
-      beforeEach (done) ->
-        @timeout 3000
-
-        job =
-          metadata:
-            auth:
-              uuid: 'uuid'
-              token: 'token'
-            jobType: 'SubscriptionList'
-            responseId: 'cool-beans'
-          rawData: 'null'
-
-        authenticateResponse =
-          metadata:
-            responseId: 'cool-beans'
-            code: 200
-
-        getSubscriptionsResponse =
-          metadata:
-            responseId: 'cool-beans'
-            code: 200
-          rawData: '[]'
-
-        @tasks['meshblu-core-task-authenticate'] = sinon.stub().yields null, authenticateResponse
-        @tasks['meshblu-core-task-get-subscriptions'] = sinon.stub().yields null, getSubscriptionsResponse
-
-        @sut.runJob job, (error) =>
-          return done error if error?
-          @jobManager.getResponse 'cool-beans', (error, @job) =>
+          jobManager = new JobManager
+            client: redis.createClient @clientId
+            namespace: 'test:internal'
+            timeoutSeconds: 1
+            responseQueue:    'CheckToken'
+            requestQueue:     'CheckToken'
+          jobManager.getResponse 'tragic-flaw', (error, @response) =>
             done error
 
-      it 'should have the original metadata', ->
-        expect(@job.metadata).to.deep.equal
-          responseId: 'cool-beans'
-          code: 200
+      it 'should have a valid response', ->
+        expect(@response).to.deep.equal
+          metadata:
+            responseId: 'tragic-flaw'
+            code: 204
+            status: 'No Content'
+          rawData: 'null'
 
-      it 'should have the new rawData', ->
-        expect(@job.rawData).to.equal '[]'
+  describe '->runJob with cache', ->
+    beforeEach ->
+      jobRegistry =
+        CheckBlackList:
+          start: 'check-black-list'
+          tasks:
+            'check-black-list':
+              task: 'meshblu-core-task-check-token-black-list'
+              cacheNamespace: 'black-list'
+
+      @sut = new QueueWorker
+        client: redis.createClient @clientId
+        localHandlers: ['CheckBlackList']
+        remoteHandlers: []
+        tasks: @tasks
+        namespace: 'test:internal'
+        timeout: 1
+        cacheFactory: @cacheFactory
+        jobRegistry: jobRegistry
+        pepper: 'super-duper-secret'
+
+    describe 'when called with an CheckBlackList job', ->
+      beforeEach (done) ->
+        cacheClient = _.bindAll new RedisNS 'black-list', redis.createClient @cacheClientId
+
+        cacheClient.set 'things-go-wrong:but-didnt-it-feel-so-right', '', done
+
+      beforeEach (done) ->
+        @timeout 3000
+
+        request =
+          metadata:
+            jobType: 'CheckBlackList'
+            responseId: 'roasted'
+            auth:
+              uuid: 'things-go-wrong'
+              token: 'but-didnt-it-feel-so-right'
+
+        @sut.runJob request, (error) =>
+          return done error if error?
+          jobManager = new JobManager
+            client: redis.createClient @clientId
+            namespace: 'test:internal'
+            timeoutSeconds: 1
+            responseQueue:    'CheckBlackList'
+            requestQueue:     'CheckBlackList'
+          jobManager.getResponse 'roasted', (error, @response) =>
+            done error
+
+      it 'should have a valid response', ->
+        expect(@response).to.deep.equal
+          metadata:
+            responseId: 'roasted'
+            code: 204
+            status: 'No Content'
+          rawData: 'null'

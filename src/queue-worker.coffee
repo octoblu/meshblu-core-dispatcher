@@ -1,38 +1,34 @@
 _          = require 'lodash'
 async      = require 'async'
-cson       = require 'cson'
 JobManager = require 'meshblu-core-job-manager'
 debug      = require('debug')('meshblu-core-dispatcher:queue-worker')
-path       = require 'path'
-jobRegistry = cson.parseFile path.join(__dirname, '../job-registry.cson')
 TaskRunner = require './task-runner'
-
-# lowercase all job names
-jobRegistry = _.mapKeys jobRegistry, (value, key) =>
-  key.toLocaleLowerCase()
 
 class QueueWorker
   constructor: (options={}) ->
-    {client,@namespace,@timeout,@tasks,@jobs,@jobRegistry} = options
+    {client,@namespace,@timeout,@jobs,@jobRegistry,@pepper} = options
+    {@datastoreFactory,@cacheFactory} = options
     @client = _.bindAll client
     @timeout ?= 30
     @namespace ?= 'meshblu:internal'
-    @jobRegistry = jobRegistry
-
-    @jobManager = new JobManager
-      timeoutSeconds: @timeout
-      client: @client
-      namespace: @namespace
-      requestQueue: 'authenticate'
-      responseQueue: 'authenticate'
 
   run: (callback=->) =>
     debug 'running...'
     async.each @jobs, @handleJob, callback
 
+  getJobManager: (jobType) =>
+    new JobManager
+      timeoutSeconds: @timeout
+      client: @client
+      namespace: @namespace
+      requestQueue: jobType
+      responseQueue: jobType
+
   handleJob: (jobType, callback) =>
     debug 'running for jobType', jobType
-    @jobManager.getRequest (error, job) =>
+
+    jobManager = @getJobManager jobType
+    jobManager.getRequest (error, job) =>
       debug 'got job', error: error, job: job
       return callback error if error?
       return callback null unless job?
@@ -42,30 +38,31 @@ class QueueWorker
     return callback new Error("Missing metadata") unless job.metadata?
     {jobType,responseId} = job.metadata
 
-    jobTypeLower = jobType.toLocaleLowerCase()
-    jobDef = jobRegistry[jobTypeLower]
+    jobDef = @jobRegistry[jobType]
     return callback new Error "jobType '#{jobType}' not found" unless jobDef?
 
     taskRunner = new TaskRunner
       config: jobDef
-      tasks: @tasks
-      data: job
-      
+      request: job
+      datastoreFactory: @datastoreFactory
+      cacheFactory: @cacheFactory
+      pepper: @pepper
+
     taskRunner.run (error, finishedJob) =>
       return callback error if error?
-      @sendResponse finishedJob, callback
+      @sendResponse jobType, finishedJob, callback
 
-  sendResponse: (job, callback) =>
-    {metadata,rawData} = job
+  sendResponse: (jobType, response, callback) =>
+    jobManager = @getJobManager jobType
+
+    {metadata,rawData} = response
     {responseId} = metadata
-    response =
+
+    newResponse =
       metadata:   metadata
       responseId: responseId
       rawData:    rawData
 
-    @jobManager.createResponse response, (error) =>
-      return callback error if error?
-      debug 'created response'
-      callback()
+    jobManager.createResponse newResponse, callback
 
 module.exports = QueueWorker
