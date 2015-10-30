@@ -3,8 +3,11 @@ Datastore = require 'meshblu-core-datastore'
 
 describe 'DatastoreFactory', ->
   beforeEach (done) ->
-    @sut = new DatastoreFactory database: 'helicopter'
-    @datastore = new Datastore database: 'helicopter', collection: 'ToTheChopper'
+    mongoHost = process.env.MONGODB_HOST ? 'localhost'
+    mongoPort = process.env.MONGODB_PORT ? '27017'
+    database = "#{mongoHost}:#{mongoPort}/helicopter"
+    @sut = new DatastoreFactory database: database
+    @datastore = new Datastore database: database, collection: 'ToTheChopper'
     @datastore.remove done
 
   beforeEach (done) ->
