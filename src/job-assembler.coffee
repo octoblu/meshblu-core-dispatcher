@@ -2,6 +2,7 @@ async = require 'async'
 _ = require 'lodash'
 {EventEmitter2} = require 'eventemitter2'
 JobManager = require 'meshblu-core-job-manager'
+JobHandler = require './job-handler'
 
 class JobAssembler extends EventEmitter2
   constructor: (options={}) ->
@@ -21,33 +22,18 @@ class JobAssembler extends EventEmitter2
       client: @remoteClient
 
   assemble: =>
-    Authenticate: (request, callback) =>
-      {metadata,rawData} = request
-      {responseId}       = metadata
+    jobs = {}
 
-      jobManager = @getJobManager 'Authenticate'
+    _.each _.union(@localHandlers, @remoteHandlers), (jobType) =>
+      jobHandler = new JobHandler jobType, @getJobManager(jobType)
+      jobs[jobType] = jobHandler.handle
 
-      options =
-        responseId: responseId
-        metadata: metadata
-        rawData: rawData
-
-      jobManager.createRequest 'Authenticate', options, (error) =>
-        return callback error if error?
-        @waitForResponse 'Authenticate', responseId, callback
+    jobs
 
   getJobManager: (jobType) =>
     if jobType in @localHandlers
       @localJobManager
     else
       @remoteJobManager
-
-  waitForResponse: (jobType, responseId, callback) =>
-    jobManager = @getJobManager jobType
-    jobManager.getResponse 'Authenticate', responseId, (error, response) =>
-      return callback error if error?
-      return callback new Error('Timed out waiting for response') unless response?
-      @emit 'response', response
-      callback null, response
 
 module.exports = JobAssembler

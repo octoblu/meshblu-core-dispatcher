@@ -18,7 +18,7 @@ describe 'JobAssembler', ->
       timeoutSeconds: 1
 
   describe '->assemble', ->
-    context 'when authenticate is in remoteHandlers', ->
+    describe 'when authenticate is in remoteHandlers', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
@@ -29,7 +29,7 @@ describe 'JobAssembler', ->
 
         @result = @sut.assemble()
 
-      context 'when authenticate is called', ->
+      describe 'when authenticate is called', ->
         beforeEach (done) ->
           responseKey = 'some-response'
           @remoteClient.lpush 'Authenticate:some-response', responseKey, done
@@ -64,7 +64,7 @@ describe 'JobAssembler', ->
             expect(result).to.equal 0
             done()
 
-    context 'when authenticate is in localHandlers', ->
+    describe 'when authenticate is in localHandlers', ->
       beforeEach ->
         @sut = new JobAssembler
           timeout: 1
@@ -75,7 +75,7 @@ describe 'JobAssembler', ->
 
         @result = @sut.assemble()
 
-      context 'when authenticate is called', ->
+      describe 'when authenticate is called', ->
         beforeEach ->
           request =
             metadata:
@@ -101,7 +101,7 @@ describe 'JobAssembler', ->
             expect(result).not.to.exist
             done()
 
-        context 'when authenticate responds', ->
+        describe 'when authenticate responds', ->
           beforeEach (done) ->
             metadata =
               responseId: 'r-id'
@@ -128,7 +128,7 @@ describe 'JobAssembler', ->
               done()
             , 1000
 
-        context 'when authenticate responds differently', ->
+        describe 'when authenticate responds differently', ->
           beforeEach (done) ->
             metadata =
               responseId: 'r-id'

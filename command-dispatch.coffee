@@ -75,9 +75,6 @@ class CommandDispatch
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
-    jobAssembler.on 'response', (response) =>
-      debug 'response', JSON.stringify response
-
     jobAssembler.assemble()
 
   getDispatchClient: =>
