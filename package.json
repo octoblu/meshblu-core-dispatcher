@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/octoblu/meshblu-core-dispatcher#readme",
   "devDependencies": {
-    "async": "^1.5.0",
     "chai": "^3.4.0",
     "coffee-coverage": "^0.6.3",
     "coffee-script": "^1.10.0",
@@ -34,7 +33,8 @@
     "uuid": "^2.0.1"
   },
   "dependencies": {
-    "async": "^1.4.2",
+    "@octoblu/redis-ns": "^0.1.1",
+    "async": "^1.5.0",
     "commander": "^2.9.0",
     "cson": "^3.0.2",
     "debug": "^2.2.0",
@@ -42,17 +42,18 @@
     "fakeredis": "^0.3.4",
     "lodash": "^3.10.1",
     "meshblu-core-cache": "^1.0.2",
-    "meshblu-core-datastore": "^1.0.6",
+    "meshblu-core-datastore": "^2.0.0",
     "meshblu-core-job-manager": "^2.1.0",
     "meshblu-core-task-black-list-token": "^1.0.0",
     "meshblu-core-task-cache-token": "^1.0.1",
+    "meshblu-core-task-check-configure-whitelist": "^1.0.4",
     "meshblu-core-task-check-token": "^1.0.0",
     "meshblu-core-task-check-token-black-list": "^1.0.3",
     "meshblu-core-task-check-token-cache": "^1.0.4",
     "meshblu-core-task-forbidden": "^1.0.0",
+    "meshblu-core-task-get-subscriptions": "^1.1.3",
     "meshblu-core-task-no-content": "^1.0.1",
-    "redis": "^2.2.5",
-    "@octoblu/redis-ns": "^0.1.1"
+    "redis": "^2.2.5"
   },
   "optionalDependencies": {
     "hiredis": "^0.4.1"

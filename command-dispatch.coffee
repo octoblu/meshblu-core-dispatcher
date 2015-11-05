@@ -1,6 +1,7 @@
 _                = require 'lodash'
 commander        = require 'commander'
 async            = require 'async'
+mongojs          = require 'mongojs'
 redis            = require 'redis'
 RedisNS          = require '@octoblu/redis-ns'
 debug            = require('debug')('meshblu-core-dispatcher:command')
@@ -13,7 +14,7 @@ JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
 
 class CommandDispatch
-  @ALL_JOBS: ['Authenticate', 'Idle']
+  @ALL_JOBS: ['Authenticate', 'SubscriptionList', 'Idle']
 
   parseList: (val) =>
     val.split ','
@@ -55,7 +56,7 @@ class CommandDispatch
       client:    @getLocalClient()
       jobRegistry:  (new JobRegistry).toJSON()
       cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
-      datastoreFactory: new DatastoreFactory database: @mongoDBUri
+      datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
 
     if @singleRun
       async.parallel [

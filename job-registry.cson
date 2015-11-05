@@ -9,11 +9,12 @@ SubscriptionList:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'check-configure-whitelist'
+    'check-configure-whitelist':
+      task: 'meshblu-core-task-check-configure-whitelist'
+      datastoreCollection: 'devices'
+      on:
         204: 'get-subscriptions'
-        # 204: 'check-discover-whitelist'
-    # 'check-discover-whitelist':
-    #   task: 'meshblu-core-task-check-discover-whitelist'
-    #   on:
-    #     204: 'get-subscriptions'
     'get-subscriptions':
       task: 'meshblu-core-task-get-subscriptions'
+      datastoreCollection: 'subscriptions'

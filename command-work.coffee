@@ -1,9 +1,10 @@
-commander    = require 'commander'
-async        = require 'async'
-redis        = require 'redis'
-RedisNS      = require '@octoblu/redis-ns'
-debug        = require('debug')('meshblu-core-dispatcher:command')
-packageJSON  = require './package.json'
+commander   = require 'commander'
+async       = require 'async'
+redis       = require 'redis'
+mongojs     = require 'mongojs'
+RedisNS     = require '@octoblu/redis-ns'
+debug       = require('debug')('meshblu-core-dispatcher:command')
+packageJSON      = require './package.json'
 CacheFactory     = require './src/cache-factory'
 DatastoreFactory = require './src/datastore-factory'
 JobAssembler     = require './src/job-assembler'
@@ -42,7 +43,7 @@ class CommandWork
       client:    @client
       jobRegistry:  (new JobRegistry).toJSON()
       cacheFactory:     new CacheFactory client: cacheClient
-      datastoreFactory: new DatastoreFactory database: @mongoDBUri
+      datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
 
     if @singleRun
       queueWorker.run(@panic)

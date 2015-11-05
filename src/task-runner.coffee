@@ -5,13 +5,15 @@ class TaskRunner
     {@config,@request,@datastoreFactory,@pepper,@cacheFactory} = options
 
   @TASKS =
-    'meshblu-core-task-black-list-token'      : require('meshblu-core-task-black-list-token')
-    'meshblu-core-task-cache-token'           : require('meshblu-core-task-cache-token')
-    'meshblu-core-task-check-token'           : require('meshblu-core-task-check-token')
-    'meshblu-core-task-check-token-black-list': require('meshblu-core-task-check-token-black-list')
-    'meshblu-core-task-check-token-cache'     : require('meshblu-core-task-check-token-cache')
-    'meshblu-core-task-no-content'            : require('meshblu-core-task-no-content')
-    'meshblu-core-task-forbidden'             : require('meshblu-core-task-forbidden')
+    'meshblu-core-task-black-list-token'          : require('meshblu-core-task-black-list-token')
+    'meshblu-core-task-cache-token'               : require('meshblu-core-task-cache-token')
+    'meshblu-core-task-check-configure-whitelist' : require('meshblu-core-task-check-configure-whitelist')
+    'meshblu-core-task-check-token'               : require('meshblu-core-task-check-token')
+    'meshblu-core-task-check-token-black-list'    : require('meshblu-core-task-check-token-black-list')
+    'meshblu-core-task-check-token-cache'         : require('meshblu-core-task-check-token-cache')
+    'meshblu-core-task-no-content'                : require('meshblu-core-task-no-content')
+    'meshblu-core-task-forbidden'                 : require('meshblu-core-task-forbidden')
+    'meshblu-core-task-get-subscriptions'         : require('meshblu-core-task-get-subscriptions')
 
   run: (callback) =>
     @_doTask @config.start, callback

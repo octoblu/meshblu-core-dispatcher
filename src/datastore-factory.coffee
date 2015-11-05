@@ -1,4 +1,5 @@
 Datastore = require 'meshblu-core-datastore'
+
 class DatastoreFactory
   constructor: ({@database}) ->
 
