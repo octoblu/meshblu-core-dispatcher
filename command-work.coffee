@@ -33,6 +33,8 @@ class CommandWork
 
   run: =>
     @parseOptions()
+    
+    process.on 'SIGTERM', => @terminate = true
 
     cacheClient = new RedisNS @internalNamespace, redis.createClient(@redisUri)
 
@@ -45,15 +47,20 @@ class CommandWork
       cacheFactory:     new CacheFactory client: cacheClient
       datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
 
-    if @singleRun
-      queueWorker.run(@panic)
-      return
+    return queueWorker.run @tentativePanic if @singleRun
 
-    async.forever queueWorker.run, @panic
+    async.until @terminated, queueWorker.run, @tentativePanic
 
   panic: (error) =>
     console.error error.stack
     process.exit 1
+
+  tentativePanic: (error) =>
+    return process.exit(0) unless error?
+    console.error error.stack
+    process.exit 1
+
+  terminated: => @terminate
 
 commandWork = new CommandWork()
 commandWork.run()

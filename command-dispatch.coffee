@@ -97,8 +97,7 @@ class CommandDispatch
     console.error error.stack
     process.exit 1
 
-  terminated: =>
-    @terminate
+  terminated: => @terminate
 
 commandDispatch = new CommandDispatch()
 commandDispatch.run()
