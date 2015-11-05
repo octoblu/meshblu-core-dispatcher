@@ -16,6 +16,9 @@ QueueWorker      = require './src/queue-worker'
 class CommandDispatch
   @ALL_JOBS: ['Authenticate', 'SubscriptionList', 'Idle']
 
+  parseInt: (int) =>
+    parseInt int
+
   parseList: (val) =>
     val.split ','
 
@@ -27,7 +30,7 @@ class CommandDispatch
       .option '-i, --internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
       .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', @parseList
       .option '-s, --single-run', 'perform only one job.'
-      .option '-t, --timeout <30>', 'seconds to wait for a next job.', parseInt, 30
+      .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
       .parse process.argv
 
     {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
@@ -41,13 +44,16 @@ class CommandDispatch
   run: =>
     @parseOptions()
 
+    process.on 'SIGTERM', => @terminate = true
+
+    return @doSingleRun @tentativePanic if @singleRun
+    async.until @terminated, @doSingleRun, @tentativePanic
+
+  doSingleRun: (callback) =>
     dispatcher = new Dispatcher
       client:  @getDispatchClient()
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
-
-    dispatcher.on 'job', (job) =>
-      debug 'doing a job: ', JSON.stringify job
 
     queueWorker = new QueueWorker
       pepper:    @pepper
@@ -58,15 +64,10 @@ class CommandDispatch
       cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
       datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
 
-    if @singleRun
-      async.parallel [
-        async.apply dispatcher.dispatch
-        async.apply queueWorker.run
-      ], @tentativePanic
-      return
-
-    async.forever queueWorker.run, @panic
-    async.forever dispatcher.dispatch, @panic
+    async.parallel [
+      async.apply dispatcher.dispatch
+      async.apply queueWorker.run
+    ], callback
 
   assembleJobHandlers: =>
     jobAssembler = new JobAssembler
@@ -95,6 +96,9 @@ class CommandDispatch
     return process.exit(0) unless error?
     console.error error.stack
     process.exit 1
+
+  terminated: =>
+    @terminate
 
 commandDispatch = new CommandDispatch()
 commandDispatch.run()
