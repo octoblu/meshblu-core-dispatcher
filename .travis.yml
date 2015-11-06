@@ -7,6 +7,11 @@ services:
 addons:
   code_climate:
     repo_token: 51f47af5eaac6f8189e00e4afd7615ab52cb5623660ee41bdc364f7476d60b2a
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
 env:
   - CXX=g++-4.8
 before_script:
