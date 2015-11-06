@@ -1,5 +1,6 @@
 _ = require 'lodash'
 http = require 'http'
+debug = require('debug')('meshblu-core-dispatcher:dispatcher')
 async = require 'async'
 {EventEmitter2} = require 'eventemitter2'
 JobManager = require 'meshblu-core-job-manager'
@@ -44,8 +45,8 @@ class Dispatcher extends EventEmitter2
     @jobManager.createResponse 'response', options, callback
 
   doJob: (request, callback) =>
+    debug 'doJob', request
     {metadata} = request
-    @emit 'job', request
 
     type = metadata.jobType
     @jobHandlers[type] request, callback
