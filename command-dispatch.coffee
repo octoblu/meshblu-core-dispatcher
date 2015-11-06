@@ -44,17 +44,27 @@ class CommandDispatch
   run: =>
     @parseOptions()
 
-    process.on 'SIGTERM', => @terminate = true
+    process.on 'SIGTERM', =>
+      console.error 'exiting...'
+      @terminate = true
 
     return @doSingleRun @tentativePanic if @singleRun
-    async.until @terminated, @doSingleRun, @tentativePanic
+    async.until @terminated, @runDispatcher, @tentativePanic
+    async.until @terminated, @runQueueWorker, @tentativePanic
 
   doSingleRun: (callback) =>
+    @runDispatcher callback
+    @runQueueWorker =>
+
+  runDispatcher: (callback) =>
     dispatcher = new Dispatcher
       client:  @getDispatchClient()
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
 
+    dispatcher.dispatch callback
+
+  runQueueWorker: (callback) =>
     queueWorker = new QueueWorker
       pepper:    @pepper
       timeout:   @timeout
@@ -64,10 +74,7 @@ class CommandDispatch
       cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
       datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
 
-    async.parallel [
-      async.apply dispatcher.dispatch
-      async.apply queueWorker.run
-    ], callback
+    queueWorker.run callback
 
   assembleJobHandlers: =>
     jobAssembler = new JobAssembler
