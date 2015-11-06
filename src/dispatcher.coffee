@@ -26,25 +26,19 @@ class Dispatcher extends EventEmitter2
 
   sendResponse: (response, callback) =>
     {metadata,rawData} = response
-    {responseId}   = metadata
 
     options =
-      responseId: responseId
       metadata: metadata
       rawData: rawData
 
     @jobManager.createResponse 'response', options, callback
 
   sendError: (metadata, upstreamError, callback) =>
-    {responseId} = metadata
-
     errorMetadata =
-      responseId: responseId
       code: 504
       status: upstreamError.message
 
     options =
-      responseId: responseId
       metadata: errorMetadata
 
     @jobManager.createResponse 'response', options, callback

@@ -4,6 +4,7 @@ redis   = require 'fakeredis'
 _           = require 'lodash'
 async       = require 'async'
 uuid        = require 'uuid'
+mongojs     = require 'mongojs'
 Cache       = require 'meshblu-core-cache'
 Datastore   = require 'meshblu-core-datastore'
 RedisNS     = require '@octoblu/redis-ns'
@@ -12,7 +13,7 @@ describe 'QueueWorker', ->
   beforeEach ->
     mongoHost = process.env.MONGODB_HOST ? 'localhost'
     mongoPort = process.env.MONGODB_PORT ? '27017'
-    @databaseUri = "#{mongoHost}:#{mongoPort}/meshblu-core-test"
+    @database = mongojs "#{mongoHost}:#{mongoPort}/meshblu-core-test"
 
     @clientId = uuid.v1()
     @cacheClientId = uuid.v1()
@@ -21,7 +22,7 @@ describe 'QueueWorker', ->
     @datastoreFactory =
       build: (collection) =>
         new Datastore
-          database: @databaseUri
+          database: @database
           collection: collection
 
     @cacheFactory =
@@ -107,7 +108,7 @@ describe 'QueueWorker', ->
     describe 'when called with an CheckToken job', ->
       beforeEach (done) ->
         datastore = new Datastore
-          database: @databaseUri
+          database: @database
           collection: 'theDevices'
 
         record =

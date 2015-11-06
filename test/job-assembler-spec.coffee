@@ -103,15 +103,11 @@ describe 'JobAssembler', ->
 
         describe 'when authenticate responds', ->
           beforeEach (done) ->
-            metadata =
-              responseId: 'r-id'
-            data =
-              authenticated: true
-
             options =
-              responseId: 'r-id'
-              metadata: metadata
-              data: data
+              metadata:
+                responseId: 'r-id'
+              data:
+                authenticated: true
 
             @localJobManager.createResponse 'Authenticate', options, done
 
@@ -130,15 +126,11 @@ describe 'JobAssembler', ->
 
         describe 'when authenticate responds differently', ->
           beforeEach (done) ->
-            metadata =
-              responseId: 'r-id'
-            data =
-              authenticated: false
-
             options =
-              responseId: 'r-id'
-              metadata: metadata
-              data: data
+              metadata:
+                responseId: 'r-id'
+              data:
+                authenticated: false
 
             @localJobManager.createResponse 'Authenticate', options, done
 

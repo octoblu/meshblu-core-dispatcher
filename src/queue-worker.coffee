@@ -41,11 +41,9 @@ class QueueWorker
 
   sendResponse: (jobType, response, callback) =>
     {metadata,rawData} = response
-    {responseId} = metadata
 
     newResponse =
       metadata:   metadata
-      responseId: responseId
       rawData:    rawData
 
     @jobManager.createResponse jobType, newResponse, callback
