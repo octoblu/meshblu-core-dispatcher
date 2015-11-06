@@ -32,7 +32,11 @@ describe 'JobAssembler', ->
       describe 'when authenticate is called', ->
         beforeEach (done) ->
           responseKey = 'some-response'
-          @remoteClient.lpush 'Authenticate:some-response', responseKey, done
+          responseStr = '{"responseId": "some-response"}'
+          async.series [
+            async.apply @remoteClient.hset, 'some-response', 'response:metadata', responseStr
+            async.apply @remoteClient.lpush, 'Authenticate:some-response', responseKey
+          ], done
 
         beforeEach (done) ->
           request =
