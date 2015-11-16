@@ -71,8 +71,8 @@ class CommandDispatch
       jobs:      @localHandlers
       client:    @getLocalClient()
       jobRegistry:  (new JobRegistry).toJSON()
-      cacheFactory:     new CacheFactory client: redis.createClient(@redisUri)
-      datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
+      cacheFactory:     @getCacheFactory()
+      datastoreFactory: @getDatastoreFactory()
 
     queueWorker.run callback
 
@@ -85,6 +85,14 @@ class CommandDispatch
       remoteHandlers: @remoteHandlers
 
     jobAssembler.assemble()
+
+  getCacheFactory: =>
+    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
+    @cacheFactory
+
+  getDatastoreFactory: =>
+    @datastoreFactory ?= new DatastoreFactory database: mongojs @mongoDBUri
+    @datastoreFactory
 
   getDispatchClient: =>
     @dispatchClient ?= new RedisNS @namespace, redis.createClient @redisUri
