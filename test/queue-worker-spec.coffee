@@ -113,9 +113,9 @@ describe 'QueueWorker', ->
 
         record =
           uuid: 'it-takes-a-real-hero-to-admit-when'
-          token: 'doesn-t-matter-something'
+          token: 'this-is-the-root-token-ignore-it'
           meshblu:
-            tokens: 'YowbIFbhW/guS26YHIiQ8M83IjIiZYKKUd491+lY88g=': {}
+            tokens: 'sUQVYy0qd0YLNSkulRP1fCAJeVBjrD9ppZoMo/p51YE=': {}
 
         async.series [
           async.apply datastore.remove
@@ -131,7 +131,7 @@ describe 'QueueWorker', ->
             responseId: 'tragic-flaw'
             auth:
               uuid: 'it-takes-a-real-hero-to-admit-when'
-              token: 'they-re-wrong'
+              token: 'doesn-t-matter-something'
 
         @sut.runJob request, (error) =>
           return done error if error?

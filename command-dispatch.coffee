@@ -69,7 +69,7 @@ class CommandDispatch
       pepper:    @pepper
       timeout:   @timeout
       jobs:      @localHandlers
-      client:    @getLocalClient()
+      client:    @getLocalQueueWorkerClient()
       jobRegistry:  (new JobRegistry).toJSON()
       cacheFactory:     @getCacheFactory()
       datastoreFactory: @getDatastoreFactory()
@@ -79,8 +79,8 @@ class CommandDispatch
   assembleJobHandlers: =>
     jobAssembler = new JobAssembler
       timeout: @timeout
-      localClient: @getLocalClient()
-      remoteClient: @getRemoteClient()
+      localClient: @getLocalJobHandlerClient()
+      remoteClient: @getRemoteJobHandlerClient()
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
@@ -98,11 +98,15 @@ class CommandDispatch
     @dispatchClient ?= new RedisNS @namespace, redis.createClient @redisUri
     @dispatchClient
 
-  getLocalClient: =>
-    @localClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
-    @localClient
+  getLocalJobHandlerClient: =>
+    @localJobHandlerClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localJobHandlerClient
 
-  getRemoteClient: =>
+  getLocalQueueWorkerClient: =>
+    @localQueueWorkerClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localQueueWorkerClient
+
+  getRemoteJobHandlerClient: =>
     @remoteClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
     @remoteClient
 
