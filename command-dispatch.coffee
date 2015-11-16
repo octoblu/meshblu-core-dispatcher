@@ -87,13 +87,16 @@ class CommandDispatch
     jobAssembler.assemble()
 
   getDispatchClient: =>
-    new RedisNS @namespace, redis.createClient(@redisUri)
+    @dispatchClient ?= new RedisNS @namespace, redis.createClient @redisUri
+    @dispatchClient
 
   getLocalClient: =>
-    new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localClient
 
   getRemoteClient: =>
-    new RedisNS @internalNamespace, redis.createClient @redisUri
+    @remoteClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @remoteClient
 
   panic: (error) =>
     console.error error.stack
