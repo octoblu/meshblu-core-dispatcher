@@ -29,6 +29,10 @@ UpdateDevice:
       task: 'meshblu-core-task-check-configure-whitelist'
       datastoreCollection: 'devices'
       on:
+        204: 'check-update-device-is-valid'
+    'check-update-device-is-valid':
+      task: 'meshblu-core-task-check-update-device-is-valid'
+      on:
         204: 'update-device'
     'update-device':
       task: 'meshblu-core-task-update-device'
