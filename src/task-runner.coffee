@@ -11,9 +11,10 @@ class TaskRunner
     'meshblu-core-task-check-token'               : require('meshblu-core-task-check-token')
     'meshblu-core-task-check-token-black-list'    : require('meshblu-core-task-check-token-black-list')
     'meshblu-core-task-check-token-cache'         : require('meshblu-core-task-check-token-cache')
-    'meshblu-core-task-no-content'                : require('meshblu-core-task-no-content')
     'meshblu-core-task-forbidden'                 : require('meshblu-core-task-forbidden')
     'meshblu-core-task-get-subscriptions'         : require('meshblu-core-task-get-subscriptions')
+    'meshblu-core-task-no-content'                : require('meshblu-core-task-no-content')
+    'meshblu-core-task-update-device'             : require('meshblu-core-task-update-device')
 
   run: (callback) =>
     @_doTask @config.start, callback

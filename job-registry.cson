@@ -18,3 +18,23 @@ SubscriptionList:
     'get-subscriptions':
       task: 'meshblu-core-task-get-subscriptions'
       datastoreCollection: 'subscriptions'
+UpdateDevice:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'check-configure-whitelist'
+    'check-configure-whitelist':
+      task: 'meshblu-core-task-check-configure-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'update-device'
+    'update-device':
+      task: 'meshblu-core-task-update-device'
+      datastoreCollection: 'devices'
+      on:
+        678: 'clear-device-in-cache'
+    'clear-device-in-cache':
+      task: 'meshblu-core-task-clear-device-in-cache'
+      cacheNamespace: 'cache:device'

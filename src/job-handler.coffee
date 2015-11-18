@@ -2,12 +2,13 @@ class JobHandler
   constructor: (@jobType, @jobManager) ->
 
   handle: (request, callback) =>
-    {metadata}   = request
+    {metadata,rawData}   = request
     {responseId} = metadata
 
     options =
       responseId: responseId
       metadata: metadata
+      rawData: rawData
 
     @jobManager.createRequest @jobType, options, (error) =>
       return callback error if error?

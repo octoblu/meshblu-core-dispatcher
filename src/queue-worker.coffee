@@ -37,14 +37,17 @@ class QueueWorker
 
     taskRunner.run (error, finishedJob) =>
       return callback error if error?
-      @sendResponse jobType, finishedJob, callback
+      @sendResponse jobType, responseId, finishedJob, callback
 
-  sendResponse: (jobType, response, callback) =>
+  sendResponse: (jobType, responseId, response, callback) =>
+    debug 'sendResponse', jobType, response
     {metadata,rawData} = response
 
     newResponse =
       metadata:   metadata
       rawData:    rawData
+
+    newResponse.metadata.responseId = responseId
 
     @jobManager.createResponse jobType, newResponse, callback
 
