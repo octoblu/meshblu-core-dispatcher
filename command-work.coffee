@@ -30,15 +30,17 @@ class CommandWork
     @redisUri   = process.env.REDIS_URI
     @mongoDBUri = process.env.MONGODB_URI
     @pepper     = process.env.TOKEN
+    @aliasServerUri = process.env.ALIAS_SERVER_URI
 
   run: =>
     @parseOptions()
-    
+
     process.on 'SIGTERM', => @terminate = true
 
     cacheClient = new RedisNS @internalNamespace, redis.createClient(@redisUri)
 
     queueWorker = new QueueWorker
+      aliasServerUri: @aliasServerUri
       pepper:    @pepper
       timeout:   @timeout
       jobs:      @jobs
