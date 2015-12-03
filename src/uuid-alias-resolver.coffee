@@ -5,6 +5,7 @@ UUID_REGEX = /[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/i
 
 class UUIDAliasResolver
   constructor: ({@cache, @aliasServerUri}) ->
+    @aliasServerUri = undefined if @aliasServerUri == ''
 
   resolve: (alias, callback) =>
     return callback null, alias if UUID_REGEX.test alias
