@@ -37,6 +37,7 @@ class CommandDispatch
     @redisUri   = process.env.REDIS_URI
     @mongoDBUri = process.env.MONGODB_URI
     @pepper     = process.env.TOKEN
+    @aliasServerUri = process.env.ALIAS_SERVER_URI
 
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
@@ -66,6 +67,7 @@ class CommandDispatch
 
   runQueueWorker: (callback) =>
     queueWorker = new QueueWorker
+      aliasServerUri: @aliasServerUri
       pepper:    @pepper
       timeout:   @timeout
       jobs:      @localHandlers

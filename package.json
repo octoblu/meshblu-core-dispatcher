@@ -54,7 +54,8 @@
     "meshblu-core-task-get-subscriptions": "^1.1.3",
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-update-device": "^1.0.3",
-    "redis": "^2.2.5"
+    "redis": "^2.2.5",
+    "request": "^2.67.0"
   },
   "optionalDependencies": {
     "hiredis": "^0.4.1"

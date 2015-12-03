@@ -50,6 +50,7 @@ describe 'QueueWorker', ->
           tasks: @tasks
           timeout: 1
           datastoreFactory: @datastoreFactory
+          cacheFactory: @cacheFactory
           jobRegistry: jobRegistry
 
       describe 'when called and job is pushed into queue', ->
@@ -102,6 +103,7 @@ describe 'QueueWorker', ->
         tasks: @tasks
         timeout: 1
         datastoreFactory: @datastoreFactory
+        cacheFactory: @cacheFactory
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
 

@@ -2,7 +2,7 @@ debug      = require('debug')('meshblu-core-dispatcher:task-runner')
 
 class TaskRunner
   constructor: (options={}, dependencies={}) ->
-    {@config,@request,@datastoreFactory,@pepper,@cacheFactory} = options
+    {@config,@request,@datastoreFactory,@pepper,@cacheFactory,@uuidAliasResolver} = options
 
   @TASKS =
     'meshblu-core-task-black-list-token'          : require('meshblu-core-task-black-list-token')
@@ -31,10 +31,7 @@ class TaskRunner
 
     datastore = @datastoreFactory.build taskConfig.datastoreCollection if taskConfig.datastoreCollection?
     cache  = @cacheFactory.build taskConfig.cacheNamespace if taskConfig.cacheNamespace?
-    task = new Task
-      datastore: datastore
-      cache: cache
-      pepper: @pepper
+    task = new Task {@uuidAliasResolver, datastore, cache, @pepper}
 
     task.do @request, (error, response) =>
       return callback error if error?
