@@ -14,7 +14,13 @@ JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
 
 class CommandDispatch
-  @ALL_JOBS: ['Authenticate', 'SubscriptionList', 'UpdateDevice', 'Idle']
+  @ALL_JOBS: [
+    'Authenticate'
+    'GetDevice'
+    'Idle'
+    'SubscriptionList'
+    'UpdateDevice'
+  ]
 
   parseInt: (int) =>
     parseInt int

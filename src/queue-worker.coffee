@@ -46,11 +46,12 @@ class QueueWorker
 
   sendResponse: (jobType, responseId, response, callback) =>
     debug 'sendResponse', jobType, response
-    {metadata,rawData} = response
+    {metadata,rawData,data} = response
 
     newResponse =
       metadata:   metadata
       rawData:    rawData
+      data:       data
 
     newResponse.metadata.responseId = responseId
 

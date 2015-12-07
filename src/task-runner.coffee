@@ -12,6 +12,7 @@ class TaskRunner
     'meshblu-core-task-check-token-black-list'    : require('meshblu-core-task-check-token-black-list')
     'meshblu-core-task-check-token-cache'         : require('meshblu-core-task-check-token-cache')
     'meshblu-core-task-forbidden'                 : require('meshblu-core-task-forbidden')
+    'meshblu-core-task-get-device'                : require('meshblu-core-task-get-device')
     'meshblu-core-task-get-subscriptions'         : require('meshblu-core-task-get-subscriptions')
     'meshblu-core-task-no-content'                : require('meshblu-core-task-no-content')
     'meshblu-core-task-update-device'             : require('meshblu-core-task-update-device')
@@ -36,7 +37,7 @@ class TaskRunner
     task.do @request, (error, response) =>
       return callback error if error?
       debug taskName, response
-      {metadata,rawData} = response
+      {metadata} = response
 
       codeStr = metadata?.code?.toString()
       nextTask = taskConfig.on?[codeStr]

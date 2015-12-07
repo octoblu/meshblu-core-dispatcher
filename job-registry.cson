@@ -42,3 +42,13 @@ UpdateDevice:
     'clear-device-in-cache':
       task: 'meshblu-core-task-clear-device-in-cache'
       cacheNamespace: 'cache:device'
+GetDevice:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'get-device'
+    'get-device':
+      task: 'meshblu-core-task-get-device'
+      datastoreCollection: 'devices'

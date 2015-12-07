@@ -32,7 +32,8 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
-    @jobManager.createResponse 'response', options, callback
+    @jobManager.createResponse 'response', options, (error, something) =>
+      callback error
 
   sendError: (metadata, upstreamError, callback) =>
     errorMetadata =
@@ -49,6 +50,8 @@ class Dispatcher extends EventEmitter2
     {metadata} = request
 
     type = metadata.jobType
-    @jobHandlers[type] request, callback
+    return @jobHandlers[type] request, callback if @jobHandlers[type]?
+
+    callback new Error "jobType Not Found: #{type}"
 
 module.exports = Dispatcher
