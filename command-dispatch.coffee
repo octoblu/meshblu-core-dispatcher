@@ -18,6 +18,7 @@ class CommandDispatch
     'Authenticate'
     'GetDevice'
     'Idle'
+    'SendMessage'
     'SubscriptionList'
     'UpdateDevice'
   ]

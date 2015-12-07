@@ -15,6 +15,7 @@ class TaskRunner
     'meshblu-core-task-get-device'                : require('meshblu-core-task-get-device')
     'meshblu-core-task-get-subscriptions'         : require('meshblu-core-task-get-subscriptions')
     'meshblu-core-task-no-content'                : require('meshblu-core-task-no-content')
+    'meshblu-core-task-send-message'              : require('meshblu-core-task-send-message')
     'meshblu-core-task-update-device'             : require('meshblu-core-task-update-device')
 
   run: (callback) =>
