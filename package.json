@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -45,11 +45,11 @@
     "meshblu-core-datastore": "^2.1.2",
     "meshblu-core-job-manager": "^3.1.2",
     "meshblu-core-task-black-list-token": "^1.0.0",
-    "meshblu-core-task-cache-token": "^1.0.1",
+    "meshblu-core-task-cache-token": "^1.0.4",
     "meshblu-core-task-check-configure-whitelist": "^2.0.0",
-    "meshblu-core-task-check-token": "^1.0.5",
+    "meshblu-core-task-check-token": "^1.0.6",
     "meshblu-core-task-check-token-black-list": "^1.0.3",
-    "meshblu-core-task-check-token-cache": "^1.0.4",
+    "meshblu-core-task-check-token-cache": "^1.0.8",
     "meshblu-core-task-forbidden": "^1.0.0",
     "meshblu-core-task-get-device": "^2.0.0",
     "meshblu-core-task-get-subscriptions": "^1.1.3",
