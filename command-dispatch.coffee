@@ -79,13 +79,15 @@ class CommandDispatch
       timeout:   @timeout
       jobs:      @localHandlers
       client:    @getLocalQueueWorkerClient()
-      jobRegistry:  (new JobRegistry).toJSON()
+      jobRegistry:  @getJobRegistry()
       cacheFactory:     @getCacheFactory()
       datastoreFactory: @getDatastoreFactory()
 
     queueWorker.run callback
 
   assembleJobHandlers: =>
+    return @assembledJobHandlers if @assembledJobHandlers?
+
     jobAssembler = new JobAssembler
       timeout: @timeout
       localClient: @getLocalJobHandlerClient()
@@ -93,7 +95,7 @@ class CommandDispatch
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
-    jobAssembler.assemble()
+    @assembledJobHandlers = jobAssembler.assemble()
 
   getCacheFactory: =>
     @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
@@ -104,19 +106,23 @@ class CommandDispatch
     @datastoreFactory
 
   getDispatchClient: =>
-    @dispatchClient ?= new RedisNS @namespace, redis.createClient @redisUri
+    @dispatchClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
     @dispatchClient
 
+  getJobRegistry: =>
+    @jobRegistry ?= (new JobRegistry).toJSON()
+    @jobRegistry
+
   getLocalJobHandlerClient: =>
-    @localJobHandlerClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localJobHandlerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
     @localJobHandlerClient
 
   getLocalQueueWorkerClient: =>
-    @localQueueWorkerClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localQueueWorkerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
     @localQueueWorkerClient
 
   getRemoteJobHandlerClient: =>
-    @remoteClient ?= new RedisNS @internalNamespace, redis.createClient @redisUri
+    @remoteClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
     @remoteClient
 
   panic: (error) =>
