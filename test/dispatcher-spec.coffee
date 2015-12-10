@@ -14,8 +14,7 @@ describe 'Dispatcher', ->
         rawData: '{ "authenticated": true }'
 
       @doAuthenticateJob = sinon.stub().yields null, response
-      @client = redis.createClient uuid.v1()
-      @client = _.bindAll @client
+      @client = _.bindAll redis.createClient uuid.v1()
 
       @sut = new Dispatcher
         client: @client

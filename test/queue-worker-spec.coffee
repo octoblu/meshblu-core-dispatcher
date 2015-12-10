@@ -28,7 +28,7 @@ describe 'QueueWorker', ->
     @cacheFactory =
       build: (namespace) =>
         rawClient = redis.createClient @cacheClientId
-        client = new RedisNS namespace, rawClient
+        client = _.bindAll new RedisNS namespace, rawClient
         new Cache
           client: client
 
@@ -44,7 +44,7 @@ describe 'QueueWorker', ->
                 datastoreCollection: 'devices'
 
         @sut = new QueueWorker
-          client: redis.createClient @clientId
+          client: _.bindAll redis.createClient @clientId
           localHandlers: ['CheckToken']
           remoteHandlers: []
           tasks: @tasks
@@ -97,7 +97,7 @@ describe 'QueueWorker', ->
               datastoreCollection: 'theDevices'
 
       @sut = new QueueWorker
-        client: redis.createClient @clientId
+        client: _.bindAll redis.createClient @clientId
         localHandlers: ['CheckToken']
         remoteHandlers: []
         tasks: @tasks
@@ -139,7 +139,7 @@ describe 'QueueWorker', ->
           return done error if error?
 
           jobManager = new JobManager
-            client: redis.createClient @clientId
+            client: _.bindAll redis.createClient @clientId
             timeoutSeconds: 1
 
           jobManager.getResponse 'CheckToken', 'tragic-flaw', (error, @response) =>
@@ -164,7 +164,7 @@ describe 'QueueWorker', ->
               cacheNamespace: 'black-list'
 
       @sut = new QueueWorker
-        client: redis.createClient @clientId
+        client: _.bindAll redis.createClient @clientId
         localHandlers: ['CheckBlackList']
         remoteHandlers: []
         tasks: @tasks
@@ -192,7 +192,7 @@ describe 'QueueWorker', ->
         @sut.runJob request, (error) =>
           return done error if error?
           jobManager = new JobManager
-            client: redis.createClient @clientId
+            client: _.bindAll redis.createClient @clientId
             timeoutSeconds: 1
           jobManager.getResponse 'CheckBlackList', 'roasted', (error, @response) =>
             done error
