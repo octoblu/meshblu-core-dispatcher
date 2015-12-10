@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -58,5 +58,8 @@
     "meshblu-core-task-update-device": "^1.0.3",
     "redis": "^2.2.5",
     "request": "^2.67.0"
+  },
+  "optionalDependencies": {
+    "hiredis": "^0.4.1"
   }
 }
