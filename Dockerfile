@@ -1,2 +1,2 @@
-FROM node:4-onbuild
+FROM node:5-onbuild
 MAINTAINER Octoblu, Inc. <docker@octoblu.com>
