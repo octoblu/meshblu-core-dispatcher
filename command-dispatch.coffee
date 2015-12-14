@@ -1,6 +1,7 @@
 _                = require 'lodash'
 commander        = require 'commander'
 async            = require 'async'
+MeshbluConfig    = require 'meshblu-config'
 mongojs          = require 'mongojs'
 redis            = require 'redis'
 RedisNS          = require '@octoblu/redis-ns'
@@ -48,6 +49,7 @@ class CommandDispatch
 
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
+    @meshbluConfig = new MeshbluConfig().toJSON()
 
   run: =>
     @parseOptions()
@@ -82,6 +84,7 @@ class CommandDispatch
       jobRegistry:  @getJobRegistry()
       cacheFactory:     @getCacheFactory()
       datastoreFactory: @getDatastoreFactory()
+      meshbluConfig: @meshbluConfig
 
     queueWorker.run callback
 

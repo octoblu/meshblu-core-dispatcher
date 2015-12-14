@@ -41,6 +41,7 @@
     "eventemitter2": "^0.4.14",
     "fakeredis": "^0.3.4",
     "lodash": "^3.10.1",
+    "meshblu-config": "^3.1.1",
     "meshblu-core-cache": "^1.1.0",
     "meshblu-core-datastore": "^2.1.2",
     "meshblu-core-job-manager": "^3.1.4",

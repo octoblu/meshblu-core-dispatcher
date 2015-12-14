@@ -7,7 +7,7 @@ TaskRunner = require './task-runner'
 
 class QueueWorker
   constructor: (options={}) ->
-    {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri} = options
+    {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig} = options
     {@datastoreFactory,@cacheFactory} = options
     @client = _.bindAll client
     @timeout ?= 30
@@ -25,21 +25,16 @@ class QueueWorker
       return callback null unless job?
       @runJob job, callback
 
-  runJob: (job={}, callback=->) =>
-    return callback new Error("Missing metadata") unless job.metadata?
-    {jobType,responseId} = job.metadata
+  runJob: (request={}, callback=->) =>
+    return callback new Error("Missing metadata") unless request.metadata?
+    {jobType,responseId} = request.metadata
 
-    jobDef = @jobRegistry[jobType]
-    return callback new Error "jobType '#{jobType}' not found" unless jobDef?
+    config = @jobRegistry[jobType]
+    return callback new Error "jobType '#{jobType}' not found" unless config?
 
-    taskRunner = new TaskRunner
-      config: jobDef
-      request: job
-      datastoreFactory: @datastoreFactory
-      cacheFactory: @cacheFactory
-      uuidAliasResolver: @uuidAliasResolver
-      pepper: @pepper
+    options = {config, request, @datastoreFactory, @cacheFactory, @uuidAliasResolver, @pepper, @meshbluConfig}
 
+    taskRunner = new TaskRunner options
     taskRunner.run (error, finishedJob) =>
       return callback error if error?
       @sendResponse jobType, responseId, finishedJob, callback
