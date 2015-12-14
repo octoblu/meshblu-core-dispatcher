@@ -1,8 +1,8 @@
-# Authenticate:
-#   start: 'authenticate'
-#   tasks:
-#     'authenticate':
-#       filter: 'Authenticate'
+Authenticate:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
 SubscriptionList:
   start: 'authenticate'
   tasks:
