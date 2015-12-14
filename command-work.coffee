@@ -1,9 +1,10 @@
-commander   = require 'commander'
-async       = require 'async'
-redis       = require 'redis'
-mongojs     = require 'mongojs'
-RedisNS     = require '@octoblu/redis-ns'
-debug       = require('debug')('meshblu-core-dispatcher:command')
+commander     = require 'commander'
+async         = require 'async'
+MeshbluConfig = require 'meshblu-config'
+redis         = require 'redis'
+mongojs       = require 'mongojs'
+RedisNS       = require '@octoblu/redis-ns'
+debug         = require('debug')('meshblu-core-dispatcher:command')
 packageJSON      = require './package.json'
 CacheFactory     = require './src/cache-factory'
 DatastoreFactory = require './src/datastore-factory'
@@ -27,10 +28,13 @@ class CommandWork
     {@internalNamespace,@singleRun,@timeout,@jobs} = commander
     @client = new RedisNS @internalNamespace, redis.createClient(process.env.REDIS_URI)
 
-    @redisUri   = process.env.REDIS_URI
-    @mongoDBUri = process.env.MONGODB_URI
-    @pepper     = process.env.TOKEN
-    @aliasServerUri = process.env.ALIAS_SERVER_URI
+    @redisUri            = process.env.REDIS_URI
+    @mongoDBUri          = process.env.MONGODB_URI
+    @pepper              = process.env.TOKEN
+    @aliasServerUri      = process.env.ALIAS_SERVER_URI
+    @forwardEventDevices = (process.env.FORWARD_EVENT_DEVICES ? '').split ','
+    
+    @meshbluConfig  = new MeshbluConfig().toJSON()
 
   run: =>
     @parseOptions()
@@ -48,6 +52,8 @@ class CommandWork
       jobRegistry:  (new JobRegistry).toJSON()
       cacheFactory:     new CacheFactory client: cacheClient
       datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
+      meshbluConfig: @meshbluConfig
+      forwardEventDevices: @forwardEventDevices
 
     return queueWorker.run @tentativePanic if @singleRun
 

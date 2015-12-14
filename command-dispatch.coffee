@@ -42,10 +42,11 @@ class CommandDispatch
       .parse process.argv
 
     {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
-    @redisUri   = process.env.REDIS_URI
-    @mongoDBUri = process.env.MONGODB_URI
-    @pepper     = process.env.TOKEN
-    @aliasServerUri = process.env.ALIAS_SERVER_URI
+    @redisUri            = process.env.REDIS_URI
+    @mongoDBUri          = process.env.MONGODB_URI
+    @pepper              = process.env.TOKEN
+    @aliasServerUri      = process.env.ALIAS_SERVER_URI
+    @forwardEventDevices = (process.env.FORWARD_EVENT_DEVICES ? '').split ','
 
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
@@ -85,6 +86,7 @@ class CommandDispatch
       cacheFactory:     @getCacheFactory()
       datastoreFactory: @getDatastoreFactory()
       meshbluConfig: @meshbluConfig
+      forwardEventDevices: @forwardEventDevices
 
     queueWorker.run callback
 
