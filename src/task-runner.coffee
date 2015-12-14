@@ -26,6 +26,7 @@ class TaskRunner
     'meshblu-core-task-no-content'                : require('meshblu-core-task-no-content')
     'meshblu-core-task-send-message'              : require('meshblu-core-task-send-message')
     'meshblu-core-task-update-device'             : require('meshblu-core-task-update-device')
+    'meshblu-core-task-check-discover-whitelist'  : require('meshblu-core-task-check-discover-whitelist')
 
   run: (callback) =>
     @_doTask @config.start, callback

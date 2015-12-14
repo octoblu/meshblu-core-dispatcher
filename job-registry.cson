@@ -1,8 +1,8 @@
-Authenticate:
-  start: 'authenticate'
-  tasks:
-    'authenticate':
-      filter: 'Authenticate'
+# Authenticate:
+#   start: 'authenticate'
+#   tasks:
+#     'authenticate':
+#       filter: 'Authenticate'
 SubscriptionList:
   start: 'authenticate'
   tasks:
@@ -47,6 +47,16 @@ GetDevice:
   tasks:
     'authenticate':
       filter: 'Authenticate'
+      on:
+        204: 'check-discover-whitelist'
+    # 'check-discoveras-whitelist':
+    #   task: 'meshblu-core-task-check-discoveras-whitelist'
+    #   datastoreCollection: 'devices'
+    #   on:
+    #     204: 'meshblu-check-discover-whitelist'
+    'check-discover-whitelist':
+      task: 'meshblu-core-task-check-discover-whitelist'
+      datastoreCollection: 'devices'
       on:
         204: 'get-device'
     'get-device':
