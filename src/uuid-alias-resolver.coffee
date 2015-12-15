@@ -8,6 +8,7 @@ class UUIDAliasResolver
     @aliasServerUri = undefined if @aliasServerUri == ''
 
   resolve: (alias, callback) =>
+    return callback null, alias if alias == '*'
     return callback null, alias if UUID_REGEX.test alias
     return callback null, alias unless @aliasServerUri?
 
@@ -21,7 +22,7 @@ class UUIDAliasResolver
       return callback error if error?
       callback null, aliases
 
-  _cacheAlias: (alias, uuid, callback) =>
+  _cacheAlias: (alias, uuid, callback) =>    
     @cache.setex "alias:#{alias}", 30, JSON.stringify(uuid: uuid), callback
 
   _getCache: (alias, callback) =>

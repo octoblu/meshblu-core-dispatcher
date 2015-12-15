@@ -48,15 +48,17 @@ GetDevice:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'check-discoveras-whitelist'
+    'check-discoveras-whitelist':
+      task: 'meshblu-core-task-check-discoveras-whitelist'
+      datastoreCollection: 'devices'
+      cacheNamespace: 'cache:device'
+      on:
         204: 'check-discover-whitelist'
-    # 'check-discoveras-whitelist':
-    #   task: 'meshblu-core-task-check-discoveras-whitelist'
-    #   datastoreCollection: 'devices'
-    #   on:
-    #     204: 'meshblu-check-discover-whitelist'
     'check-discover-whitelist':
       task: 'meshblu-core-task-check-discover-whitelist'
       datastoreCollection: 'devices'
+      cacheNamespace: 'cache:device'
       on:
         204: 'get-device'
     'get-device':
