@@ -3,6 +3,7 @@ Authenticate:
   tasks:
     'authenticate':
       filter: 'Authenticate'
+
 SubscriptionList:
   start: 'authenticate'
   tasks:
@@ -18,6 +19,7 @@ SubscriptionList:
     'get-subscriptions':
       task: 'meshblu-core-task-get-subscriptions'
       datastoreCollection: 'subscriptions'
+
 UpdateDevice:
   start: 'authenticate'
   tasks:
@@ -42,7 +44,30 @@ UpdateDevice:
     'clear-device-in-cache':
       task: 'meshblu-core-task-clear-device-in-cache'
       cacheNamespace: 'cache:device'
+
 GetDevice:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'check-discoveras-whitelist'
+    'check-discoveras-whitelist':
+      task: 'meshblu-core-task-check-discoveras-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-discover-whitelist'
+
+    'check-discover-whitelist':
+      task: 'meshblu-core-task-check-discover-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'get-device'
+    'get-device':
+      task: 'meshblu-core-task-get-device'
+      datastoreCollection: 'devices'
+
+SearchDevices:
   start: 'authenticate'
   tasks:
     'authenticate':
@@ -54,16 +79,8 @@ GetDevice:
       datastoreCollection: 'devices'
       cacheNamespace: 'cache:device'
       on:
-        204: 'check-discover-whitelist'
-    'check-discover-whitelist':
-      task: 'meshblu-core-task-check-discover-whitelist'
-      datastoreCollection: 'devices'
-      cacheNamespace: 'cache:device'
-      on:
-        204: 'get-device'
-    'get-device':
-      task: 'meshblu-core-task-get-device'
-      datastoreCollection: 'devices'
+        204: 'meshblu-core-task-search-devices'
+
 SendMessage:
   start: 'authenticate'
   tasks:
