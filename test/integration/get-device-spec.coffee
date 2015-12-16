@@ -8,6 +8,7 @@ JobManager    = require 'meshblu-core-job-manager'
 
 describe 'MeshbluCoreDispatcher', ->
   beforeEach ->
+    @meshbluHttp = new MeshbluHttp()
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
 
@@ -22,36 +23,17 @@ describe 'MeshbluCoreDispatcher', ->
 
 
   describe 'GetDevice', ->
-    # @timeout 5000
+    beforeEach 'register devices', (done) ->
+      @meshbluHttp.register type: 'device:auth', (error, @authDevice) =>
+        discovererDeviceData = type: 'device:discoverer', discoverAsWhitelist: [@authDevice.uuid]
+        @meshbluHttp.register discovererDeviceData, (error, @discovererDevice) =>
+          discovereeDeviceData = type: 'device:discoveree', discoverWhitelist: [@discovererDevice.uuid]
+          @meshbluHttp.register discovereeDeviceData, (error, @discovererDevice) => done()
+
     beforeEach (done) ->
-      # console.log "meshbluHttp", @meshbluHttp
-      openParams =
-        discoverWhitelist: ['*']
-        configureWhitelist: ['*']
-        receiveWhitelist: ['*']
-        sendWhitelist: ['*']
-
-      @authData = _.defaults type: 'device:auth-device', openParams
-      @discovererData = _.extend {}, @authData, type: "device:device-discoverer"
-      @discovereeData = _.extend {}, @authData, type: "device:device-discoveree"
-
-      @meshbluHttp = new MeshbluHttp({
-        server: "meshblu.octoblu.com"
-        port: 443
-      })
-
-      @meshbluHttp.register @authData, (error, credentials) =>
-        console.log 'Register:authdevice', error, @authCredentials
-
-      @meshbluHttp.register @discovererData, (error, @deviceDiscoverer) =>
-        console.log 'Register:device-discoverer', error, @deviceDiscoverer
-
-      @meshbluHttp.register @discovereeData, (error, @deviceDiscoveree) =>
-        console.log 'Register:device-discoveree', error, @deviceDiscoveree
-
       auth =
-        uuid: 'hi'
-        token: 'earth'
+        uuid: @authDevice.uuid
+        token: @authDevice.token
 
       job =
         metadata:
