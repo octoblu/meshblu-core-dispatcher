@@ -25,10 +25,10 @@ class TestDispatcher
   constructor: ->
     @redisUri            = process.env.REDIS_URI
     @mongoDBUri          = 'localhost:27017/meshblu-core-test'
-    @pepper              = process.env.TOKEN
+    @pepper              = 'pepper'
     @namespace           = 'meshblu-test'
     @namespaceInternal   = 'meshblu-test:internal'
-    @meshbluConfig = new MeshbluConfig().toJSON()
+    @meshbluConfig       = new MeshbluConfig().toJSON()
 
 
   doSingleRun: (callback) =>

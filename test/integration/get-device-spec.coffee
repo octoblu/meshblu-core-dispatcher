@@ -1,6 +1,7 @@
 _              = require 'lodash'
 mongojs        = require 'mongojs'
 redis          = require 'redis'
+bcrypt         = require 'bcrypt'
 RedisNS        = require '@octoblu/redis-ns'
 
 TestDispatcher = require './test-dispatcher'
@@ -29,22 +30,22 @@ describe 'MeshbluCoreDispatcher', ->
       doneThrice = _.after done, 3
 
       @auth =
-        uuid: '4b95391b-e64e-436d-b1ed-3d0d72ade8da'
-        token: '714930d5629f843ef69bd5b064f31d8644de7fee'
+        uuid: 'lack_of_lifeboats'
+        token: 'leak'
 
       @authDevice =
-        uuid: '4b95391b-e64e-436d-b1ed-3d0d72ade8da'
-        token: '$2a$08$igLdPKPvc0HNGZt5MrasheHQ0s6ItfpRJ7syqjcPhVZ36IC3AvASe'
+        uuid: 'lack_of_lifeboats'
+        token: bcrypt.hashSync @auth.token, 8
         type: 'device:auth'
 
       @discovererDevice =
-        uuid: '4e7a7334-329d-4d7c-993d-f1c162ba37cc'
+        uuid: 'deep-freeze'
         type: 'device:discoverer'
         discoverAsWhitelist: [@authDevice.uuid]
         discoverWhitelist: []
 
       @discovereeDevice =
-        uuid: '9a594952-9e39-478a-9819-9022afd89ad3'
+        uuid: 'premature-bird'
         type: 'device:discoveree'
         discoverWhitelist: [@discovererDevice.uuid]
 
