@@ -54,6 +54,22 @@ describe 'MeshbluCoreDispatcher', ->
       @collection.insert @discovererDevice, doneThrice
       @collection.insert @discovereeDevice, doneThrice
 
+    describe "when a device requests itself without as'ing", ->
+      beforeEach (done) ->
+        job =
+          metadata:
+            auth: @auth
+            toUuid: @auth.uuid
+            jobType: 'GetDevice'
+
+        @jobManager.do 'request', 'response', job, (@error, @response) => done()
+
+        @dispatcher.doSingleRun =>
+
+      it 'should give us a device', ->
+        device = JSON.parse @response.rawData
+        expect(device.type).to.equal 'device:auth'
+
     describe 'when a device requests itself (whoami)', ->
       beforeEach (done) ->
         job =
