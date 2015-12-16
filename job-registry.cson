@@ -51,6 +51,10 @@ GetDevice:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'check-protect-your-as'
+    'check-protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
         204: 'check-discoveras-whitelist'
     'check-discoveras-whitelist':
       task: 'meshblu-core-task-check-discoveras-whitelist'

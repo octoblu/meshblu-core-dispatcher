@@ -119,9 +119,8 @@ describe 'MeshbluCoreDispatcher', ->
 
         @dispatcher.doSingleRun =>
 
-      it 'should give us a device', ->
-        device = JSON.parse @response.rawData
-        expect(device.type).to.equal 'device:discoverer'
+      it "should tell us we're not allowed", ->
+        expect(@response.metadata.code).to.equal 403
 
     describe "when authDevice tries to discover discovereeDevice", ->
       beforeEach (done) ->
@@ -159,13 +158,13 @@ describe 'MeshbluCoreDispatcher', ->
         device = JSON.parse @response.rawData
         expect(device.type).to.equal 'device:discoveree'
 
-    describe "when authDevice tries to discover discovereeDevice as discovereeDevice", ->
+    describe "when authDevice tries to discover discovererDevice as discovereeDevice", ->
       beforeEach (done) ->
         job =
           metadata:
             auth: @auth
             fromUuid: @discovereeDevice.uuid
-            toUuid: @discovereeDevice.uuid
+            toUuid: @discovererDevice.uuid
             jobType: 'GetDevice'
 
 
