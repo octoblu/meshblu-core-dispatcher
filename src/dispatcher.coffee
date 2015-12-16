@@ -10,7 +10,7 @@ class Dispatcher extends EventEmitter2
     {client,@timeout} = options
     @client = _.bindAll client
     {@jobHandlers} = options
-    @timeout ?= 1
+    @timeout ?= 30
 
     @jobManager = new JobManager
       client: @client

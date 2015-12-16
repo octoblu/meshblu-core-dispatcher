@@ -25,6 +25,7 @@
     "coffee-coverage": "^0.6.3",
     "coffee-script": "^1.10.0",
     "istanbul": "^0.4.0",
+    "meshblu-http": "^3.6.0",
     "mocha": "^2.3.3",
     "mocha-istanbul": "^0.2.0",
     "mongojs": "^1.4.1",
