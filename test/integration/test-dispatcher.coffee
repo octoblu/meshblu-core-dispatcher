@@ -24,7 +24,7 @@ class TestDispatcher
 
   constructor: ->
     @redisUri            = process.env.REDIS_URI
-    @mongoDBUri          = process.env.MONGODB_URI
+    @mongoDBUri          = 'localhost:27017/meshblu-core-test'
     @pepper              = process.env.TOKEN
     @namespace           = 'meshblu-test'
     @namespaceInternal   = 'meshblu-test:internal'
