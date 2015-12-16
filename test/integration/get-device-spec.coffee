@@ -8,7 +8,7 @@ JobManager    = require 'meshblu-core-job-manager'
 
 describe 'MeshbluCoreDispatcher', ->
   beforeEach ->
-    @meshbluHttp = new MeshbluHttp()
+    @meshbluHttp = new MeshbluHttp port: 3000, server: 'localhost'
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
 
@@ -30,23 +30,24 @@ describe 'MeshbluCoreDispatcher', ->
           discovereeDeviceData = type: 'device:discoveree', discoverWhitelist: [@discovererDevice.uuid]
           @meshbluHttp.register discovereeDeviceData, (error, @discovererDevice) => done()
 
-    beforeEach (done) ->
-      auth =
-        uuid: @authDevice.uuid
-        token: @authDevice.token
+    describe 'when a device requests itself (whoami)', ->
+      beforeEach (done) ->        
+        auth =
+          uuid: @authDevice.uuid
+          token: @authDevice.token
 
-      job =
-        metadata:
-          auth: auth
-          fromUuid: auth.uuid
-          toUuid: auth.uuid
-          jobType: 'GetDevice'
+        job =
+          metadata:
+            auth: auth
+            fromUuid: auth.uuid
+            toUuid: auth.uuid
+            jobType: 'GetDevice'
 
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+        @jobManager.do 'request', 'response', job, (@error, @response) => done()
 
-      @dispatcher.doSingleRun =>
+        @dispatcher.doSingleRun =>
 
-    it 'should give us a response', ->
-      console.log 'error', @error, 'response', @response
-      expect(@response).to.exist
+      it 'should give us a device', ->
+        device = JSON.parse @response.rawData
+        expect(device.type).to.equal 'device:auth'

@@ -86,17 +86,14 @@ class TestDispatcher
     @dispatchClient
 
   getLocalJobHandlerClient: =>
-    console.log 'getLocalJobHandlerClient', @namespace
     @localJobHandlerClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
     @localJobHandlerClient
 
   getLocalQueueWorkerClient: =>
-    console.log 'getLocalQueueWorkerClient', @namespace
     @localQueueWorkerClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
     @localQueueWorkerClient
 
   getRemoteJobHandlerClient: =>
-    console.log 'getRemoteQueueWorkerClient', @namespace
     @remoteClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
     @remoteClient
 
