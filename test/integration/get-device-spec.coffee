@@ -25,10 +25,18 @@ describe 'MeshbluCoreDispatcher', ->
   describe 'GetDevice', ->
     beforeEach 'register devices', (done) ->
       @meshbluHttp.register type: 'device:auth', (error, @authDevice) =>
-        discovererDeviceData = type: 'device:discoverer', discoverAsWhitelist: [@authDevice.uuid]
+        discovererDeviceData =
+          type: 'device:discoverer'
+          discoverAsWhitelist: [@authDevice.uuid]
+          discoverWhitelist: []
+
         @meshbluHttp.register discovererDeviceData, (error, @discovererDevice) =>
-          discovereeDeviceData = type: 'device:discoveree', discoverWhitelist: [@discovererDevice.uuid]
-          @meshbluHttp.register discovereeDeviceData, (error, @discovereeDevice) => done()
+          discovereeDeviceData =
+            type: 'device:discoveree'
+            discoverWhitelist: [@discovererDevice.uuid]
+
+          @meshbluHttp.register discovereeDeviceData, (error, @discovereeDevice) =>
+            done()
 
     describe 'when a device requests itself (whoami)', ->
       beforeEach (done) ->
@@ -73,7 +81,7 @@ describe 'MeshbluCoreDispatcher', ->
       it "should tell us we're not allowed", ->
         expect(@response.metadata.code).to.equal 403
 
-    xdescribe "when auth tries to discover discovererDevice but is only in it's discoverAsWhitelist", ->
+    describe "when auth tries to discover discovererDevice but is only in it's discoverAsWhitelist", ->
       beforeEach (done) ->
         auth =
           uuid: @authDevice.uuid
@@ -85,7 +93,6 @@ describe 'MeshbluCoreDispatcher', ->
             fromUuid: auth.uuid
             toUuid: @discovererDevice.uuid
             jobType: 'GetDevice'
-
 
         @jobManager.do 'request', 'response', job, (@error, @response) => done()
 
