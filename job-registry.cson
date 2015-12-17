@@ -83,7 +83,13 @@ SearchDevices:
       datastoreCollection: 'devices'
       cacheNamespace: 'cache:device'
       on:
-        204: 'meshblu-core-task-search-devices'
+        204: 'search-devices'
+    'search-devices':
+      task: 'meshblu-core-task-search-device'
+      datastoreCollection: 'devices'
+      cacheNamespace: 'cache:device'
+      on:
+        204: 'search-devices'
 
 SendMessage:
   start: 'authenticate'

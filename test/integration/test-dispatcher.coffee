@@ -1,4 +1,6 @@
+path             = require 'path'
 _                = require 'lodash'
+cson             = require 'cson'
 async            = require 'async'
 MeshbluConfig    = require 'meshblu-config'
 mongojs          = require 'mongojs'
@@ -13,23 +15,16 @@ JobRegistry      = require '../../src/job-registry'
 QueueWorker      = require '../../src/queue-worker'
 
 class TestDispatcher
-  @ALL_JOBS: [
-    'Authenticate'
-    'GetDevice'
-    'Idle'
-    'SendMessage'
-    'SubscriptionList'
-    'UpdateDevice'
-  ]
-
   constructor: ->
-    @redisUri            = process.env.REDIS_URI
-    @mongoDBUri          = 'localhost:27017/meshblu-core-test'
-    @pepper              = 'pepper'
-    @namespace           = 'meshblu-test'
-    @namespaceInternal   = 'meshblu-test:internal'
-    @meshbluConfig       = new MeshbluConfig().toJSON()
+    jobs = cson.parseFile( path.join __dirname, '../../job-registry.cson')
 
+    @redisUri          = process.env.REDIS_URI
+    @mongoDBUri        = 'localhost:27017/meshblu-core-test'
+    @pepper            = 'pepper'
+    @namespace         = 'meshblu-test'
+    @namespaceInternal = 'meshblu-test:internal'
+    @meshbluConfig     = new MeshbluConfig().toJSON()
+    @jobNames          = _.keys(jobs)
 
   doSingleRun: (callback) =>
     @runDispatcher callback
@@ -48,7 +43,7 @@ class TestDispatcher
       aliasServerUri:   undefined
       timeout:          15
       pepper:           @pepper
-      jobs:             TestDispatcher.ALL_JOBS
+      jobs:             @jobNames
       client:           @getLocalQueueWorkerClient()
       jobRegistry:      @getJobRegistry()
       cacheFactory:     @getCacheFactory()
@@ -64,7 +59,7 @@ class TestDispatcher
       timeout:        15
       localClient:    @getLocalJobHandlerClient()
       remoteClient:   @getRemoteJobHandlerClient()
-      localHandlers:  TestDispatcher.ALL_JOBS
+      localHandlers:  @jobNames
       remoteHandlers: []
 
     @assembledJobHandlers = jobAssembler.assemble()
