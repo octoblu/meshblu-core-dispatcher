@@ -71,6 +71,12 @@ GetDevice:
       task: 'meshblu-core-task-get-device'
       datastoreCollection: 'devices'
 
+GetDevicePublicKey:
+  start: 'get-device-public-key'
+  tasks:
+    'get-device-public-key':
+      task: 'meshblu-core-task-get-device-public-key'
+
 SearchDevices:
   start: 'authenticate'
   tasks:
