@@ -7,7 +7,7 @@ JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout} = options
+    {client,@timeout,@elasticsearch} = options
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
@@ -20,38 +20,58 @@ class Dispatcher extends EventEmitter2
     @jobManager.getRequest ['request'], (error, request) =>
       return callback error if error?
       return callback() unless request?
+      debug 'dispatch: got a job'
+
+      startTime = Date.now()
 
       @doJob request, (error, response) =>
-        return @sendError request.metadata, error, callback if error?
-        @sendResponse response, callback
+        return @sendError {startTime, request, error}, callback if error?
+        @sendResponse {startTime, request, response}, callback
 
-  sendResponse: (response, callback) =>
+  sendResponse: ({startTime, request, response}, callback) =>
     {metadata,rawData} = response
 
-    options =
+    response =
       metadata: metadata
       rawData: rawData
 
-    @jobManager.createResponse 'response', options, (error, something) =>
-      callback error
+    @log {startTime, request, response}, =>
+      @jobManager.createResponse 'response', response, (error, something) =>
+        callback error
 
-  sendError: (metadata, upstreamError, callback) =>
-    errorMetadata =
-      code: 504
-      status: upstreamError.message
+  sendError: ({startTime, request, error}, callback) =>
+    response =
+      metadata:
+        code: 504
+        responseId: request.metadata.responseId
+        status: error.message
 
-    options =
-      metadata: errorMetadata
-
-    @jobManager.createResponse 'response', options, callback
+    @log {startTime, request, response}, =>
+      @jobManager.createResponse 'response', response, callback
 
   doJob: (request, callback) =>
-    debug 'doJob', request
     {metadata} = request
 
     type = metadata.jobType
     return @jobHandlers[type] request, callback if @jobHandlers[type]?
 
     callback new Error "jobType Not Found: #{type}"
+
+  log: ({startTime, request, response}, callback) =>
+    return callback() unless @elasticsearch?
+
+    requestMetadata = _.cloneDeep request.metadata
+    delete requestMetadata.auth?.token
+
+    event =
+      index: 'meshblu_job'
+      type: 'dispatcher'
+      body:
+        elapsedTime: Date.now() - startTime
+        request:
+          metadata: requestMetadata
+        response: _.pick(response, 'metadata')
+
+    @elasticsearch.create event, callback
 
 module.exports = Dispatcher
