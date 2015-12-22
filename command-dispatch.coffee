@@ -19,6 +19,7 @@ class CommandDispatch
   @ALL_JOBS: [
     'Authenticate'
     'GetDevice'
+    'GetDevicePublicKey'
     'Idle'
     'SendMessage'
     'SubscriptionList'
