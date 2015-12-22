@@ -52,10 +52,8 @@ class CommandDispatch
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
     @meshbluConfig = new MeshbluConfig().toJSON()
-    if process.env.ELASTICSEARCH_HOSTNAME && process.env.ELASTICSEARCH_PORT
-      @elasticsearch = new elasticsearch.Client
-        hostname: process.env.ELASTICSEARCH_HOSTNAME
-        port:     process.env.ELASTICSEARCH_PORT
+    if process.env.ELASTICSEARCH_HOST
+      @elasticsearch = new elasticsearch.Client host: process.env.ELASTICSEARCH_HOST
 
   run: =>
     @parseOptions()
