@@ -7,7 +7,7 @@ JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout,@elasticsearch} = options
+    {client,@timeout,@logJobs} = options
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
@@ -58,12 +58,11 @@ class Dispatcher extends EventEmitter2
     callback new Error "jobType Not Found: #{type}"
 
   log: ({startTime, request, response}, callback) =>
-    return callback() unless @elasticsearch?
-
+    return callback() unless @logJobs
     requestMetadata = _.cloneDeep request.metadata
     delete requestMetadata.auth?.token
 
-    event =
+    job =
       index: 'meshblu_job'
       type: 'dispatcher'
       body:
@@ -72,6 +71,8 @@ class Dispatcher extends EventEmitter2
           metadata: requestMetadata
         response: _.pick(response, 'metadata')
 
-    @elasticsearch.create event, callback
+    @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
+      console.error 'Dispatcher.log', {error} if error?
+      callback error
 
 module.exports = Dispatcher

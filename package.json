@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -41,7 +41,6 @@
     "commander": "^2.9.0",
     "cson": "^3.0.2",
     "debug": "^2.2.0",
-    "elasticsearch": "^10.0.1",
     "eventemitter2": "^0.4.14",
     "fakeredis": "^0.3.4",
     "lodash": "^3.10.1",

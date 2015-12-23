@@ -1,7 +1,6 @@
 _                = require 'lodash'
 commander        = require 'commander'
 async            = require 'async'
-elasticsearch    = require 'elasticsearch'
 MeshbluConfig    = require 'meshblu-config'
 mongojs          = require 'mongojs'
 redis            = require 'redis'
@@ -48,13 +47,11 @@ class CommandDispatch
     @mongoDBUri          = process.env.MONGODB_URI
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
-    @forwardEventDevices = (process.env.FORWARD_EVENT_DEVICES ? '').split ','
+    @logJobs             = process.env.LOG_JOBS == 'true'
 
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
     @meshbluConfig = new MeshbluConfig().toJSON()
-    if process.env.ELASTICSEARCH_HOST
-      @elasticsearch = new elasticsearch.Client host: process.env.ELASTICSEARCH_HOST
 
   run: =>
     @parseOptions()
@@ -76,7 +73,7 @@ class CommandDispatch
       client:  @getDispatchClient()
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
-      elasticsearch: @elasticsearch
+      logJobs: @logJobs
 
     dispatcher.dispatch callback
 
