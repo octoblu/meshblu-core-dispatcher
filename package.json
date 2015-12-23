@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -64,7 +64,7 @@
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-search-device": "^1.0.12",
-    "meshblu-core-task-send-message": "^1.0.4",
+    "meshblu-core-task-send-message": "^1.1.0",
     "meshblu-core-task-update-device": "^1.0.3",
     "redis": "^2.2.5",
     "request": "^2.67.0"
