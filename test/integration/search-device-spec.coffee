@@ -7,7 +7,7 @@ RedisNS        = require '@octoblu/redis-ns'
 TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 
-describe 'GetDevice', ->
+describe 'SearchDevice', ->
   beforeEach (done)->
     @db = mongojs 'localhost:27017/meshblu-core-test'
     @collection = @db.collection 'devices'
@@ -76,7 +76,7 @@ describe 'GetDevice', ->
 
     it 'should give us a device', ->
       devices = JSON.parse @response.rawData
-      expect(devices.length).to.equal 2
+      expect(devices.length).to.equal 1
 
   describe "when a device is lookin' for bug as a fly", ->
     beforeEach (done) ->
@@ -95,6 +95,29 @@ describe 'GetDevice', ->
     it 'should give us a device', ->
       devices = JSON.parse @response.rawData
       expect(devices.length).to.equal 3
+
+  describe "when a device is trying to discover a fly as a fly", ->
+    beforeEach (done) ->
+      job =
+        metadata:
+          auth: @auth
+          toUuid: @flyDevice.uuid
+          fromUuid: @flyDevice.uuid
+          jobType: 'SearchDevices'
+        data:
+          uuid: @flyDevice.uuid
+
+      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+
+      @dispatcher.doSingleRun =>
+
+    it 'should not give us a device', ->
+      devices = JSON.parse @response.rawData
+      expect(devices).to.not.exist
+
+    it 'should tell us we\'re not allowed', ->
+      expect(@response.metadata.code).to.equal 403
+
 
   describe "when a device is lookin' for a dinosaur as a fly", ->
     beforeEach (done) ->
