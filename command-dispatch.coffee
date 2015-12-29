@@ -24,6 +24,7 @@ class CommandDispatch
     'SubscriptionList'
     'UpdateDevice'
     'RevokeTokenByQuery'
+    'SearchDevices'
   ]
 
   parseInt: (int) =>
