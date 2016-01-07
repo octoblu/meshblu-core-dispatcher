@@ -66,6 +66,7 @@ class Dispatcher extends EventEmitter2
       index: 'meshblu_job'
       type: 'dispatcher'
       body:
+        date: startTime
         elapsedTime: Date.now() - startTime
         request:
           metadata: requestMetadata
