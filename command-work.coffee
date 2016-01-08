@@ -26,14 +26,16 @@ class CommandWork
       .parse process.argv
 
     {@internalNamespace,@singleRun,@timeout,@jobs} = commander
-    @client = new RedisNS @internalNamespace, redis.createClient(process.env.REDIS_URI)
 
     @redisUri            = process.env.REDIS_URI
     @mongoDBUri          = process.env.MONGODB_URI
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
     @forwardEventDevices = (process.env.FORWARD_EVENT_DEVICES ? '').split ','
-    
+
+    if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
+      @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
+
     @meshbluConfig  = new MeshbluConfig().toJSON()
 
   run: =>
@@ -41,23 +43,38 @@ class CommandWork
 
     process.on 'SIGTERM', => @terminate = true
 
-    cacheClient = new RedisNS @internalNamespace, redis.createClient(@redisUri)
-
     queueWorker = new QueueWorker
-      aliasServerUri: @aliasServerUri
-      pepper:    @pepper
-      timeout:   @timeout
-      jobs:      @jobs
-      client:    @client
-      jobRegistry:  (new JobRegistry).toJSON()
-      cacheFactory:     new CacheFactory client: cacheClient
-      datastoreFactory: new DatastoreFactory database: mongojs(@mongoDBUri)
-      meshbluConfig: @meshbluConfig
+      aliasServerUri:      @aliasServerUri
+      pepper:              @pepper
+      privateKey:          @privateKey
+      timeout:             @timeout
+      jobs:                @jobs
+      client:              @getLocalQueueWorkerClient()
+      jobRegistry:         @getJobRegistry()
+      cacheFactory:        @getCacheFactory()
+      datastoreFactory:    @getDatastoreFactory()
+      meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
 
     return queueWorker.run @tentativePanic if @singleRun
 
     async.until @terminated, queueWorker.run, @tentativePanic
+
+  getCacheFactory: =>
+    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
+    @cacheFactory
+
+  getDatastoreFactory: =>
+    @datastoreFactory ?= new DatastoreFactory database: mongojs @mongoDBUri
+    @datastoreFactory
+
+  getJobRegistry: =>
+    @jobRegistry ?= (new JobRegistry).toJSON()
+    @jobRegistry
+
+  getLocalQueueWorkerClient: =>
+    @localQueueWorkerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localQueueWorkerClient
 
   panic: (error) =>
     console.error error.stack

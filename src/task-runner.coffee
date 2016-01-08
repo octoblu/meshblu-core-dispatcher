@@ -20,6 +20,7 @@ class TaskRunner
     'meshblu-core-task-check-token'               : require('meshblu-core-task-check-token')
     'meshblu-core-task-check-token-black-list'    : require('meshblu-core-task-check-token-black-list')
     'meshblu-core-task-check-token-cache'         : require('meshblu-core-task-check-token-cache')
+    'meshblu-core-task-deliver-webhook'           : require('meshblu-core-task-deliver-webhook')
     'meshblu-core-task-forbidden'                 : require('meshblu-core-task-forbidden')
     'meshblu-core-task-get-device'                : require('meshblu-core-task-get-device')
     'meshblu-core-task-get-device-public-key'     : require('meshblu-core-task-get-device-public-key')

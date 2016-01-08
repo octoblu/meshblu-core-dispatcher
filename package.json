@@ -60,6 +60,7 @@
     "meshblu-core-task-get-device": "^2.0.0",
     "meshblu-core-task-get-device-public-key": "^1.0.0",
     "meshblu-core-task-get-subscriptions": "^1.1.3",
+    "meshblu-core-task-message-webhook": "^1.0.0",
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-revoke-token-by-query": "^1.0.5",

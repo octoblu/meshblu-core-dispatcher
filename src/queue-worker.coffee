@@ -41,6 +41,7 @@ class QueueWorker
       @pepper
       @meshbluConfig
       @forwardEventDevices
+      @jobManager
     }).run (error, finishedJob) =>
       return callback error if error?
       @sendResponse jobType, responseId, finishedJob, callback

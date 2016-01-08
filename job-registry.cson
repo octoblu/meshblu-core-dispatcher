@@ -4,6 +4,15 @@ Authenticate:
     'authenticate':
       filter: 'Authenticate'
 
+DeliverSentMessage:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'check-configure-whitelist'
+
+
 SubscriptionList:
   start: 'authenticate'
   tasks:
@@ -77,6 +86,18 @@ GetDevicePublicKey:
       task: 'meshblu-core-task-get-device-public-key'
       datastoreCollection: 'devices'
 
+DeliverWebhook:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'do-webhook'
+    'do-webhook':
+      task: 'meshblu-core-task-deliver-webhook'
+      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'devices'
+
 SearchDevices:
   start: 'authenticate'
   tasks:
@@ -105,10 +126,23 @@ SendMessage:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'check-protect-your-as'
+    'check-protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-sendas-whitelist'
+    'check-sendas-whitelist':
+      task: 'meshblu-core-task-check-sendas-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-send-whitelist'
+    'check-send-whitelist':
+      task: 'meshblu-core-task-check-send-whitelist'
+      datastoreCollection: 'devices'
+      on:
         204: 'send-message'
     'send-message':
       task: 'meshblu-core-task-send-message'
-      cacheNamespace: 'messages'
 
 RevokeTokenByQuery:
   start: 'authenticate'

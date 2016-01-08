@@ -17,6 +17,7 @@ QueueWorker      = require './src/queue-worker'
 class CommandDispatch
   @ALL_JOBS: [
     'Authenticate'
+    'DeliverWebhook'
     'GetDevice'
     'GetDevicePublicKey'
     'Idle'
@@ -51,6 +52,9 @@ class CommandDispatch
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
     @logJobs             = process.env.LOG_JOBS == 'true'
 
+    if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
+      @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
+
     @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
     @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
     @meshbluConfig = new MeshbluConfig().toJSON()
@@ -81,15 +85,16 @@ class CommandDispatch
 
   runQueueWorker: (callback) =>
     queueWorker = new QueueWorker
-      aliasServerUri: @aliasServerUri
-      pepper:    @pepper
-      timeout:   @timeout
-      jobs:      @localHandlers
-      client:    @getLocalQueueWorkerClient()
-      jobRegistry:  @getJobRegistry()
-      cacheFactory:     @getCacheFactory()
-      datastoreFactory: @getDatastoreFactory()
-      meshbluConfig: @meshbluConfig
+      aliasServerUri:      @aliasServerUri
+      pepper:              @pepper
+      privateKey:          @privateKey
+      timeout:             @timeout
+      jobs:                @localHandlers
+      client:              @getLocalQueueWorkerClient()
+      jobRegistry:         @getJobRegistry()
+      cacheFactory:        @getCacheFactory()
+      datastoreFactory:    @getDatastoreFactory()
+      meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
 
     queueWorker.run callback
