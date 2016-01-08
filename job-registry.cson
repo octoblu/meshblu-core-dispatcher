@@ -4,14 +4,42 @@ Authenticate:
     'authenticate':
       filter: 'Authenticate'
 
-DeliverSentMessage:
+DeliverWebhook:
   start: 'authenticate'
   tasks:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'check-configure-whitelist'
+        204: 'deliver-webhook'
+    'deliver-webhook':
+      task: 'meshblu-core-task-deliver-webhook'
+      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'devices'
 
+DeliverMessage:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-send-whitelists'
+    'enforce-send-whitelists':
+      filter: 'EnforceSendWhitelists'
+      on:
+        204: 'publish-message'
+    'publish-message':
+      task: 'meshblu-core-task-publish-message'
+      cacheNamespace: 'meshblu'
+      on:
+        204: 'deliver-subscriptions'
+    'deliver-subscriptions':
+      task: 'meshblu-core-task-deliver-subscriptions'
+      cacheNamespace: 'meshblu'
+      on:
+        204: 'deliver-subscriptions'
+    'forward-webhooks':
+      task: 'meshblu-core-task-forward-webhooks'
+      cacheNamespace: 'meshblu'
 
 SubscriptionList:
   start: 'authenticate'
@@ -35,10 +63,9 @@ UpdateDevice:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'check-configure-whitelist'
-    'check-configure-whitelist':
-      task: 'meshblu-core-task-check-configure-whitelist'
-      datastoreCollection: 'devices'
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
       on:
         204: 'check-update-device-is-valid'
     'check-update-device-is-valid':
@@ -60,19 +87,9 @@ GetDevice:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'check-protect-your-as'
-    'check-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
-      on:
-        204: 'check-discoveras-whitelist'
-    'check-discoveras-whitelist':
-      task: 'meshblu-core-task-check-discoveras-whitelist'
-      datastoreCollection: 'devices'
-      on:
-        204: 'check-discover-whitelist'
-    'check-discover-whitelist':
-      task: 'meshblu-core-task-check-discover-whitelist'
-      datastoreCollection: 'devices'
+        204: 'enforce-discover-whitelists'
+    'enforce-discover-whitelist':
+      filter: 'EnforceDiscoverWhitelists'
       on:
         204: 'get-device'
     'get-device':
@@ -86,33 +103,15 @@ GetDevicePublicKey:
       task: 'meshblu-core-task-get-device-public-key'
       datastoreCollection: 'devices'
 
-DeliverWebhook:
-  start: 'authenticate'
-  tasks:
-    'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'do-webhook'
-    'do-webhook':
-      task: 'meshblu-core-task-deliver-webhook'
-      cacheNamespace: 'meshblu-token-cache'
-      datastoreCollection: 'devices'
-
 SearchDevices:
   start: 'authenticate'
   tasks:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'check-protect-your-as'
-    'check-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
-      on:
-        204: 'check-discoveras-whitelist'
-    'check-discoveras-whitelist':
-      task: 'meshblu-core-task-check-discoveras-whitelist'
-      datastoreCollection: 'devices'
-      cacheNamespace: 'cache:device'
+        204: 'enforce-discover-whitelists'
+    'enforce-discover-whitelists':
+      filter: 'EnforceDiscoverWhitelists'
       on:
         204: 'search-devices'
     'search-devices':
@@ -126,20 +125,6 @@ SendMessage:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'check-protect-your-as'
-    'check-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
-      on:
-        204: 'check-sendas-whitelist'
-    'check-sendas-whitelist':
-      task: 'meshblu-core-task-check-sendas-whitelist'
-      datastoreCollection: 'devices'
-      on:
-        204: 'check-send-whitelist'
-    'check-send-whitelist':
-      task: 'meshblu-core-task-check-send-whitelist'
-      datastoreCollection: 'devices'
-      on:
         204: 'send-message'
     'send-message':
       task: 'meshblu-core-task-send-message'
@@ -150,14 +135,9 @@ RevokeTokenByQuery:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'check-discoveras-whitelist'
-    'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'check-configure-whitelist'
-    'check-configure-whitelist':
-      task: 'meshblu-core-task-check-configure-whitelist'
-      datastoreCollection: 'devices'
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
       on:
         204: 'revoke-token-by-query'
     'revoke-token-by-query':

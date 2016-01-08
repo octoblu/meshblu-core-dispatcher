@@ -32,6 +32,7 @@ class TaskRunner
     'meshblu-core-task-check-discover-whitelist'  : require('meshblu-core-task-check-discover-whitelist')
     'meshblu-core-task-check-discoveras-whitelist': require('meshblu-core-task-check-discoveras-whitelist')
     'meshblu-core-task-protect-your-as'           : require('meshblu-core-task-protect-your-as')
+    'meshblu-core-task-publish-message'           : require('meshblu-core-task-publish-message')
     'meshblu-core-task-revoke-token-by-query'     : require('meshblu-core-task-revoke-token-by-query')
 
   run: (callback) =>

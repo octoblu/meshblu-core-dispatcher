@@ -47,7 +47,6 @@ describe 'GetDevice', ->
       type: 'device:discoveree'
       discoverWhitelist: [@discovererDevice.uuid]
 
-
     @collection.insert @authDevice, doneThrice
     @collection.insert @discovererDevice, doneThrice
     @collection.insert @discovereeDevice, doneThrice

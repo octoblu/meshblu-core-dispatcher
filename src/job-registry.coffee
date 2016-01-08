@@ -21,6 +21,7 @@ class JobRegistry
     _.each tasksWithFilters, (task, taskName) =>
       job.tasks[taskName] = @newStartTask task
 
+    console.log JSON.stringify job, null, 2
     job
 
   tasksFromFilter: (task) =>
@@ -33,7 +34,7 @@ class JobRegistry
     filterStart = @filters[task.filter].start
 
     return {
-      task: 'meshblu-core-task-no-content'
+      task: "meshblu-core-task-no-content"
       on:
         204: filterStart
     }

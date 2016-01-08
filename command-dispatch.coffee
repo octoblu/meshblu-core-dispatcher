@@ -18,6 +18,7 @@ class CommandDispatch
   @ALL_JOBS: [
     'Authenticate'
     'DeliverWebhook'
+    'DeliverMessage'
     'GetDevice'
     'GetDevicePublicKey'
     'Idle'

@@ -27,3 +27,67 @@ Authenticate:
         204: 'forbid'
     'forbid':
       task: 'meshblu-core-task-forbidden'
+
+EnforceConfigureWhitelists:
+  start: 'check-protect-your-as'
+  tasks:
+    'check-protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-configureas-whitelist'
+    'check-configureas-whitelist':
+      task: 'meshblu-core-task-check-configureas-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-configure-whitelist'
+    'check-configure-whitelist':
+      task: 'meshblu-core-task-check-configure-whitelist'
+      datastoreCollection: 'devices'
+
+EnforceDiscoverWhitelists:
+  start: 'check-protect-your-as'
+  tasks:
+    'check-protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-discoveras-whitelist'
+    'check-discoveras-whitelist':
+      task: 'meshblu-core-task-check-discoveras-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-discover-whitelist'
+    'check-discover-whitelist':
+      task: 'meshblu-core-task-check-discover-whitelist'
+      datastoreCollection: 'devices'
+
+EnforceSendWhitelists:
+  start: 'check-protect-your-as'
+  tasks:
+    'check-protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-sendas-whitelist'
+    'check-sendas-whitelist':
+      task: 'meshblu-core-task-check-sendas-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-send-whitelist'
+    'check-send-whitelist':
+      task: 'meshblu-core-task-check-send-whitelist'
+      datastoreCollection: 'devices'
+
+EnforceReceiveWhitelists:
+  start: 'check-protect-your-as'
+  tasks:
+    'check-protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-receiveas-whitelist'
+    'check-receiveas-whitelist':
+      task: 'meshblu-core-task-check-receiveas-whitelist'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-receive-whitelist'
+    'check-receive-whitelist':
+      task: 'meshblu-core-task-check-receive-whitelist'
+      datastoreCollection: 'devices'
