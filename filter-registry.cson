@@ -29,22 +29,17 @@ Authenticate:
       task: 'meshblu-core-task-forbidden'
 
 EnforceConfigureWhitelists:
-  start: 'check-protect-your-as'
+  start: 'enforce-configure-as-whitelist'
   tasks:
-    'check-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
-      on:
-        204: 'check-configure-as-whitelist'
-    'check-configure-as-whitelist':
-      task: 'meshblu-core-task-check-configureas-whitelist'
-      datastoreCollection: 'devices'
+    'enforce-configure-as-whitelist':
+      filter: 'EnforceConfigureAsWhitelist'
       on:
         204: 'check-configure-whitelist'
     'check-configure-whitelist':
       task: 'meshblu-core-task-check-configure-whitelist'
       datastoreCollection: 'devices'
 
-EnforceConfigureAsWhitelists:
+EnforceConfigureAsWhitelist:
   start: 'check-protect-your-as'
   tasks:
     'check-protect-your-as':
@@ -78,10 +73,10 @@ EnforceDiscoverAsWhitelist:
       datastoreCollection: 'devices'
 
 EnforceSendWhitelists:
-  start: 'check-protect-your-as'
+  start: 'enforce-send-as-whitelist'
   tasks:
-    'check-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
+    'enforce-send-as-whitelist':
+      filter: 'EnforceSendAsWhitelist'
       on:
         204: 'check-send-as-whitelist'
     'check-send-as-whitelist':
@@ -105,10 +100,10 @@ EnforceSendAsWhitelist:
       datastoreCollection: 'devices'
 
 EnforceReceiveWhitelists:
-  start: 'check-protect-your-as'
+  start: 'enforce-receive-as-whitelist'
   tasks:
-    'check-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
+    'enforce-receive-as-whitelist':
+      filter: 'EnforceReceiveAsWhitelist'
       on:
         204: 'check-receive-as-whitelist'
     'check-receive-as-whitelist':

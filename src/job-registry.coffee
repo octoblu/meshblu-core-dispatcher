@@ -13,6 +13,7 @@ class JobRegistry
   buildJob: (job) =>
     job = _.cloneDeep job
 
+    # needs better recursion
     @mapFilters job.tasks
 
     job
