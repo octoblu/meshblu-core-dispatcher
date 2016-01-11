@@ -9,7 +9,7 @@ JobManager     = require 'meshblu-core-job-manager'
 
 describe 'GetDevice', ->
   beforeEach (done)->
-    @db = mongojs 'localhost:27017/meshblu-core-test'
+    @db = mongojs 'meshblu-core-test'
     @collection = @db.collection 'devices'
     @collection.drop (error) => done error
 
@@ -25,8 +25,6 @@ describe 'GetDevice', ->
       timeoutSeconds: 15
 
   beforeEach 'register devices', (done) ->
-    doneThrice = _.after done, 3
-
     @auth =
       uuid: 'lack_of_lifeboats'
       token: 'leak'
@@ -36,20 +34,24 @@ describe 'GetDevice', ->
       token: bcrypt.hashSync @auth.token, 8
       type: 'device:auth'
 
+    @collection.insert @authDevice, done
+
+  beforeEach (done) ->
     @discovererDevice =
       uuid: 'deep-freeze'
       type: 'device:discoverer'
       discoverAsWhitelist: [@authDevice.uuid]
       discoverWhitelist: []
 
+    @collection.insert @discovererDevice, done
+
+  beforeEach (done) ->
     @discovereeDevice =
       uuid: 'premature-bird'
       type: 'device:discoveree'
       discoverWhitelist: [@discovererDevice.uuid]
 
-    @collection.insert @authDevice, doneThrice
-    @collection.insert @discovererDevice, doneThrice
-    @collection.insert @discovereeDevice, doneThrice
+    @collection.insert @discovereeDevice, done
 
   describe "when a device requests itself without as'ing", ->
     beforeEach (done) ->
