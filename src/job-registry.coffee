@@ -13,19 +13,23 @@ class JobRegistry
   buildJob: (job) =>
     job = _.cloneDeep job
 
-    tasksWithFilters = _.pick job.tasks, (task) => task.filter?
-
-    _.each tasksWithFilters, (task) =>
-      _.extend job.tasks, @tasksFromFilter(task)
-
-    _.each tasksWithFilters, (task, taskName) =>
-      job.tasks[taskName] = @newStartTask task
+    @mapFilters job.tasks
 
     job
 
+  mapFilters: (tasks) =>
+    _.each tasks, (task) =>
+      return unless task.filter?
+      _.extend tasks, @tasksFromFilter task
+
+    _.each tasks, (task, taskName) =>
+      return unless task.filter?
+      tasks[taskName] = @newStartTask task
+
   tasksFromFilter: (task) =>
     filter = _.cloneDeep @filters[task.filter]
-    _.mapValues filter.tasks, (filterTask, filterTaskName) =>
+    @mapFilters filter.tasks
+    _.mapValues filter.tasks, (filterTask) =>
       filterTask.on = _.defaults {}, filterTask.on, task.on
       filterTask
 

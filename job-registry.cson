@@ -109,9 +109,9 @@ SearchDevices:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'enforce-discover-whitelists'
-    'enforce-discover-whitelists':
-      filter: 'EnforceDiscoverWhitelists'
+        204: 'enforce-discover-as-whitelist'
+    'enforce-discover-as-whitelist':
+      filter: 'EnforceDiscoverAsWhitelist'
       on:
         204: 'search-devices'
     'search-devices':
