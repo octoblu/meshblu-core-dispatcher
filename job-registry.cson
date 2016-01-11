@@ -31,15 +31,15 @@ DeliverMessage:
       task: 'meshblu-core-task-publish-message'
       cacheNamespace: 'meshblu'
       on:
-        204: 'deliver-subscriptions'
-    'deliver-subscriptions':
-      task: 'meshblu-core-task-deliver-subscriptions'
+        204: 'publish-subscriptions'
+    'publish-subscriptions':
+      task: 'meshblu-core-task-publish-subscriptions'
       cacheNamespace: 'meshblu'
-      on:
-        204: 'deliver-subscriptions'
-    'forward-webhooks':
-      task: 'meshblu-core-task-forward-webhooks'
-      cacheNamespace: 'meshblu'
+    #   on:
+    #     204: 'forward-webhooks'
+    # 'forward-webhooks':
+    #   task: 'meshblu-core-task-forward-webhooks'
+    #   cacheNamespace: 'meshblu'
 
 SubscriptionList:
   start: 'authenticate'

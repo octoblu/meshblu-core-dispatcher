@@ -15,20 +15,6 @@ JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
 
 class CommandDispatch
-  @ALL_JOBS: [
-    'Authenticate'
-    'DeliverWebhook'
-    'DeliverMessage'
-    'GetDevice'
-    'GetDevicePublicKey'
-    'Idle'
-    'SendMessage'
-    'SubscriptionList'
-    'UpdateDevice'
-    'RevokeTokenByQuery'
-    'SearchDevices'
-  ]
-
   parseInt: (int) =>
     parseInt int
 
@@ -56,8 +42,9 @@ class CommandDispatch
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
 
-    @localHandlers = _.difference CommandDispatch.ALL_JOBS, @outsourceJobs
-    @remoteHandlers = _.intersection CommandDispatch.ALL_JOBS, @outsourceJobs
+    allJobs = _.keys @getJobRegistry()
+    @localHandlers = _.difference allJobs, @outsourceJobs
+    @remoteHandlers = _.intersection allJobs, @outsourceJobs
     @meshbluConfig = new MeshbluConfig().toJSON()
 
   run: =>
@@ -99,6 +86,7 @@ class CommandDispatch
       datastoreFactory:    @getDatastoreFactory()
       meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
+      externalClient:      @getTaskJobManagerClient()
 
     queueWorker.run callback
 
@@ -141,6 +129,10 @@ class CommandDispatch
   getRemoteJobHandlerClient: =>
     @remoteClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
     @remoteClient
+
+  getTaskJobManagerClient: =>
+    @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
+    @taskJobManagerClient
 
   panic: (error) =>
     console.error error.stack
