@@ -72,8 +72,10 @@ class CommandDispatch
     async.until @terminated, @runQueueWorker, @tentativePanic
 
   doSingleRun: (callback) =>
-    @runDispatcher callback
-    @runQueueWorker =>
+    async.parallel [
+      async.apply @runDispatcher
+      async.apply @runQueueWorker
+    ], callback
 
   runDispatcher: (callback) =>
     dispatcher = new Dispatcher

@@ -11,7 +11,7 @@ describe 'GetDevice', ->
   beforeEach (done)->
     @db = mongojs 'localhost:27017/meshblu-core-test'
     @collection = @db.collection 'devices'
-    @collection.drop (error) => done()
+    @collection.drop (error) => done error
 
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
@@ -59,9 +59,10 @@ describe 'GetDevice', ->
           toUuid: @auth.uuid
           jobType: 'GetDevice'
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should give us a device', ->
       device = JSON.parse @response.rawData
@@ -76,9 +77,10 @@ describe 'GetDevice', ->
           toUuid: @auth.uuid
           jobType: 'GetDevice'
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should give us a device', ->
       device = JSON.parse @response.rawData
@@ -96,9 +98,10 @@ describe 'GetDevice', ->
           toUuid: @auth.uuid
           jobType: 'GetDevice'
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it "should tell us we're not allowed", ->
       expect(@response.metadata.code).to.equal 403
@@ -112,9 +115,10 @@ describe 'GetDevice', ->
           toUuid: @discovererDevice.uuid
           jobType: 'GetDevice'
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it "should tell us we're not allowed", ->
       expect(@response.metadata.code).to.equal 403
@@ -128,9 +132,10 @@ describe 'GetDevice', ->
           toUuid: @discovererDevice.uuid
           jobType: 'GetDevice'
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it "should tell us we're not allowed", ->
       expect(@response.metadata.code).to.equal 403
@@ -145,13 +150,13 @@ describe 'GetDevice', ->
           jobType: 'GetDevice'
 
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it "should tell us we're not allowed", ->
       expect(@response.metadata.code).to.equal 403
-
 
   describe "when authDevice tries to discover discovereeDevice as discovererDevice", ->
     beforeEach (done) ->
@@ -162,10 +167,10 @@ describe 'GetDevice', ->
           toUuid: @discovereeDevice.uuid
           jobType: 'GetDevice'
 
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
-
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should give us a device', ->
       device = JSON.parse @response.rawData
@@ -181,9 +186,10 @@ describe 'GetDevice', ->
           jobType: 'GetDevice'
 
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it "should tell us we're not allowed", ->
       expect(@response.metadata.code).to.equal 403

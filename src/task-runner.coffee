@@ -39,7 +39,11 @@ class TaskRunner
     @_doTask @config.start, callback
 
   _doTask: (name, callback) =>
+
+    debug '_dotask initial', name
     taskConfig = @config.tasks[name]
+    debug '@config', JSON.stringify @config.tasks, null, 2
+    debug 'taskConfig', taskConfig
     return callback new Error "Task Definition '#{name}' not found" unless taskConfig?
 
     taskName = taskConfig.task

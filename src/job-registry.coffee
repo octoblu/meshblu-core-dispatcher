@@ -21,7 +21,6 @@ class JobRegistry
     _.each tasksWithFilters, (task, taskName) =>
       job.tasks[taskName] = @newStartTask task
 
-    console.log JSON.stringify job, null, 2
     job
 
   tasksFromFilter: (task) =>

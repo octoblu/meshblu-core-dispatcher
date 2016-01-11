@@ -70,9 +70,10 @@ describe 'SearchDevice', ->
           jobType: 'SearchDevices'
         data:
           type: 'bug'
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) =>  done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should give us a device', ->
       devices = JSON.parse @response.rawData
@@ -88,11 +89,13 @@ describe 'SearchDevice', ->
           jobType: 'SearchDevices'
         data:
           type: 'bug'
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should give us a device', ->
+      expect(@response.metadata.code).to.equal 200
       devices = JSON.parse @response.rawData
       expect(devices.length).to.equal 3
 
@@ -107,9 +110,10 @@ describe 'SearchDevice', ->
         data:
           uuid: @flyDevice.uuid
 
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should not give us a device', ->
       devices = JSON.parse @response.rawData
@@ -117,7 +121,6 @@ describe 'SearchDevice', ->
 
     it 'should tell us we\'re not allowed', ->
       expect(@response.metadata.code).to.equal 403
-
 
   describe "when a device is lookin' for a dinosaur as a fly", ->
     beforeEach (done) ->
@@ -129,9 +132,10 @@ describe 'SearchDevice', ->
           jobType: 'SearchDevices'
         data:
           type: 'dinosaur'
-      @jobManager.do 'request', 'response', job, (@error, @response) => done()
+      @jobManager.do 'request', 'response', job, (error, @response) => done error
 
-      @dispatcher.doSingleRun =>
+      @dispatcher.doSingleRun (error) =>
+        throw error if error?
 
     it 'should give us a device', ->
       devices = JSON.parse @response.rawData

@@ -13,7 +13,6 @@ class CommandJobs
     @parseOptions()
 
     jobRegistry = new JobRegistry
-    console.log JSON.stringify(jobRegistry.toJSON(), null, 2)
 
   panic: (error) =>
     console.error error.stack

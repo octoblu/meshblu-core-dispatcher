@@ -27,8 +27,10 @@ class TestDispatcher
     @jobNames          = _.keys(jobs)
 
   doSingleRun: (callback) =>
-    @runDispatcher callback
-    @runQueueWorker =>
+    async.parallel [
+      async.apply @runDispatcher
+      async.apply @runQueueWorker
+    ], callback
 
   runDispatcher: (callback) =>
     dispatcher = new Dispatcher

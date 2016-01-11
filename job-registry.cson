@@ -88,7 +88,7 @@ GetDevice:
       filter: 'Authenticate'
       on:
         204: 'enforce-discover-whitelists'
-    'enforce-discover-whitelist':
+    'enforce-discover-whitelists':
       filter: 'EnforceDiscoverWhitelists'
       on:
         204: 'get-device'
