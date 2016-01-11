@@ -11,7 +11,7 @@ describe 'GetDevice', ->
   beforeEach (done)->
     @db = mongojs 'meshblu-core-test'
     @collection = @db.collection 'devices'
-    @collection.drop (error) => done error
+    @collection.drop => done()
 
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
