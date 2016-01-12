@@ -26,6 +26,10 @@ DeliverMessage:
     'enforce-send-whitelists':
       filter: 'EnforceSendWhitelists'
       on:
+        204: 'check-forwarded-for'
+    'check-forwarded-for':
+      task: 'meshblu-core-task-check-forwarded-for'
+      on:
         204: 'publish-message'
     'publish-message':
       task: 'meshblu-core-task-publish-message'
@@ -34,12 +38,13 @@ DeliverMessage:
         204: 'publish-subscriptions'
     'publish-subscriptions':
       task: 'meshblu-core-task-publish-subscriptions'
-      cacheNamespace: 'meshblu'
-    #   on:
-    #     204: 'forward-webhooks'
-    # 'forward-webhooks':
-    #   task: 'meshblu-core-task-forward-webhooks'
-    #   cacheNamespace: 'meshblu'
+      cacheNamespace: 'meshblu-token-one-time'
+      datastoreCollection: 'subscriptions'
+      on:
+        204: 'enqueue-webhooks'
+    'enqueue-webhooks':
+      task: 'meshblu-core-task-enqueue-webhooks'
+      datastoreCollection: 'devices'
 
 SubscriptionList:
   start: 'authenticate'

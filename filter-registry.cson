@@ -5,7 +5,16 @@ Authenticate:
       task: 'meshblu-core-task-check-token-black-list'
       cacheNamespace: 'meshblu-token-black-list'
       on:
-        204: 'check-token-cache'
+        204: 'check-token-one-time-cache'
+    'check-token-one-time-cache':
+      task: 'meshblu-core-task-check-token-cache'
+      cacheNamespace: 'meshblu-token-one-time'
+      on:
+        204: 'remove-token-cache'
+        404: 'check-token-cache'
+    'remove-token-cache':
+      task: 'meshblu-core-task-remove-token-cache'
+      cacheNamespace: 'meshblu-token-one-time'
     'check-token-cache':
       task: 'meshblu-core-task-check-token-cache'
       cacheNamespace: 'meshblu-token-cache'
@@ -47,7 +56,7 @@ EnforceConfigureAsWhitelist:
       on:
         204: 'check-configure-as-whitelist'
     'check-configure-as-whitelist':
-      task: 'meshblu-core-task-check-configureas-whitelist'
+      task: 'meshblu-core-task-check-configure-as-whitelist'
       datastoreCollection: 'devices'
 
 EnforceDiscoverWhitelists:
@@ -69,7 +78,7 @@ EnforceDiscoverAsWhitelist:
       on:
         204: 'check-discover-as-whitelist'
     'check-discover-as-whitelist':
-      task: 'meshblu-core-task-check-discoveras-whitelist'
+      task: 'meshblu-core-task-check-discover-as-whitelist'
       datastoreCollection: 'devices'
 
 EnforceSendWhitelists:
@@ -77,11 +86,6 @@ EnforceSendWhitelists:
   tasks:
     'enforce-send-as-whitelist':
       filter: 'EnforceSendAsWhitelist'
-      on:
-        204: 'check-send-as-whitelist'
-    'check-send-as-whitelist':
-      task: 'meshblu-core-task-check-sendas-whitelist'
-      datastoreCollection: 'devices'
       on:
         204: 'check-send-whitelist'
     'check-send-whitelist':
@@ -96,7 +100,7 @@ EnforceSendAsWhitelist:
       on:
         204: 'check-send-as-whitelist'
     'check-send-as-whitelist':
-      task: 'meshblu-core-task-check-sendas-whitelist'
+      task: 'meshblu-core-task-check-send-as-whitelist'
       datastoreCollection: 'devices'
 
 EnforceReceiveWhitelists:
@@ -104,11 +108,6 @@ EnforceReceiveWhitelists:
   tasks:
     'enforce-receive-as-whitelist':
       filter: 'EnforceReceiveAsWhitelist'
-      on:
-        204: 'check-receive-as-whitelist'
-    'check-receive-as-whitelist':
-      task: 'meshblu-core-task-check-receiveas-whitelist'
-      datastoreCollection: 'devices'
       on:
         204: 'check-receive-whitelist'
     'check-receive-whitelist':
@@ -124,5 +123,5 @@ EnforceReceiveAsWhitelist:
       on:
         204: 'check-receive-as-whitelist'
     'check-receive-as-whitelist':
-      task: 'meshblu-core-task-check-receiveas-whitelist'
+      task: 'meshblu-core-task-check-receive-as-whitelist'
       datastoreCollection: 'devices'
