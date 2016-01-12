@@ -41,9 +41,19 @@ DeliverMessage:
       cacheNamespace: 'meshblu-token-one-time'
       datastoreCollection: 'subscriptions'
       on:
+        204: 'publish-deprecated-subscriptions'
+    'publish-deprecated-subscriptions':
+      task: 'meshblu-core-task-publish-deprecated-subscriptions'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-webhooks'
     'enqueue-webhooks':
       task: 'meshblu-core-task-enqueue-webhooks'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-deprecated-webhooks'
+    'enqueue-deprecated-webhooks':
+      task: 'meshblu-core-task-enqueue-deprecated-webhooks'
       datastoreCollection: 'devices'
 
 SubscriptionList:
