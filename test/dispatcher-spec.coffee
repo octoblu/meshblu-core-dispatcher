@@ -77,10 +77,32 @@ describe 'Dispatcher', ->
             expect(JSON.parse(dataStr)).to.deep.equal authenticated: true
             done()
 
-        it 'should log the elapsed time', (done) ->
-          @client.rpop 'job-log', (error, jobStr) =>
-            done error if error?
-            job = JSON.parse jobStr
+        describe 'when the queue worker inserts into the log queue', ->
+          beforeEach (done) ->
+            @client.rpop 'job-log', (error, @dispatcherJobStr) => done error
+
+          beforeEach (done) ->
+            @client.rpop 'job-log', (error, @jobStr) => done error
+
+          it 'should log the dispatcher elapsed and error', ->
+              job = JSON.parse @dispatcherJobStr
+
+              expect(job).to.containSubset
+                index: 'meshblu_dispatcher'
+                type: 'dispatcher'
+
+              expect(job.body).to.containSubset
+                request:
+                  metadata:
+                    jobType: 'Authenticate'
+                    responseId: 'a-response-id'
+                    auth:
+                      uuid: 'a-uuid'
+
+              expect(job.body.elapsedTime).to.be.within 0, 200 #ms
+
+          it 'should log the job elapsed and error', ->
+            job = JSON.parse @jobStr
 
             expect(job).to.containSubset
               index: 'meshblu_job'
@@ -95,12 +117,11 @@ describe 'Dispatcher', ->
                     uuid: 'a-uuid'
               response:
                 metadata:
-                  jobType: 'Authenticate'
-                  responseId: 'a-response-id'
                   code: 200
+                  responseId: 'a-response-id'
+                  jobType: 'Authenticate'
 
             expect(job.body.elapsedTime).to.be.within 0, 5 #ms
-            done()
 
       context 'when the queue is empty', ->
         beforeEach (done) ->
@@ -171,10 +192,32 @@ describe 'Dispatcher', ->
               status: 'Could not rehabilitate server'
             done()
 
-        it 'should log the elapsed and error', (done) ->
-          @client.rpop 'job-log', (error, jobStr) =>
-            done error if error?
-            job = JSON.parse jobStr
+        describe 'when the queue worker inserts into the log queue', ->
+          beforeEach (done) ->
+            @client.rpop 'job-log', (error, @dispatcherJobStr) => done error
+
+          beforeEach (done) ->
+            @client.rpop 'job-log', (error, @jobStr) => done error
+
+          it 'should log the dispatcher elapsed and error', ->
+              job = JSON.parse @dispatcherJobStr
+
+              expect(job).to.containSubset
+                index: 'meshblu_dispatcher'
+                type: 'dispatcher'
+
+              expect(job.body).to.containSubset
+                request:
+                  metadata:
+                    jobType: 'Authenticate'
+                    responseId: 'a-response-id'
+                    auth:
+                      uuid: 'a-uuid'
+
+              expect(job.body.elapsedTime).to.be.within 0, 200 #ms
+
+          it 'should log the job elapsed and error', ->
+            job = JSON.parse @jobStr
 
             expect(job).to.containSubset
               index: 'meshblu_job'
@@ -194,4 +237,3 @@ describe 'Dispatcher', ->
                   status: 'Could not rehabilitate server'
 
             expect(job.body.elapsedTime).to.be.within 0, 5 #ms
-            done()
