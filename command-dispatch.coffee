@@ -30,10 +30,10 @@ class CommandDispatch
       .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', @parseList
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
-      .option '--index-name <name>', 'Index name for Elasticsearch, defaults to "meshblu"', 'meshblu'
+      .option '--index-name <name>', 'Index name for Elasticsearch, defaults to "meshblu"', 'meshblu_job'
       .parse process.argv
 
-    {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
+    {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout,@indexName} = commander
     @redisUri            = process.env.REDIS_URI
     @mongoDBUri          = process.env.MONGODB_URI
     @pepper              = process.env.TOKEN

@@ -2,6 +2,7 @@ _ = require 'lodash'
 http = require 'http'
 debug = require('debug')('meshblu-core-dispatcher:dispatcher')
 async = require 'async'
+moment = require 'moment'
 {EventEmitter2} = require 'eventemitter2'
 JobManager = require 'meshblu-core-job-manager'
 
@@ -11,6 +12,8 @@ class Dispatcher extends EventEmitter2
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
+
+    @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
     @jobManager = new JobManager
       client: @client
@@ -73,7 +76,7 @@ class Dispatcher extends EventEmitter2
     delete requestMetadata.auth?.token
 
     job =
-      index: @indexName
+      index: "#{@indexName}-#{@todaySuffix}"
       type: type
       body:
         elapsedTime: Date.now() - startTime

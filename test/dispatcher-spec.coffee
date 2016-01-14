@@ -2,9 +2,13 @@ Dispatcher = require '../src/dispatcher'
 async = require 'async'
 redis = require 'fakeredis'
 uuid = require 'uuid'
+moment = require 'moment'
 _ = require 'lodash'
 
 describe 'Dispatcher', ->
+  beforeEach ->
+    @todaySuffix = moment.utc().format('YYYY-MM-DD')
+
   describe '-> dispatch', ->
     describe 'when doAuthenticateJob yields a result', ->
       beforeEach ->
@@ -25,6 +29,7 @@ describe 'Dispatcher', ->
           timeout: 1
           jobHandlers:
             Authenticate: @doAuthenticateJob
+          indexName: 'meshblu_job'
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
@@ -88,7 +93,7 @@ describe 'Dispatcher', ->
               job = JSON.parse @dispatcherJobStr
 
               expect(job).to.containSubset
-                index: 'meshblu_dispatcher'
+                index: "meshblu_job-#{@todaySuffix}"
                 type: 'dispatcher'
 
               expect(job.body).to.containSubset
@@ -105,8 +110,8 @@ describe 'Dispatcher', ->
             job = JSON.parse @jobStr
 
             expect(job).to.containSubset
-              index: 'meshblu_job'
-              type: 'dispatcher'
+              index: "meshblu_job-#{@todaySuffix}"
+              type: 'job'
 
             expect(job.body).to.containSubset
               request:
@@ -146,6 +151,7 @@ describe 'Dispatcher', ->
           logJobs: true
           jobHandlers:
             Authenticate: @doAuthenticateJob
+          indexName: 'meshblu_job'
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
@@ -203,7 +209,7 @@ describe 'Dispatcher', ->
               job = JSON.parse @dispatcherJobStr
 
               expect(job).to.containSubset
-                index: 'meshblu_dispatcher'
+                index: "meshblu_job-#{@todaySuffix}"
                 type: 'dispatcher'
 
               expect(job.body).to.containSubset
@@ -220,8 +226,8 @@ describe 'Dispatcher', ->
             job = JSON.parse @jobStr
 
             expect(job).to.containSubset
-              index: 'meshblu_job'
-              type: 'dispatcher'
+              index: "meshblu_job-#{@todaySuffix}"
+              type: 'job'
 
             expect(job.body).to.containSubset
               request:
