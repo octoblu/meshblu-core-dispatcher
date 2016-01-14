@@ -86,8 +86,6 @@ class Dispatcher extends EventEmitter2
           metadata: requestMetadata
         response: _.pick(response, 'metadata')
 
-    debug '_log', job
-
     @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
       console.error 'Dispatcher.log', {error} if error?
       callback error
