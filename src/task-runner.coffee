@@ -1,4 +1,6 @@
+_          = require 'lodash'
 debug      = require('debug')('meshblu-core-dispatcher:task-runner')
+moment     = require 'moment'
 
 class TaskRunner
   constructor: (options={}) ->
@@ -12,7 +14,12 @@ class TaskRunner
       @meshbluConfig
       @forwardEventDevices
       @jobManager
+      @logJobs
+      @indexName
+      @client
     } = options
+    @todaySuffix = moment.utc().format('YYYY-MM-DD')
+
 
   @TASKS =
     'meshblu-core-task-black-list-token'                   : require('meshblu-core-task-black-list-token')
@@ -51,7 +58,7 @@ class TaskRunner
     @_doTask @config.start, callback
 
   _doTask: (name, callback) =>
-
+    startTime = Date.now()
     taskConfig = @config.tasks[name]
     return callback new Error "Task Definition '#{name}' not found" unless taskConfig?
 
@@ -72,7 +79,35 @@ class TaskRunner
 
       codeStr = metadata?.code?.toString()
       nextTask = taskConfig.on?[codeStr]
-      return callback null, response unless nextTask?
-      @_doTask nextTask, callback
+      request = _.cloneDeep @request
+      request.metadata.taskName = taskName
+      @logTask {startTime, request, response}, =>
+        return callback null, response unless nextTask?
+        @_doTask nextTask, callback
+
+  logTask: (options, callback) =>
+    options.type = 'task'
+    @_log options, callback
+
+  _log: ({startTime, request, response, type}, callback) =>
+    return callback() unless @logJobs
+    requestMetadata = _.cloneDeep request.metadata
+    delete requestMetadata.auth?.token
+
+    job =
+      index: "#{@indexName}-#{@todaySuffix}"
+      type: type
+      body:
+        elapsedTime: Date.now() - startTime
+        date: Date.now()
+        request:
+          metadata: requestMetadata
+        response: _.pick(response, 'metadata')
+
+    debug '_log', job
+
+    @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
+      console.error 'Dispatcher.log', {error} if error?
+      callback error
 
 module.exports = TaskRunner

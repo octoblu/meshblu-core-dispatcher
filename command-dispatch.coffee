@@ -27,19 +27,23 @@ class CommandDispatch
       .usage 'Run the dispatch worker. All jobs not outsourced will be run in-process.'
       .option '-n, --namespace <meshblu>', 'request/response queue namespace.', 'meshblu'
       .option '-i, --internal-namespace <meshblu:internal>', 'job handler queue namespace.', 'meshblu:internal'
-      .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', @parseList
+      .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', ''
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
       .option '--index-name <name>', 'Index name for Elasticsearch, defaults to "meshblu_job"', 'meshblu_job'
       .parse process.argv
 
-    {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
+    {@singleRun} = commander
     @redisUri            = process.env.REDIS_URI
     @mongoDBUri          = process.env.MONGODB_URI
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
     @logJobs             = process.env.LOG_JOBS == 'true'
     @indexName           = process.env.INDEX_NAME || commander.indexName
+    @namespace           = process.env.NAMESPACE || commander.namespace
+    @internalNamespace   = process.env.INTERNAL_NAMESPACE || commander.internalNamespace
+    @outsourceJobs       = @parseList(process.env.OUTSOURCE_JOBS || commander.outsourceJobs)
+    @timeout             = @parseInt(process.env.TIMEOUT || commander.timeout)
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -91,6 +95,7 @@ class CommandDispatch
       forwardEventDevices: @forwardEventDevices
       externalClient:      @getTaskJobManagerClient()
       logJobs:             @logJobs
+      indexName:           @indexName
 
     queueWorker.run callback
 
