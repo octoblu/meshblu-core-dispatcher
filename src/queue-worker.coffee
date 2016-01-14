@@ -8,7 +8,7 @@ TaskRunner = require './task-runner'
 class QueueWorker
   constructor: (options={}) ->
     {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig,@forwardEventDevices} = options
-    {@externalClient,@logJobs,@indexName,@workerName} = options
+    {@externalClient,@logJobs,@indexName,@workerName,@privateKey} = options
     {@datastoreFactory,@cacheFactory} = options
     @client = _.bindAll client
     @timeout ?= 30
@@ -47,6 +47,7 @@ class QueueWorker
       @logJobs
       @client
       @workerName
+      @privateKey
     }).run (error, response) =>
       return callback error if error?
       @sendResponse jobType, responseId, response, callback

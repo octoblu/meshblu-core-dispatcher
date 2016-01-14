@@ -18,6 +18,7 @@ class TaskRunner
       @indexName
       @client
       @workerName
+      @privateKey
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -72,7 +73,16 @@ class TaskRunner
     datastore = @datastoreFactory.build taskConfig.datastoreCollection if taskConfig.datastoreCollection?
     cache  = @cacheFactory.build taskConfig.cacheNamespace if taskConfig.cacheNamespace?
 
-    task = new Task {@uuidAliasResolver, datastore, cache, @pepper, @meshbluConfig, @forwardEventDevices, @jobManager}
+    task = new Task {
+      @uuidAliasResolver
+      datastore
+      cache
+      @pepper
+      @meshbluConfig
+      @forwardEventDevices
+      @jobManager
+      @privateKey
+    }
     task.do @request, (error, response) =>
       return callback error if error?
       debug taskName, response
