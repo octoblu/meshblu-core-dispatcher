@@ -7,7 +7,7 @@ JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout,@logJobs} = options
+    {client,@timeout,@logJobs,@indexName} = options
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
@@ -23,7 +23,7 @@ class Dispatcher extends EventEmitter2
       return callback() unless request?
       debug 'dispatch: got a job'
 
-      @logRequest {startTime: startDispatchTime, request, index: 'meshblu_dispatcher'}, =>
+      @logDispatcher {startTime: startDispatchTime, request}, =>
         startTime = Date.now()
 
         @doJob request, (error, response) =>
@@ -37,7 +37,7 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
-    @logRequest {startTime, request, response}, =>
+    @logJob {startTime, request, response}, =>
       @jobManager.createResponse 'response', response, (error, something) =>
         callback error
 
@@ -48,7 +48,7 @@ class Dispatcher extends EventEmitter2
         responseId: request.metadata.responseId
         status: error.message
 
-    @logRequest {startTime, request, response}, =>
+    @logJob {startTime, request, response}, =>
       @jobManager.createResponse 'response', response, callback
 
   doJob: (request, callback) =>
@@ -59,22 +59,27 @@ class Dispatcher extends EventEmitter2
 
     callback new Error "jobType Not Found: #{type}"
 
-  logRequest: ({startTime, index='meshblu_job', request, response}, callback) =>
+  logDispatcher: (options, callback) =>
+    options.type = 'dispatcher'
+    @_log options, callback
+
+  logJob: (options, callback) =>
+    options.type = 'job'
+    @_log options, callback
+
+  _log: ({startTime, request, response, type}, callback) =>
+    return callback() unless @logJobs
     requestMetadata = _.cloneDeep request.metadata
     delete requestMetadata.auth?.token
 
-    body =
-      date: startTime
-      elapsedTime: Date.now() - startTime
-      request:
-        metadata: requestMetadata
-
-    body.response = _.pick response, 'metadata' if response?
-    @_log {index, type: 'dispatcher', body}, callback
-
-  _log: ({index, type, body}, callback) =>
-    return callback() unless @logJobs
-    job = {index, type, body}
+    job =
+      index: @indexName
+      type: type
+      body:
+        elapsedTime: Date.now() - startTime
+        request:
+          metadata: requestMetadata
+        response: _.pick(response, 'metadata')
 
     @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
       console.error 'Dispatcher.log', {error} if error?
