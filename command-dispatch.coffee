@@ -30,16 +30,16 @@ class CommandDispatch
       .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', @parseList
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
-      .option '--index-name <name>', 'Index name for Elasticsearch, defaults to "meshblu"', 'meshblu_job'
+      .option '--index-name <name>', 'Index name for Elasticsearch, defaults to "meshblu_job"', 'meshblu_job'
       .parse process.argv
 
-    {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout,@indexName} = commander
+    {@namespace,@internalNamespace,@outsourceJobs,@singleRun,@timeout} = commander
     @redisUri            = process.env.REDIS_URI
     @mongoDBUri          = process.env.MONGODB_URI
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
     @logJobs             = process.env.LOG_JOBS == 'true'
-    @indexName           = process.env.INDEX_NAME
+    @indexName           = process.env.INDEX_NAME || command.indexName
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
