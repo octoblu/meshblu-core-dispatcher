@@ -7,7 +7,8 @@ TaskRunner = require './task-runner'
 
 class QueueWorker
   constructor: (options={}) ->
-    {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig,@forwardEventDevices,@externalClient} = options
+    {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig,@forwardEventDevices} = options
+    {@externalClient,@logJobs} = options
     {@datastoreFactory,@cacheFactory} = options
     @client = _.bindAll client
     @timeout ?= 30
@@ -32,6 +33,7 @@ class QueueWorker
     config = @jobRegistry[jobType]
     return callback new Error "jobType '#{jobType}' not found" unless config?
 
+    startTime = Date.now()
     new TaskRunner({
       config
       request
@@ -42,9 +44,10 @@ class QueueWorker
       @meshbluConfig
       @forwardEventDevices
       jobManager: new JobManager timeoutSeconds: @timeout, client: @externalClient
-    }).run (error, finishedJob) =>
+    }).run (error, response) =>
       return callback error if error?
-      @sendResponse jobType, responseId, finishedJob, callback
+      @logTask {startTime, request, response}, =>
+        @sendResponse jobType, responseId, response, callback
 
   sendResponse: (jobType, responseId, response, callback) =>
     debug 'sendResponse', jobType, response
@@ -58,5 +61,30 @@ class QueueWorker
     newResponse.metadata.responseId = responseId
 
     @jobManager.createResponse jobType, newResponse, callback
+
+  logTask: (options, callback) =>
+    options.type = 'task'
+    @_log options, callback
+
+  _log: ({startTime, request, response, type}, callback) =>
+    return callback() unless @logJobs
+    requestMetadata = _.cloneDeep request.metadata
+    delete requestMetadata.auth?.token
+
+    job =
+      index: "#{@indexName}-#{@todaySuffix}"
+      type: type
+      body:
+        elapsedTime: Date.now() - startTime
+        date: Date.now()
+        request:
+          metadata: requestMetadata
+        response: _.pick(response, 'metadata')
+
+    debug '_log', job
+
+    @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
+      console.error 'Dispatcher.log', {error} if error?
+      callback error
 
 module.exports = QueueWorker

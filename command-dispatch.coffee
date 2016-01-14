@@ -39,7 +39,7 @@ class CommandDispatch
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
     @logJobs             = process.env.LOG_JOBS == 'true'
-    @indexName           = process.env.INDEX_NAME || command.indexName
+    @indexName           = process.env.INDEX_NAME || commander.indexName
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -90,6 +90,7 @@ class CommandDispatch
       meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
       externalClient:      @getTaskJobManagerClient()
+      logJobs:             @logJobs
 
     queueWorker.run callback
 
