@@ -17,6 +17,7 @@ class TaskRunner
       @logJobs
       @indexName
       @client
+      @workerName
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -79,9 +80,7 @@ class TaskRunner
 
       codeStr = metadata?.code?.toString()
       nextTask = taskConfig.on?[codeStr]
-      request = _.cloneDeep @request
-      request.metadata.taskName = taskName
-      @logTask {startTime, request, response}, =>
+      @logTask {startTime, @request, response, taskName}, =>
         return callback null, response unless nextTask?
         @_doTask nextTask, callback
 
@@ -89,10 +88,12 @@ class TaskRunner
     options.type = 'task'
     @_log options, callback
 
-  _log: ({startTime, request, response, type}, callback) =>
+  _log: ({startTime, request, response, type, taskName}, callback) =>
     return callback() unless @logJobs
     requestMetadata = _.cloneDeep request.metadata
     delete requestMetadata.auth?.token
+    requestMetadata.workerName = @workerName
+    requestMetadata.taskName = taskName
 
     job =
       index: "#{@indexName}-#{@todaySuffix}"

@@ -44,6 +44,7 @@ class CommandDispatch
     @internalNamespace   = process.env.INTERNAL_NAMESPACE || commander.internalNamespace
     @outsourceJobs       = @parseList(process.env.OUTSOURCE_JOBS || commander.outsourceJobs)
     @timeout             = @parseInt(process.env.TIMEOUT || commander.timeout)
+    @workerName          = process.env.WORKER_NAME
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -77,6 +78,7 @@ class CommandDispatch
       jobHandlers: @assembleJobHandlers()
       logJobs: @logJobs
       indexName: @indexName
+      workerName: @workerName
 
     dispatcher.dispatch callback
 
@@ -96,6 +98,7 @@ class CommandDispatch
       externalClient:      @getTaskJobManagerClient()
       logJobs:             @logJobs
       indexName:           @indexName
+      workerName:          @workerName
 
     queueWorker.run callback
 

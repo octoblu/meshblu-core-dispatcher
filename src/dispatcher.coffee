@@ -8,7 +8,7 @@ JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout,@logJobs,@indexName} = options
+    {client,@timeout,@logJobs,@indexName,@workerName} = options
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
@@ -74,6 +74,7 @@ class Dispatcher extends EventEmitter2
     return callback() unless @logJobs
     requestMetadata = _.cloneDeep request.metadata
     delete requestMetadata.auth?.token
+    requestMetadata.workerName = @workerName
 
     job =
       index: "#{@indexName}-#{@todaySuffix}"
