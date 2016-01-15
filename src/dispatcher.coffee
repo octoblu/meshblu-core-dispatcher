@@ -9,6 +9,7 @@ JobManager = require 'meshblu-core-job-manager'
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
     {client,@timeout,@logJobs,@indexName,@workerName} = options
+    @startDispatchTime = Date.now()
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
@@ -20,13 +21,12 @@ class Dispatcher extends EventEmitter2
       timeoutSeconds: @timeout
 
   dispatch: (callback) =>
-    startDispatchTime = Date.now()
     @jobManager.getRequest ['request'], (error, request) =>
       return callback error if error?
       return callback() unless request?
       debug 'dispatch: got a job'
 
-      @logDispatcher {startTime: startDispatchTime, request}, =>
+      @logDispatcher {startTime: @startDispatchTime, request}, =>
         startTime = Date.now()
 
         @doJob request, (error, response) =>
@@ -40,8 +40,8 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
-    @logJob {startTime, request, response}, =>
-      @jobManager.createResponse 'response', response, (error, something) =>
+    @jobManager.createResponse 'response', response, (error) =>
+      @logJob {startTime, request, response}, =>
         callback error
 
   sendError: ({startTime, request, error}, callback) =>

@@ -65,5 +65,4 @@ class QueueWorker
 
     @jobManager.createResponse jobType, newResponse, callback
 
-
 module.exports = QueueWorker

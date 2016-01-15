@@ -3,26 +3,6 @@ debug      = require('debug')('meshblu-core-dispatcher:task-runner')
 moment     = require 'moment'
 
 class TaskRunner
-  constructor: (options={}) ->
-    {
-      @config
-      @request
-      @datastoreFactory
-      @pepper
-      @cacheFactory
-      @uuidAliasResolver
-      @meshbluConfig
-      @forwardEventDevices
-      @jobManager
-      @logJobs
-      @indexName
-      @client
-      @workerName
-      @privateKey
-    } = options
-    @todaySuffix = moment.utc().format('YYYY-MM-DD')
-
-
   @TASKS =
     'meshblu-core-task-black-list-token'                   : require('meshblu-core-task-black-list-token')
     'meshblu-core-task-cache-token'                        : require('meshblu-core-task-cache-token')
@@ -55,6 +35,25 @@ class TaskRunner
     'meshblu-core-task-publish-deprecated-subscriptions'   : require('meshblu-core-task-publish-deprecated-subscriptions')
     'meshblu-core-task-publish-subscriptions'              : require('meshblu-core-task-publish-subscriptions')
     'meshblu-core-task-revoke-token-by-query'              : require('meshblu-core-task-revoke-token-by-query')
+
+  constructor: (options={}) ->
+    {
+      @config
+      @request
+      @datastoreFactory
+      @pepper
+      @cacheFactory
+      @uuidAliasResolver
+      @meshbluConfig
+      @forwardEventDevices
+      @jobManager
+      @logJobs
+      @indexName
+      @client
+      @workerName
+      @privateKey
+    } = options
+    @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
   run: (callback) =>
     @_doTask @config.start, callback
