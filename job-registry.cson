@@ -49,11 +49,13 @@ DeliverMessage:
         204: 'enqueue-webhooks'
     'enqueue-webhooks':
       task: 'meshblu-core-task-enqueue-webhooks'
+      cacheNamespace: 'meshblu-token-one-time'
       datastoreCollection: 'devices'
       on:
         204: 'enqueue-deprecated-webhooks'
     'enqueue-deprecated-webhooks':
       task: 'meshblu-core-task-enqueue-deprecated-webhooks'
+      cacheNamespace: 'meshblu-token-one-time'
       datastoreCollection: 'devices'
 
 SubscriptionList:
