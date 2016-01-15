@@ -104,7 +104,7 @@ describe 'Dispatcher', ->
                     auth:
                       uuid: 'a-uuid'
 
-              expect(job.body.elapsedTime).to.be.within 0, 200 #ms
+              expect(job.body.elapsedTime).to.be.within 0, 300 #ms
 
           it 'should log the job elapsed and error', ->
             job = JSON.parse @jobStr
@@ -126,7 +126,7 @@ describe 'Dispatcher', ->
                   responseId: 'a-response-id'
                   jobType: 'Authenticate'
 
-            expect(job.body.elapsedTime).to.be.within 0, 5 #ms
+            expect(job.body.elapsedTime).to.be.within 0, 300 #ms
 
       context 'when the queue is empty', ->
         beforeEach (done) ->
@@ -220,7 +220,7 @@ describe 'Dispatcher', ->
                     auth:
                       uuid: 'a-uuid'
 
-              expect(job.body.elapsedTime).to.be.within 0, 200 #ms
+              expect(job.body.elapsedTime).to.be.within 0, 300 #ms
 
           it 'should log the job elapsed and error', ->
             job = JSON.parse @jobStr
@@ -242,4 +242,4 @@ describe 'Dispatcher', ->
                   responseId: 'a-response-id'
                   status: 'Could not rehabilitate server'
 
-            expect(job.body.elapsedTime).to.be.within 0, 5 #ms
+            expect(job.body.elapsedTime).to.be.within 0, 100 #ms
