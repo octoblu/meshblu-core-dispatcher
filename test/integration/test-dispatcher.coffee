@@ -52,6 +52,7 @@ class TestDispatcher
       datastoreFactory: @getDatastoreFactory()
       meshbluConfig:    @meshbluConfig
       forwardEventDevices: []
+      externalClient:      @getTaskJobManagerClient()
 
     queueWorker.run callback
 
@@ -93,5 +94,9 @@ class TestDispatcher
   getRemoteJobHandlerClient: =>
     @remoteClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
     @remoteClient
+
+  getTaskJobManagerClient: =>
+    @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
+    @taskJobManagerClient
 
 module.exports = TestDispatcher

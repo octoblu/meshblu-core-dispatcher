@@ -16,7 +16,21 @@ DeliverWebhook:
       cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
 
-DeliverMessage:
+DeliverBroadcastMessage:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-receive-whitelists'
+    'enforce-receive-whitelists':
+      filter: 'EnforceReceiveWhitelists'
+      on:
+        204: 'deliver-message'
+    'deliver-message':
+      filter: 'HandleDeliverMessage'
+
+DeliverReceivedMessage:
   start: 'authenticate'
   tasks:
     'authenticate':
@@ -26,37 +40,23 @@ DeliverMessage:
     'enforce-send-whitelists':
       filter: 'EnforceSendWhitelists'
       on:
-        204: 'check-forwarded-for'
-    'check-forwarded-for':
-      task: 'meshblu-core-task-check-forwarded-for'
+        204: 'deliver-message'
+    'deliver-message':
+      filter: 'HandleDeliverMessage'
+
+DeliverSentMessage:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
       on:
-        204: 'publish-message'
-    'publish-message':
-      task: 'meshblu-core-task-publish-message'
-      cacheNamespace: 'meshblu'
+        204: 'enforce-send-whitelists'
+    'enforce-send-whitelists':
+      filter: 'EnforceSendWhitelists'
       on:
-        204: 'publish-subscriptions'
-    'publish-subscriptions':
-      task: 'meshblu-core-task-publish-subscriptions'
-      cacheNamespace: 'meshblu-token-one-time'
-      datastoreCollection: 'subscriptions'
-      on:
-        204: 'publish-deprecated-subscriptions'
-    'publish-deprecated-subscriptions':
-      task: 'meshblu-core-task-publish-deprecated-subscriptions'
-      datastoreCollection: 'devices'
-      on:
-        204: 'enqueue-webhooks'
-    'enqueue-webhooks':
-      task: 'meshblu-core-task-enqueue-webhooks'
-      cacheNamespace: 'meshblu-token-one-time'
-      datastoreCollection: 'devices'
-      on:
-        204: 'enqueue-deprecated-webhooks'
-    'enqueue-deprecated-webhooks':
-      task: 'meshblu-core-task-enqueue-deprecated-webhooks'
-      cacheNamespace: 'meshblu-token-one-time'
-      datastoreCollection: 'devices'
+        204: 'deliver-message'
+    'deliver-message':
+      filter: 'HandleDeliverMessage'
 
 SubscriptionList:
   start: 'authenticate'
