@@ -18,6 +18,7 @@ describe 'QueueWorker', ->
     @clientId = uuid.v1()
     @cacheClientId = uuid.v1()
     @client = _.bindAll redis.createClient @clientId
+    @externalClient = _.bindAll redis.createClient @clientId
 
     @datastoreFactory =
       build: (collection) =>
@@ -52,6 +53,7 @@ describe 'QueueWorker', ->
           datastoreFactory: @datastoreFactory
           cacheFactory: @cacheFactory
           jobRegistry: jobRegistry
+          externalClient: @externalClient
 
       describe 'when called and job is pushed into queue', ->
         beforeEach (done) ->
@@ -106,6 +108,7 @@ describe 'QueueWorker', ->
         cacheFactory: @cacheFactory
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
+        externalClient: @externalClient
 
     describe 'when called with an CheckToken job', ->
       beforeEach (done) ->
@@ -172,6 +175,7 @@ describe 'QueueWorker', ->
         cacheFactory: @cacheFactory
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
+        externalClient: @externalClient
 
     describe 'when called with an CheckBlackList job', ->
       beforeEach (done) ->
