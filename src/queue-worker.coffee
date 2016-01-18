@@ -18,10 +18,8 @@ class QueueWorker
       aliasServerUri: aliasServerUri
 
   run: (callback=->) =>
-    debug 'running...'
-
     @jobManager.getRequest @jobs, (error, job) =>
-      debug 'got job', error: error, job: job
+      debug 'got job', error: error, job: JSON.stringify(job, null, 2)
       return callback error if error?
       return callback null unless job?
       @runJob job, callback

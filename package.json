@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -74,7 +74,7 @@
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-publish-deprecated-subscriptions": "^1.0.2",
     "meshblu-core-task-publish-message": "^1.0.0",
-    "meshblu-core-task-publish-subscriptions": "^2.0.8",
+    "meshblu-core-task-publish-subscriptions": "^2.0.10",
     "meshblu-core-task-remove-token-cache": "^1.0.0",
     "meshblu-core-task-revoke-token-by-query": "^1.0.5",
     "meshblu-core-task-search-device": "^1.2.1",
