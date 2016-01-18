@@ -78,7 +78,7 @@
     "meshblu-core-task-remove-token-cache": "^1.0.0",
     "meshblu-core-task-revoke-token-by-query": "^1.0.5",
     "meshblu-core-task-search-device": "^1.2.1",
-    "meshblu-core-task-send-message": "^2.0.0",
+    "meshblu-core-task-send-message": "^2.1.1",
     "meshblu-core-task-update-device": "^1.0.3",
     "moment": "^2.11.1",
     "redis": "^2.2.5",
