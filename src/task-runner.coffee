@@ -103,6 +103,8 @@ class TaskRunner
     delete requestMetadata.auth?.token
     requestMetadata.workerName = @workerName
     requestMetadata.taskName = taskName
+    responseMetadata = _.cloneDeep(response?.metadata ? {})
+    responseMetadata.success = (responseMetadata.code > 499)
 
     job =
       index: "#{@indexName}-#{@todaySuffix}"
@@ -112,7 +114,8 @@ class TaskRunner
         date: Date.now()
         request:
           metadata: requestMetadata
-        response: _.pick(response, 'metadata')
+        response:
+          metadata: responseMetadata
 
     @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
       console.error 'Dispatcher.log', {error} if error?

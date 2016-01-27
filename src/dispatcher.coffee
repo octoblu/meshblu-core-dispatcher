@@ -75,6 +75,8 @@ class Dispatcher extends EventEmitter2
     requestMetadata = _.cloneDeep request.metadata
     delete requestMetadata.auth?.token
     requestMetadata.workerName = @workerName
+    responseMetadata = _.cloneDeep(response?.metadata ? {})
+    responseMetadata.success = (responseMetadata.code > 499)
 
     job =
       index: "#{@indexName}-#{@todaySuffix}"
@@ -84,7 +86,8 @@ class Dispatcher extends EventEmitter2
         date: Date.now()
         request:
           metadata: requestMetadata
-        response: _.pick(response, 'metadata')
+        response:
+          metadata: responseMetadata
 
     @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
       console.error 'Dispatcher.log', {error} if error?
