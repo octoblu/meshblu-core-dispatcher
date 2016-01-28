@@ -104,7 +104,7 @@ class TaskRunner
     requestMetadata.workerName = @workerName
     requestMetadata.taskName = taskName
     responseMetadata = _.cloneDeep(response?.metadata ? {})
-    responseMetadata.success = (responseMetadata.code > 499)
+    responseMetadata.success = (responseMetadata.code < 500)
 
     job =
       index: "#{@indexName}-#{@todaySuffix}"
