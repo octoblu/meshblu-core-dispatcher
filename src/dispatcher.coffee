@@ -8,11 +8,14 @@ JobManager = require 'meshblu-core-job-manager'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout,@logJobs,@indexName,@workerName} = options
+    {client,@timeout,@logJobs,@workerName,@jobLogger,@dispatchLogger} = options
     @startDispatchTime = Date.now()
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
+
+    throw new Error('Missing @jobLogger') unless @jobLogger?
+    throw new Error('Missing @dispatchLogger') unless @dispatchLogger?
 
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -62,35 +65,12 @@ class Dispatcher extends EventEmitter2
 
     callback new Error "jobType Not Found: #{type}"
 
-  logDispatcher: (options, callback) =>
-    options.type = 'dispatcher'
-    @_log options, callback
+  logDispatcher: ({startTime, request, response}, callback) =>
+    elapsedTime = Date.now() - startTime
+    @dispatchLogger.log {request, response, elapsedTime}, callback
 
-  logJob: (options, callback) =>
-    options.type = 'job'
-    @_log options, callback
-
-  _log: ({startTime, request, response, type}, callback) =>
-    return callback() unless @logJobs
-    requestMetadata = _.cloneDeep request.metadata
-    delete requestMetadata.auth?.token
-    requestMetadata.workerName = @workerName
-    responseMetadata = _.cloneDeep(response?.metadata ? {})
-    responseMetadata.success = (responseMetadata.code < 500)
-
-    job =
-      index: "#{@indexName}-#{@todaySuffix}"
-      type: type
-      body:
-        elapsedTime: Date.now() - startTime
-        date: Date.now()
-        request:
-          metadata: requestMetadata
-        response:
-          metadata: responseMetadata
-
-    @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
-      console.error 'Dispatcher.log', {error} if error?
-      callback error
+  logJob: ({startTime, request, response}, callback) =>
+    elapsedTime = Date.now() - startTime
+    @jobLogger.log {request, response, elapsedTime}, callback
 
 module.exports = Dispatcher

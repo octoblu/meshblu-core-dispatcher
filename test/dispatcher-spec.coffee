@@ -4,15 +4,28 @@ redis = require 'fakeredis'
 uuid = require 'uuid'
 moment = require 'moment'
 _ = require 'lodash'
+JobLogger = require 'job-logger'
 
 describe 'Dispatcher', ->
   beforeEach ->
+    @redisKey = uuid.v1()
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
+
+    @dispatchLogger = new JobLogger
+      client: redis.createClient @redisKey
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:dispatch'
+      jobLogQueue: 'sample-rate:0.01'
+
+    @jobLogger = new JobLogger
+      client: redis.createClient @redisKey
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:job'
+      jobLogQueue: 'sample-rate:0.01'
 
   describe '-> dispatch', ->
     describe 'when doAuthenticateJob yields a result', ->
       beforeEach ->
-        @clientId = uuid.v1()
         response =
           metadata:
             jobType: 'Authenticate'
@@ -21,15 +34,16 @@ describe 'Dispatcher', ->
           rawData: '{ "authenticated": true }'
 
         @doAuthenticateJob = sinon.stub().yields null, response
-        @client = _.bindAll redis.createClient @clientId
+        @client = _.bindAll redis.createClient @redisKey
 
         @sut = new Dispatcher
-          client: redis.createClient(@clientId)
+          client: redis.createClient(@redisKey)
           logJobs: true
           timeout: 1
           jobHandlers:
             Authenticate: @doAuthenticateJob
-          indexName: 'meshblu_job'
+          dispatchLogger: @dispatchLogger
+          jobLogger: @jobLogger
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
@@ -84,19 +98,18 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'job-log', (error, @dispatcherJobStr) => done error
+            @client.rpop 'sample-rate:0.01', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
-            @client.rpop 'job-log', (error, @jobStr) => done error
+            @client.rpop 'sample-rate:0.01', (error, @jobStr) => done error
 
           it 'should log the dispatcher elapsed and error', ->
-              job = JSON.parse @dispatcherJobStr
+            job = JSON.parse @dispatcherJobStr
 
-              expect(job).to.containSubset
-                index: "meshblu_job-#{@todaySuffix}"
-                type: 'dispatcher'
-
-              expect(job.body).to.containSubset
+            expect(job).to.containSubset
+              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              type: 'meshblu-core-dispatcher:dispatch'
+              body:
                 request:
                   metadata:
                     jobType: 'Authenticate'
@@ -104,14 +117,14 @@ describe 'Dispatcher', ->
                     auth:
                       uuid: 'a-uuid'
 
-              expect(job.body.elapsedTime).to.be.within 0, 300 #ms
+            expect(job.body.elapsedTime).to.be.within 0, 300 #ms
 
           it 'should log the job elapsed and error', ->
             job = JSON.parse @jobStr
 
             expect(job).to.containSubset
-              index: "meshblu_job-#{@todaySuffix}"
-              type: 'job'
+              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              type: 'meshblu-core-dispatcher:job'
 
             expect(job.body).to.containSubset
               request:
@@ -142,7 +155,7 @@ describe 'Dispatcher', ->
     describe 'when doAuthenticateJob yields an error', ->
       beforeEach ->
         @doAuthenticateJob = sinon.stub().yields new Error('Could not rehabilitate server')
-        @client = _.bindAll redis.createClient uuid.v1()
+        @client = _.bindAll redis.createClient @redisKey
         @elasticsearch = create: sinon.stub().yields(null)
 
         @sut = new Dispatcher
@@ -151,7 +164,8 @@ describe 'Dispatcher', ->
           logJobs: true
           jobHandlers:
             Authenticate: @doAuthenticateJob
-          indexName: 'meshblu_job'
+          dispatchLogger: @dispatchLogger
+          jobLogger: @jobLogger
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
@@ -200,19 +214,18 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'job-log', (error, @dispatcherJobStr) => done error
+            @client.rpop 'sample-rate:0.01', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
-            @client.rpop 'job-log', (error, @jobStr) => done error
+            @client.rpop 'sample-rate:0.01', (error, @jobStr) => done error
 
           it 'should log the dispatcher elapsed and error', ->
-              job = JSON.parse @dispatcherJobStr
+            job = JSON.parse @dispatcherJobStr
 
-              expect(job).to.containSubset
-                index: "meshblu_job-#{@todaySuffix}"
-                type: 'dispatcher'
-
-              expect(job.body).to.containSubset
+            expect(job).to.containSubset
+              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              type: 'meshblu-core-dispatcher:dispatch'
+              body:
                 request:
                   metadata:
                     jobType: 'Authenticate'
@@ -220,14 +233,14 @@ describe 'Dispatcher', ->
                     auth:
                       uuid: 'a-uuid'
 
-              expect(job.body.elapsedTime).to.be.within 0, 300 #ms
+            expect(job.body.elapsedTime).to.be.within 0, 300 #ms
 
           it 'should log the job elapsed and error', ->
             job = JSON.parse @jobStr
 
             expect(job).to.containSubset
-              index: "meshblu_job-#{@todaySuffix}"
-              type: 'job'
+              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              type: 'meshblu-core-dispatcher:job'
 
             expect(job.body).to.containSubset
               request:

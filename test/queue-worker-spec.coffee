@@ -8,6 +8,8 @@ mongojs     = require 'mongojs'
 Cache       = require 'meshblu-core-cache'
 Datastore   = require 'meshblu-core-datastore'
 RedisNS     = require '@octoblu/redis-ns'
+moment      = require 'moment'
+JobLogger   = require 'job-logger'
 
 describe 'QueueWorker', ->
   beforeEach ->
@@ -15,10 +17,10 @@ describe 'QueueWorker', ->
     mongoPort = process.env.MONGODB_PORT ? '27017'
     @database = mongojs "#{mongoHost}:#{mongoPort}/meshblu-core-test"
 
-    @clientId = uuid.v1()
+    @redisKey = uuid.v1()
     @cacheClientId = uuid.v1()
-    @client = _.bindAll redis.createClient @clientId
-    @externalClient = _.bindAll redis.createClient @clientId
+    @client = _.bindAll redis.createClient @redisKey
+    @externalClient = _.bindAll redis.createClient @redisKey
 
     @datastoreFactory =
       build: (collection) =>
@@ -33,6 +35,15 @@ describe 'QueueWorker', ->
         new Cache
           client: client
 
+  beforeEach ->
+    @todaySuffix = moment.utc().format('YYYY-MM-DD')
+
+    @taskLogger = new JobLogger
+      client: redis.createClient @redisKey
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:task'
+      jobLogQueue: 'sample-rate:0.01'
+
   describe '->run', ->
     describe 'when using client', ->
       beforeEach ->
@@ -45,7 +56,7 @@ describe 'QueueWorker', ->
                 datastoreCollection: 'devices'
 
         @sut = new QueueWorker
-          client: _.bindAll redis.createClient @clientId
+          client: _.bindAll redis.createClient @redisKey
           localHandlers: ['CheckToken']
           remoteHandlers: []
           tasks: @tasks
@@ -54,6 +65,7 @@ describe 'QueueWorker', ->
           cacheFactory: @cacheFactory
           jobRegistry: jobRegistry
           externalClient: @externalClient
+          taskLogger: @taskLogger
 
       describe 'when called and job is pushed into queue', ->
         beforeEach (done) ->
@@ -99,7 +111,7 @@ describe 'QueueWorker', ->
               datastoreCollection: 'theDevices'
 
       @sut = new QueueWorker
-        client: _.bindAll redis.createClient @clientId
+        client: _.bindAll redis.createClient @redisKey
         localHandlers: ['CheckToken']
         remoteHandlers: []
         tasks: @tasks
@@ -109,6 +121,7 @@ describe 'QueueWorker', ->
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
         externalClient: @externalClient
+        taskLogger: @taskLogger
 
     describe 'when called with an CheckToken job', ->
       beforeEach (done) ->
@@ -142,7 +155,7 @@ describe 'QueueWorker', ->
           return done error if error?
 
           jobManager = new JobManager
-            client: _.bindAll redis.createClient @clientId
+            client: _.bindAll redis.createClient @redisKey
             timeoutSeconds: 1
 
           jobManager.getResponse 'CheckToken', 'tragic-flaw', (error, @response) =>
@@ -167,7 +180,7 @@ describe 'QueueWorker', ->
               cacheNamespace: 'black-list'
 
       @sut = new QueueWorker
-        client: _.bindAll redis.createClient @clientId
+        client: _.bindAll redis.createClient @redisKey
         localHandlers: ['CheckBlackList']
         remoteHandlers: []
         tasks: @tasks
@@ -176,6 +189,7 @@ describe 'QueueWorker', ->
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
         externalClient: @externalClient
+        taskLogger: @taskLogger
 
     describe 'when called with an CheckBlackList job', ->
       beforeEach (done) ->
@@ -196,7 +210,7 @@ describe 'QueueWorker', ->
         @sut.runJob request, (error) =>
           return done error if error?
           jobManager = new JobManager
-            client: _.bindAll redis.createClient @clientId
+            client: _.bindAll redis.createClient @redisKey
             timeoutSeconds: 1
           jobManager.getResponse 'CheckBlackList', 'roasted', (error, @response) =>
             done error

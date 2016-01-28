@@ -13,6 +13,7 @@ Dispatcher       = require './src/dispatcher'
 JobAssembler     = require './src/job-assembler'
 JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
+JobLogger        = require 'job-logger'
 
 class CommandDispatch
   parseInt: (int) =>
@@ -30,7 +31,6 @@ class CommandDispatch
       .option '-o, --outsource-jobs <job1,job2>', 'jobs for external workers', ''
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
-      .option '--index-name <name>', 'Index name for Elasticsearch, defaults to "meshblu_job"', 'meshblu_job'
       .parse process.argv
 
     {@singleRun} = commander
@@ -39,12 +39,15 @@ class CommandDispatch
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
     @logJobs             = process.env.LOG_JOBS == 'true'
-    @indexName           = process.env.INDEX_NAME || commander.indexName
     @namespace           = process.env.NAMESPACE || commander.namespace
     @internalNamespace   = process.env.INTERNAL_NAMESPACE || commander.internalNamespace
     @outsourceJobs       = @parseList(process.env.OUTSOURCE_JOBS || commander.outsourceJobs)
     @timeout             = @parseInt(process.env.TIMEOUT || commander.timeout)
     @workerName          = process.env.WORKER_NAME
+    @jobLogRedisUri      = process.env.JOB_LOG_REDIS_URI
+
+    unless @jobLogRedisUri
+      throw new Error 'Missing JOB_LOG_REDIS_URI'
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -77,8 +80,9 @@ class CommandDispatch
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
       logJobs: @logJobs
-      indexName: @indexName
       workerName: @workerName
+      dispatchLogger: @getDispatchLogger()
+      jobLogger: @getJobLogger()
 
     dispatcher.dispatch callback
 
@@ -97,8 +101,8 @@ class CommandDispatch
       forwardEventDevices: @forwardEventDevices
       externalClient:      @getTaskJobManagerClient()
       logJobs:             @logJobs
-      indexName:           @indexName
       workerName:          @workerName
+      taskLogger:          @getTaskLogger()
 
     queueWorker.run callback
 
@@ -126,9 +130,29 @@ class CommandDispatch
     @dispatchClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
     @dispatchClient
 
+  getDispatchLogger: =>
+    @dispatchLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:dispatch'
+      jobLogQueue: 'sample-rate:0.01'
+    @dispatchLogger
+
+  getJobLogger: =>
+    @jobLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:job'
+      jobLogQueue: 'sample-rate:0.01'
+    @jobLogger
+
   getJobRegistry: =>
     @jobRegistry ?= (new JobRegistry).toJSON()
     @jobRegistry
+
+  getLogClient: =>
+    @logClient ?= redis.createClient @redisUri
+    @logClient
 
   getLocalJobHandlerClient: =>
     @localJobHandlerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
@@ -145,6 +169,14 @@ class CommandDispatch
   getTaskJobManagerClient: =>
     @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
     @taskJobManagerClient
+
+  getTaskLogger: =>
+    @taskLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:task'
+      jobLogQueue: 'sample-rate:0.01'
+    @taskLogger
 
   panic: (error) =>
     console.error error.stack

@@ -48,10 +48,10 @@ class TaskRunner
       @forwardEventDevices
       @jobManager
       @logJobs
-      @indexName
       @client
       @workerName
       @privateKey
+      @taskLogger
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -93,32 +93,11 @@ class TaskRunner
         return callback null, response unless nextTask?
         @_doTask nextTask, callback
 
-  logTask: (options, callback) =>
-    options.type = 'task'
-    @_log options, callback
-
-  _log: ({startTime, request, response, type, taskName}, callback) =>
-    return callback() unless @logJobs
-    requestMetadata = _.cloneDeep request.metadata
-    delete requestMetadata.auth?.token
-    requestMetadata.workerName = @workerName
-    requestMetadata.taskName = taskName
-    responseMetadata = _.cloneDeep(response?.metadata ? {})
-    responseMetadata.success = (responseMetadata.code < 500)
-
-    job =
-      index: "#{@indexName}-#{@todaySuffix}"
-      type: type
-      body:
-        elapsedTime: Date.now() - startTime
-        date: Date.now()
-        request:
-          metadata: requestMetadata
-        response:
-          metadata: responseMetadata
-
-    @client.lpush 'job-log', JSON.stringify(job), (error, result) =>
-      console.error 'Dispatcher.log', {error} if error?
-      callback error
+  logTask: ({startTime, request, response, taskName}, callback) =>
+    request = _.cloneDeep request
+    request.metadata.workerName = @workerName
+    request.metadata.taskName = taskName
+    elapsedTime = Date.now() - startTime
+    @taskLogger.log {request, response, elapsedTime}, callback
 
 module.exports = TaskRunner

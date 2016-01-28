@@ -13,6 +13,7 @@ Dispatcher       = require '../../src/dispatcher'
 JobAssembler     = require '../../src/job-assembler'
 JobRegistry      = require '../../src/job-registry'
 QueueWorker      = require '../../src/queue-worker'
+JobLogger        = require 'job-logger'
 
 class TestDispatcher
   constructor: ->
@@ -37,6 +38,8 @@ class TestDispatcher
       client:  @getDispatchClient()
       timeout:   15
       jobHandlers: @assembleJobHandlers()
+      jobLogger: @getJobLogger()
+      dispatchLogger: @getDispatchLogger()
 
     dispatcher.dispatch callback
 
@@ -53,6 +56,7 @@ class TestDispatcher
       meshbluConfig:    @meshbluConfig
       forwardEventDevices: []
       externalClient:      @getTaskJobManagerClient()
+      taskLogger:       @getTaskLogger()
 
     queueWorker.run callback
 
@@ -75,9 +79,29 @@ class TestDispatcher
     @datastoreFactory ?= new DatastoreFactory database: mongojs @mongoDBUri
     @datastoreFactory
 
+  getDispatchLogger: =>
+    @dispatchLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:dispatch'
+      jobLogQueue: 'sample-rate:0.01'
+    @dispatchLogger
+
+  getJobLogger: =>
+    @jobLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:job'
+      jobLogQueue: 'sample-rate:0.01'
+    @jobLogger
+
   getJobRegistry: =>
     @jobRegistry ?= (new JobRegistry).toJSON()
     @jobRegistry
+
+  getLogClient: =>
+    @logClient ?= redis.createClient @redisUri
+    @logClient
 
   getDispatchClient: =>
     @dispatchClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
@@ -98,5 +122,13 @@ class TestDispatcher
   getTaskJobManagerClient: =>
     @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
     @taskJobManagerClient
+
+  getTaskLogger: =>
+    @taskLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher'
+      type: 'meshblu-core-dispatcher:task'
+      jobLogQueue: 'sample-rate:0.01'
+    @taskLogger
 
 module.exports = TestDispatcher
