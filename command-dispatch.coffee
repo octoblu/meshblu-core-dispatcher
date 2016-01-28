@@ -151,7 +151,7 @@ class CommandDispatch
     @jobRegistry
 
   getLogClient: =>
-    @logClient ?= redis.createClient @redisUri
+    @logClient ?= redis.createClient @jobLogRedisUri
     @logClient
 
   getLocalJobHandlerClient: =>
