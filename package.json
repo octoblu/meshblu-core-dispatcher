@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {

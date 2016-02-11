@@ -45,9 +45,13 @@ class CommandDispatch
     @timeout             = @parseInt(process.env.TIMEOUT || commander.timeout)
     @workerName          = process.env.WORKER_NAME
     @jobLogRedisUri      = process.env.JOB_LOG_REDIS_URI
+    @jobLogQueue         = process.env.JOB_LOG_QUEUE
 
-    unless @jobLogRedisUri
+    unless @jobLogRedisUri?
       throw new Error 'Missing JOB_LOG_REDIS_URI'
+
+    unless @jobLogQueue?
+      throw new Error 'Missing JOB_LOG_QUEUE'
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -135,7 +139,7 @@ class CommandDispatch
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: @jobLogQueue
     @dispatchLogger
 
   getJobLogger: =>
@@ -143,7 +147,7 @@ class CommandDispatch
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: @jobLogQueue
     @jobLogger
 
   getJobRegistry: =>
@@ -175,7 +179,7 @@ class CommandDispatch
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: @jobLogQueue
     @taskLogger
 
   panic: (error) =>
