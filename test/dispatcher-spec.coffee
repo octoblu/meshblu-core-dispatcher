@@ -15,13 +15,15 @@ describe 'Dispatcher', ->
       client: redis.createClient @redisKey
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
 
     @jobLogger = new JobLogger
       client: redis.createClient @redisKey
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
 
   describe '-> dispatch', ->
     describe 'when doAuthenticateJob yields a result', ->
@@ -98,10 +100,10 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'sample-rate:0.01', (error, @dispatcherJobStr) => done error
+            @client.rpop 'some-queue', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
-            @client.rpop 'sample-rate:0.01', (error, @jobStr) => done error
+            @client.rpop 'some-queue', (error, @jobStr) => done error
 
           it 'should log the dispatcher elapsed and error', ->
             job = JSON.parse @dispatcherJobStr
@@ -214,10 +216,10 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'sample-rate:0.01', (error, @dispatcherJobStr) => done error
+            @client.rpop 'some-queue', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
-            @client.rpop 'sample-rate:0.01', (error, @jobStr) => done error
+            @client.rpop 'some-queue', (error, @jobStr) => done error
 
           it 'should log the dispatcher elapsed and error', ->
             job = JSON.parse @dispatcherJobStr

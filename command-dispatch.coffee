@@ -46,12 +46,18 @@ class CommandDispatch
     @workerName          = process.env.WORKER_NAME
     @jobLogRedisUri      = process.env.JOB_LOG_REDIS_URI
     @jobLogQueue         = process.env.JOB_LOG_QUEUE
+    @jobLogSampleRate    = process.env.JOB_LOG_SAMPLE_RATE
 
     unless @jobLogRedisUri?
       throw new Error 'Missing JOB_LOG_REDIS_URI'
 
     unless @jobLogQueue?
       throw new Error 'Missing JOB_LOG_QUEUE'
+
+    unless @jobLogSampleRate?
+      throw new Error 'Missing JOB_LOG_SAMPLE_RATE'
+
+    @jobLogSampleRate = parseFloat @jobLogSampleRate
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -140,6 +146,7 @@ class CommandDispatch
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
     @dispatchLogger
 
   getJobLogger: =>

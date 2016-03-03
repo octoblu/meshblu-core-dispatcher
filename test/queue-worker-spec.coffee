@@ -42,7 +42,8 @@ describe 'QueueWorker', ->
       client: redis.createClient @redisKey
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
 
   describe '->run', ->
     describe 'when using client', ->

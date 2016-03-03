@@ -84,7 +84,8 @@ class TestDispatcher
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
     @dispatchLogger
 
   getJobLogger: =>
@@ -92,7 +93,8 @@ class TestDispatcher
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
     @jobLogger
 
   getJobRegistry: =>
@@ -128,7 +130,8 @@ class TestDispatcher
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
-      jobLogQueue: 'sample-rate:0.01'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
     @taskLogger
 
 module.exports = TestDispatcher
