@@ -114,7 +114,6 @@ EnforceReceiveWhitelists:
       task: 'meshblu-core-task-check-receive-whitelist'
       datastoreCollection: 'devices'
 
-
 EnforceReceiveAsWhitelist:
   start: 'check-protect-your-as'
   tasks:
