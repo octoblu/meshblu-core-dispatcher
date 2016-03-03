@@ -155,6 +155,7 @@ class CommandDispatch
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
     @jobLogger
 
   getJobRegistry: =>
@@ -187,6 +188,7 @@ class CommandDispatch
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
     @taskLogger
 
   panic: (error) =>
