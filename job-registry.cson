@@ -30,6 +30,20 @@ DeliverBroadcastMessage:
     'deliver-message':
       filter: 'HandleDeliverMessage'
 
+DeliverConfigMessage:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-discover-whitelists'
+    'enforce-discover-whitelists':
+      filter: 'EnforceDiscoverWhitelists'
+      on:
+        204: 'deliver-message'
+    'deliver-message':
+      filter: 'HandleDeliverMessage'
+
 DeliverReceivedMessage:
   start: 'authenticate'
   tasks:
@@ -157,7 +171,7 @@ UpdateDevice:
       task: 'meshblu-core-task-update-device'
       datastoreCollection: 'devices'
       on:
-        678: 'clear-device-in-cache'
-    'clear-device-in-cache':
-      task: 'meshblu-core-task-clear-device-in-cache'
+        204: 'remove-device-cache'
+    'remove-device-cache':
+      task: 'meshblu-core-task-remove-device-cache'
       cacheNamespace: 'cache:device'
