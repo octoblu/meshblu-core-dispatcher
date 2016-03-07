@@ -1,6 +1,7 @@
 _          = require 'lodash'
 debug      = require('debug')('meshblu-core-dispatcher:task-runner')
 moment     = require 'moment'
+TaskJobManager = require './task-job-manager'
 
 class TaskRunner
   @TASKS =
@@ -57,6 +58,12 @@ class TaskRunner
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
+    @buildTaskJobManager()
+
+  buildTaskJobManager: =>
+    cache  = @cacheFactory.build 'meshblu-token-one-time'
+    @taskJobManager = new TaskJobManager {@jobManager, cache, @pepper, @uuidAliasResolver}
+
   run: (callback) =>
     @_doTask @config.start, callback
 
@@ -81,7 +88,7 @@ class TaskRunner
       @pepper
       @meshbluConfig
       @forwardEventDevices
-      @jobManager
+      jobManager: @taskJobManager
       @privateKey
     }
     task.do @request, (error, response) =>
