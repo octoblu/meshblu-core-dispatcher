@@ -78,7 +78,8 @@ describe 'SendMessage: broadcast', ->
           token: 'leak'
 
         {rawData, metadata} = @request
-        expect(metadata.auth).to.deep.equal auth
+        expect(metadata.auth.uuid).to.deep.equal auth.uuid
+        expect(metadata.auth.token).to.exist
         expect(metadata.jobType).to.equal 'DeliverSentMessage'
         expect(metadata.messageType).to.equal 'sent'
         expect(metadata.toUuid).to.equal 'sender-uuid'
@@ -96,7 +97,8 @@ describe 'SendMessage: broadcast', ->
             token: 'leak'
 
           {rawData, metadata} = @request
-          expect(metadata.auth).to.deep.equal auth
+          expect(metadata.auth.uuid).to.deep.equal auth.uuid
+          expect(metadata.auth.token).to.exist
           expect(metadata.jobType).to.equal 'DeliverBroadcastMessage'
           expect(metadata.messageType).to.equal 'broadcast'
           expect(metadata.toUuid).to.equal 'sender-uuid'

@@ -15,7 +15,7 @@ class TaskJobManager
     metadata         = _.cloneDeep options.metadata
     options.metadata = metadata
     {auth}           = metadata
-    
+
     @tokenManager.generateAndStoreTokenInCache {uuid: auth.uuid, expireSeconds: @expireSeconds}, (error, token) =>
       return callback error if error?
       auth.token = token
