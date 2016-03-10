@@ -1,2 +1,22 @@
 # Roadmap for Meshblu Core Dispatcher
-
+- [ ] Messaging
+  - [ ] GET /subscribe/:uuid
+  - [ ] GET /subscribe/:uuid/broadcast
+  - [ ] GET /subscribe/:uuid/received
+  - [ ] GET /subscribe/:uuid/sent
+  - [ ] GET /subscribe
+- [ ] GET /status
+- [ ] GET /publickey
+- [ ] POST /devices (register)
+- [ ] DELETE /devices/:uuid (unregister)
+- [ ] GET /devices (search)
+- [ ] GET /v2/devices (search)
+- [ ] POST /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (create subscription)
+- [ ] DELETE /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (delete subscription)
+- [ ] GET /devices/:uuid/publickey
+- [ ] POST /claimdevice/:uuid
+- [ ] POST /devices/:uuid/token (create token)
+- [ ] POST /devices/:uuid/tokens (create tokens)
+- [ ] DELETE /devices/:uuid/tokens/:token
+- [ ] GET /mydevices
+- [ ] GET /authenticate/:uuid
