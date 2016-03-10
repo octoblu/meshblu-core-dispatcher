@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -64,7 +64,7 @@
     "meshblu-core-task-check-token": "^1.0.6",
     "meshblu-core-task-check-token-black-list": "^1.0.3",
     "meshblu-core-task-check-token-cache": "^1.0.8",
-    "meshblu-core-task-check-update-device-is-valid": "^1.1.0",
+    "meshblu-core-task-check-update-device-is-valid": "^1.2.0",
     "meshblu-core-task-deliver-webhook": "^1.0.7",
     "meshblu-core-task-enqueue-deprecated-webhooks": "^1.1.0",
     "meshblu-core-task-enqueue-webhooks": "^1.1.0",
