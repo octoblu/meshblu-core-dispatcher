@@ -8,7 +8,7 @@
   - [ ] GET /subscribe/:uuid/sent
   - [ ] GET /subscribe
 - [ ] GET /status
-- [ ] GET /publickey
+- [x] GET /publickey
 - [ ] POST /devices (register)
 - [ ] DELETE /devices/:uuid (unregister)
 - [ ] GET /devices (search)

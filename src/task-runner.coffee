@@ -26,6 +26,7 @@ class TaskRunner
     'meshblu-core-task-forbidden'                          : require('meshblu-core-task-forbidden')
     'meshblu-core-task-get-device'                         : require('meshblu-core-task-get-device')
     'meshblu-core-task-get-device-public-key'              : require('meshblu-core-task-get-device-public-key')
+    'meshblu-core-task-get-global-public-key'              : require('meshblu-core-task-get-global-public-key')
     'meshblu-core-task-search-device'                      : require('meshblu-core-task-search-device')
     'meshblu-core-task-get-subscriptions'                  : require('meshblu-core-task-get-subscriptions')
     'meshblu-core-task-no-content'                         : require('meshblu-core-task-no-content')
@@ -54,6 +55,7 @@ class TaskRunner
       @client
       @workerName
       @privateKey
+      @publicKey
       @taskLogger
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
@@ -90,6 +92,7 @@ class TaskRunner
       @forwardEventDevices
       jobManager: @taskJobManager
       @privateKey
+      @publicKey
     }
     task.do @request, (error, response) =>
       return callback error if error?

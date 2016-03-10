@@ -8,7 +8,7 @@ TaskRunner = require './task-runner'
 class QueueWorker
   constructor: (options={}) ->
     {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig,@forwardEventDevices} = options
-    {@externalClient,@logJobs,@workerName,@privateKey} = options
+    {@externalClient,@logJobs,@workerName,@privateKey,@publicKey} = options
     {@datastoreFactory,@cacheFactory,@taskLogger} = options
     @client = _.bindAll client
     @timeout ?= 30
@@ -29,6 +29,7 @@ class QueueWorker
     {jobType,responseId} = request.metadata
 
     config = @jobRegistry[jobType]
+    console.error _.keys @jobRegistry
     return callback new Error "jobType '#{jobType}' not found" unless config?
 
     new TaskRunner({
@@ -45,6 +46,7 @@ class QueueWorker
       @client
       @workerName
       @privateKey
+      @publicKey
       @taskLogger
     }).run (error, response) =>
       return callback error if error?

@@ -62,6 +62,9 @@ class CommandDispatch
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
 
+    if process.env.PUBLIC_KEY_BASE64? && process.env.PUBLIC_KEY_BASE64 != ''
+      @publicKey = new Buffer(process.env.PUBLIC_KEY_BASE64, 'base64').toString('utf8')
+
     allJobs = _.keys @getJobRegistry()
     @localHandlers = _.difference allJobs, @outsourceJobs
     @remoteHandlers = _.intersection allJobs, @outsourceJobs
@@ -101,6 +104,7 @@ class CommandDispatch
       aliasServerUri:      @aliasServerUri
       pepper:              @pepper
       privateKey:          @privateKey
+      publicKey:           @publicKey
       timeout:             @timeout
       jobs:                @localHandlers
       client:              @getLocalQueueWorkerClient()

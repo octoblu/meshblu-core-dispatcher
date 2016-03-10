@@ -16,7 +16,7 @@ QueueWorker      = require '../../src/queue-worker'
 JobLogger        = require 'job-logger'
 
 class TestDispatcher
-  constructor: ->
+  constructor: ({@publicKey} = {})->
     jobs = cson.parseFile( path.join __dirname, '../../job-registry.cson')
 
     @redisUri          = process.env.REDIS_URI
@@ -48,6 +48,7 @@ class TestDispatcher
       aliasServerUri:   undefined
       timeout:          15
       pepper:           @pepper
+      publicKey:        @publicKey
       jobs:             @jobNames
       client:           @getLocalQueueWorkerClient()
       jobRegistry:      @getJobRegistry()
