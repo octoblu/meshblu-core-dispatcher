@@ -1,4 +1,6 @@
 # Roadmap for Meshblu Core Dispatcher
+
+### Endpoints that need to be replaced
 - [ ] Messaging
   - [ ] GET /subscribe/:uuid
   - [ ] GET /subscribe/:uuid/broadcast
@@ -20,3 +22,10 @@
 - [ ] DELETE /devices/:uuid/tokens/:token
 - [ ] GET /mydevices
 - [ ] GET /authenticate/:uuid
+
+### Protocol Adapters that need to be built
+ - [ ] MQTT
+ - [ ] CoAP
+ - [ ] XMPP
+ - [ ] SNMP
+ - [ ] SMTP
