@@ -15,7 +15,7 @@
 - [ ] GET /v2/devices (search)
 - [ ] POST /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (create subscription)
 - [ ] DELETE /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (delete subscription)
-- [ ] GET /devices/:uuid/publickey
+- [x] GET /devices/:uuid/publickey
 - [ ] POST /claimdevice/:uuid
 - [ ] POST /devices/:uuid/token (create token)
 - [ ] POST /devices/:uuid/tokens (create tokens)
