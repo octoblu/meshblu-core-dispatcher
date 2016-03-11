@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,6 @@
     "meshblu-http": "^3.6.0",
     "mocha": "^2.3.3",
     "mocha-istanbul": "^0.2.0",
-    "mongojs": "^1.4.1",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "uuid": "^2.0.1"
@@ -49,7 +48,7 @@
     "meshblu-core-cache": "^1.5.0",
     "meshblu-core-datastore": "^2.4.0",
     "meshblu-core-job-manager": "^3.1.8",
-    "meshblu-core-manager-token": "^4.0.2",
+    "meshblu-core-manager-token": "^4.0.3",
     "meshblu-core-task-black-list-token": "^1.0.0",
     "meshblu-core-task-cache-token": "^1.0.4",
     "meshblu-core-task-check-configure-as-whitelist": "^1.0.2",
@@ -86,6 +85,7 @@
     "meshblu-core-task-send-message": "^2.1.1",
     "meshblu-core-task-update-device": "^1.1.2",
     "moment": "^2.11.1",
+    "mongojs": "^2.3.0",
     "redis": "^2.2.5",
     "request": "^2.67.0"
   },

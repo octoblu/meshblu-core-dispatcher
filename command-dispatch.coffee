@@ -48,14 +48,23 @@ class CommandDispatch
     @jobLogQueue         = process.env.JOB_LOG_QUEUE
     @jobLogSampleRate    = process.env.JOB_LOG_SAMPLE_RATE
 
+    unless @redisUri?
+      throw new Error 'Missing mandatory parameter: REDIS_URI'
+
+    unless @mongoDBUri?
+      throw new Error 'Missing mandatory parameter: MONGODB_URI'
+
     unless @jobLogRedisUri?
-      throw new Error 'Missing JOB_LOG_REDIS_URI'
+      throw new Error 'Missing mandatory parameter: JOB_LOG_REDIS_URI'
 
     unless @jobLogQueue?
-      throw new Error 'Missing JOB_LOG_QUEUE'
+      throw new Error 'Missing mandatory parameter: JOB_LOG_QUEUE'
 
     unless @jobLogSampleRate?
-      throw new Error 'Missing JOB_LOG_SAMPLE_RATE'
+      throw new Error 'Missing mandatory parameter: JOB_LOG_SAMPLE_RATE'
+
+    unless @pepper?
+      throw new Error 'Missing mandatory parameter: TOKEN'
 
     @jobLogSampleRate = parseFloat @jobLogSampleRate
 

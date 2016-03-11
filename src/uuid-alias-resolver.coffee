@@ -22,7 +22,7 @@ class UUIDAliasResolver
       return callback error if error?
       callback null, aliases
 
-  _cacheAlias: (alias, uuid, callback) =>    
+  _cacheAlias: (alias, uuid, callback) =>
     @cache.setex "alias:#{alias}", 30, JSON.stringify(uuid: uuid), callback
 
   _getCache: (alias, callback) =>
