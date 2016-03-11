@@ -29,7 +29,7 @@ class QueueWorker
     {jobType,responseId} = request.metadata
 
     config = @jobRegistry[jobType]
-    console.error _.keys @jobRegistry
+    debug 'jobRegistry keys' _.keys @jobRegistry
     return callback new Error "jobType '#{jobType}' not found" unless config?
 
     new TaskRunner({
