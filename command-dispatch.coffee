@@ -13,6 +13,8 @@ Dispatcher       = require './src/dispatcher'
 JobAssembler     = require './src/job-assembler'
 JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
+ArrayLogger      = require './src/array-logger'
+DeviceLogger     = require './src/device-logger'
 JobLogger        = require 'job-logger'
 
 class CommandDispatch
@@ -47,6 +49,9 @@ class CommandDispatch
     @jobLogRedisUri      = process.env.JOB_LOG_REDIS_URI
     @jobLogQueue         = process.env.JOB_LOG_QUEUE
     @jobLogSampleRate    = process.env.JOB_LOG_SAMPLE_RATE
+    @deviceLogQueue      = process.env.DEVICE_LOG_QUEUE
+    @deviceLogSampleRate = process.env.DEVICE_LOG_SAMPLE_RATE
+    @deviceLogUuid       = process.env.DEVICE_LOG_UUID
 
     unless @redisUri?
       throw new Error 'Missing mandatory parameter: REDIS_URI'
@@ -67,6 +72,7 @@ class CommandDispatch
       throw new Error 'Missing mandatory parameter: TOKEN'
 
     @jobLogSampleRate = parseFloat @jobLogSampleRate
+    @deviceLogSampleRate = parseFloat @deviceLogSampleRate
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -196,13 +202,25 @@ class CommandDispatch
     @taskJobManagerClient
 
   getTaskLogger: =>
-    @taskLogger ?= new JobLogger
+    return @taskLogger if @taskLogger?
+
+    jobLogger = new JobLogger
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @jobLogQueue
       sampleRate: @jobLogSampleRate
-    @taskLogger
+
+    deviceLogger = new DeviceLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher-device'
+      type: 'meshblu-core-dispatcher:task'
+      jobLogQueue: @deviceLogQueue
+      sampleRate: @deviceLogSampleRate
+      filterUuid: @deviceLogUuid
+
+    @taskLogger = new ArrayLogger loggers: [jobLogger, deviceLogger]
+    return @taskLogger
 
   panic: (error) =>
     console.error error.stack
