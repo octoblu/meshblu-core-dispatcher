@@ -4,6 +4,12 @@ Authenticate:
     'authenticate':
       filter: 'Authenticate'
 
+GetStatus:
+  start: 'get-status'
+  tasks:
+    'get-status':
+      task: 'meshblu-core-task-get-status'
+
 DeliverWebhook:
   start: 'authenticate'
   tasks:
