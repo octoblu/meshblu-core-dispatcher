@@ -92,9 +92,12 @@ class CommandDispatch
       console.error 'exiting...'
       @terminate = true
 
-    return @doSingleRun @tentativePanic if @singleRun
-    async.until @terminated, @runDispatcher, @tentativePanic
-    async.until @terminated, @runQueueWorker, @tentativePanic
+    @database = mongojs @mongoDBUri
+    @database.on 'error', @panic
+
+    return @doSingleRun @closeAndTentativePanic if @singleRun
+    async.until @terminated, @runDispatcher, @closeAndTentativePanic
+    async.until @terminated, @runQueueWorker, @closeAndTentativePanic
 
   doSingleRun: (callback) =>
     async.parallel [
@@ -152,7 +155,7 @@ class CommandDispatch
     @cacheFactory
 
   getDatastoreFactory: =>
-    @datastoreFactory ?= new DatastoreFactory database: mongojs @mongoDBUri
+    @datastoreFactory ?= new DatastoreFactory database: @database
     @datastoreFactory
 
   getDispatchClient: =>
@@ -225,6 +228,13 @@ class CommandDispatch
   panic: (error) =>
     console.error error.stack
     process.exit 1
+
+  closeAndTentativePanic: (error) =>
+    return @tentativePanic error unless @database?
+    @database.close (dbError) =>
+      debug 'closed database'
+      return @tentativePanic error if error?
+      @tentativePanic dbError
 
   tentativePanic: (error) =>
     return process.exit(0) unless error?

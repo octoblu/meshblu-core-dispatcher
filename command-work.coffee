@@ -56,17 +56,20 @@ class CommandWork
       datastoreFactory:    @getDatastoreFactory()
       meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
+        
+    @database = mongojs @mongoDBUri
+    @database.on 'error', @panic
 
-    return queueWorker.run @tentativePanic if @singleRun
+    return queueWorker.run @closeAndTentativePanic if @singleRun
 
-    async.until @terminated, queueWorker.run, @tentativePanic
+    async.until @terminated, queueWorker.run, @closeAndTentativePanic
 
   getCacheFactory: =>
     @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
     @cacheFactory
 
   getDatastoreFactory: =>
-    @datastoreFactory ?= new DatastoreFactory database: mongojs @mongoDBUri
+    @datastoreFactory ?= new DatastoreFactory database: @database
     @datastoreFactory
 
   getJobRegistry: =>
@@ -80,6 +83,13 @@ class CommandWork
   panic: (error) =>
     console.error error.stack
     process.exit 1
+
+  closeAndTentativePanic: (error) =>
+    return @tentativePanic error unless @database?
+    @database.close (dbError) =>
+      debug 'closed database'
+      return @tentativePanic error if error?
+      @tentativePanic dbError
 
   tentativePanic: (error) =>
     return process.exit(0) unless error?
