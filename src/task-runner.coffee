@@ -24,6 +24,7 @@ class TaskRunner
     'meshblu-core-task-enqueue-deprecated-webhooks'        : require('meshblu-core-task-enqueue-deprecated-webhooks')
     'meshblu-core-task-enqueue-webhooks'                   : require('meshblu-core-task-enqueue-webhooks')
     'meshblu-core-task-forbidden'                          : require('meshblu-core-task-forbidden')
+    'meshblu-core-task-get-authorized-subscription-types'  : require('meshblu-core-task-get-authorized-subscription-types')
     'meshblu-core-task-get-device'                         : require('meshblu-core-task-get-device')
     'meshblu-core-task-get-device-public-key'              : require('meshblu-core-task-get-device-public-key')
     'meshblu-core-task-get-global-public-key'              : require('meshblu-core-task-get-global-public-key')

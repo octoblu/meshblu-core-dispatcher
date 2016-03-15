@@ -78,6 +78,20 @@ DeliverSentMessage:
     'deliver-message':
       filter: 'HandleDeliverMessage'
 
+GetAuthorizedSubscriptionTypes:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-receive-as-whitelist'
+    'enforce-receive-as-whitelist':
+      filter: 'EnforceReceiveAsWhitelist'
+      on:
+        204: 'get-authorized-subscription-types'
+    'get-authorized-subscription-types':
+      task: 'meshblu-core-task-get-authorized-subscription-types'
+
 GetDevice:
   start: 'authenticate'
   tasks:
