@@ -10,6 +10,14 @@ GetStatus:
     'get-status':
       task: 'meshblu-core-task-get-status'
 
+RegisterDevice:
+  start: 'register-device'
+  tasks:
+    'register-device':
+      task: 'meshblu-core-task-register-device'
+      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'devices'
+
 DeliverWebhook:
   start: 'authenticate'
   tasks:

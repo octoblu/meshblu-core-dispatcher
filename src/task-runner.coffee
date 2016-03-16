@@ -34,6 +34,7 @@ class TaskRunner
     'meshblu-core-task-no-content'                         : require('meshblu-core-task-no-content')
     'meshblu-core-task-remove-device-cache'                : require('meshblu-core-task-remove-device-cache')
     'meshblu-core-task-remove-token-cache'                 : require('meshblu-core-task-remove-token-cache')
+    'meshblu-core-task-register-device'                    : require('meshblu-core-task-register-device')
     'meshblu-core-task-search-device'                      : require('meshblu-core-task-search-device')
     'meshblu-core-task-send-message'                       : require('meshblu-core-task-send-message')
     'meshblu-core-task-update-device'                      : require('meshblu-core-task-update-device')
