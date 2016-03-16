@@ -1,13 +1,13 @@
 # Roadmap for Meshblu Core Dispatcher
 
 ### Endpoints that need to be replaced
-- [ ] Messaging
-  - [ ] GET /subscribe/:uuid
-  - [ ] GET /subscribe/:uuid/broadcast
-  - [ ] GET /subscribe/:uuid/received
-  - [ ] GET /subscribe/:uuid/sent
-  - [ ] GET /subscribe
-- [ ] GET /status
+- [x] Messaging
+  - [x] GET /subscribe/:uuid
+  - [x] GET /subscribe/:uuid/broadcast
+  - [x] GET /subscribe/:uuid/received
+  - [x] GET /subscribe/:uuid/sent
+  - [x] GET /subscribe
+- [x] GET /status
 - [x] GET /publickey
 - [ ] POST /devices (register)
 - [ ] DELETE /devices/:uuid (unregister)
