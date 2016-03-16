@@ -28,3 +28,6 @@ node_modules
 meshblu.json
 meshblu-core-dispatcher.dockerfile-dev
 npmrc-dev
+
+# dev files
+.*-dev
