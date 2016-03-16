@@ -9,7 +9,7 @@
   - [x] GET /subscribe
 - [x] GET /status
 - [x] GET /publickey
-- [ ] POST /devices (register)
+- [x] POST /devices (register)
 - [ ] DELETE /devices/:uuid (unregister)
 - [ ] GET /devices (search)
 - [ ] GET /v2/devices (search)
