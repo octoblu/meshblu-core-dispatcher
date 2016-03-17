@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "3.9.0",
+  "version": "3.9.1",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -85,7 +85,7 @@
     "meshblu-core-task-remove-device-cache": "^1.0.1",
     "meshblu-core-task-remove-token-cache": "^1.0.0",
     "meshblu-core-task-revoke-token-by-query": "^1.0.5",
-    "meshblu-core-task-search-device": "^1.2.1",
+    "meshblu-core-task-search-device": "^1.2.4",
     "meshblu-core-task-send-message": "^2.1.1",
     "meshblu-core-task-unregister-device": "^1.0.1",
     "meshblu-core-task-update-device": "^1.1.2",
