@@ -220,6 +220,6 @@ describe 'QueueWorker', ->
         expect(@response).to.deep.equal
           metadata:
             responseId: 'roasted'
-            code: 403
-            status: 'Forbidden'
+            code: 401
+            status: 'Unauthorized'
           rawData: 'null'

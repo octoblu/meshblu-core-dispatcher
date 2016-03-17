@@ -106,7 +106,7 @@ describe 'GetDevice', ->
         throw error if error?
 
     it "should tell us we're not allowed", ->
-      expect(@response.metadata.code).to.equal 403
+      expect(@response.metadata.code).to.equal 401
 
   describe "when auth tries to discover discovererDevice but is only in it's discoverAsWhitelist", ->
     beforeEach (done) ->
