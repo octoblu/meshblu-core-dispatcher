@@ -21,7 +21,7 @@
 - [ ] POST /devices/:uuid/tokens (create session tokens)
 - [ ] DELETE /devices/:uuid/tokens/:token (revoke root token)
 - [x] GET /mydevices (devices with owner)
-- [ ] GET /authenticate/:uuid (authenticate uuid)
+- [x] GET /authenticate/:uuid (authenticate uuid)
 
 ### Protocol Adapters that need to be built
  - [ ] MQTT
