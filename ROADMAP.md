@@ -15,13 +15,13 @@
 - [x] GET /v2/devices (search)
 - [ ] POST /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (create subscription)
 - [ ] DELETE /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (delete subscription)
-- [x] GET /devices/:uuid/publickey
-- [ ] POST /claimdevice/:uuid
-- [ ] POST /devices/:uuid/token (create token)
-- [ ] POST /devices/:uuid/tokens (create tokens)
-- [ ] DELETE /devices/:uuid/tokens/:token
-- [x] GET /mydevices
-- [ ] GET /authenticate/:uuid
+- [x] GET /devices/:uuid/publickey (device publicKey)
+- [x] POST /claimdevice/:uuid (claim device)
+- [ ] POST /devices/:uuid/token (reset root token)
+- [ ] POST /devices/:uuid/tokens (create session tokens)
+- [ ] DELETE /devices/:uuid/tokens/:token (revoke root token)
+- [x] GET /mydevices (devices with owner)
+- [ ] GET /authenticate/:uuid (authenticate uuid)
 
 ### Protocol Adapters that need to be built
  - [ ] MQTT
