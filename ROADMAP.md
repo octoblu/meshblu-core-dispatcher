@@ -11,8 +11,8 @@
 - [x] GET /publickey
 - [x] POST /devices (register)
 - [x] DELETE /devices/:uuid (unregister)
-- [ ] GET /devices (search) - Peter
-- [ ] GET /v2/devices (search)
+- [x] GET /devices (search)
+- [x] GET /v2/devices (search)
 - [ ] POST /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (create subscription)
 - [ ] DELETE /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (delete subscription)
 - [x] GET /devices/:uuid/publickey
@@ -20,7 +20,7 @@
 - [ ] POST /devices/:uuid/token (create token)
 - [ ] POST /devices/:uuid/tokens (create tokens)
 - [ ] DELETE /devices/:uuid/tokens/:token
-- [ ] GET /mydevices
+- [x] GET /mydevices
 - [ ] GET /authenticate/:uuid
 
 ### Protocol Adapters that need to be built
