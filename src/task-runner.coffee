@@ -38,6 +38,7 @@ class TaskRunner
     'meshblu-core-task-search-device'                      : require('meshblu-core-task-search-device')
     'meshblu-core-task-send-message'                       : require('meshblu-core-task-send-message')
     'meshblu-core-task-update-device'                      : require('meshblu-core-task-update-device')
+    'meshblu-core-task-unregister-device'                  : require('meshblu-core-task-unregister-device')
     'meshblu-core-task-protect-your-as'                    : require('meshblu-core-task-protect-your-as')
     'meshblu-core-task-publish-message'                    : require('meshblu-core-task-publish-message')
     'meshblu-core-task-publish-deprecated-subscriptions'   : require('meshblu-core-task-publish-deprecated-subscriptions')

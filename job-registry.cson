@@ -4,20 +4,6 @@ Authenticate:
     'authenticate':
       filter: 'Authenticate'
 
-GetStatus:
-  start: 'get-status'
-  tasks:
-    'get-status':
-      task: 'meshblu-core-task-get-status'
-
-RegisterDevice:
-  start: 'register-device'
-  tasks:
-    'register-device':
-      task: 'meshblu-core-task-register-device'
-      cacheNamespace: 'meshblu-token-cache'
-      datastoreCollection: 'devices'
-
 DeliverWebhook:
   start: 'authenticate'
   tasks:
@@ -135,6 +121,12 @@ GetGlobalPublicKey:
     'get-global-public-key':
       task: 'meshblu-core-task-get-global-public-key'
 
+GetStatus:
+  start: 'get-status'
+  tasks:
+    'get-status':
+      task: 'meshblu-core-task-get-status'
+
 SearchDevices:
   start: 'authenticate'
   tasks:
@@ -177,6 +169,14 @@ SubscriptionList:
       task: 'meshblu-core-task-get-subscriptions'
       datastoreCollection: 'subscriptions'
 
+RegisterDevice:
+  start: 'register-device'
+  tasks:
+    'register-device':
+      task: 'meshblu-core-task-register-device'
+      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'devices'
+
 RevokeTokenByQuery:
   start: 'authenticate'
   tasks:
@@ -192,6 +192,26 @@ RevokeTokenByQuery:
       task: 'meshblu-core-task-revoke-token-by-query'
       cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
+
+UnregisterDevice:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
+      on:
+        204: 'unregister-device'
+    'unregister-device':
+      task: 'meshblu-core-task-unregister-device'
+      datastoreCollection: 'devices'
+      on:
+        204: 'remove-device-cache'
+    'remove-device-cache':
+      task: 'meshblu-core-task-remove-device-cache'
+      cacheNamespace: 'cache:device'
 
 UpdateDevice:
   start: 'authenticate'
