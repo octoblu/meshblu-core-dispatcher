@@ -11,7 +11,7 @@
 - [x] GET /publickey
 - [x] POST /devices (register)
 - [x] DELETE /devices/:uuid (unregister)
-- [ ] GET /devices (search)
+- [ ] GET /devices (search) - Peter
 - [ ] GET /v2/devices (search)
 - [ ] POST /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (create subscription)
 - [ ] DELETE /v2/devices/:subscriberUuid/subscriptions/:emitterUuid/:type (delete subscription)
