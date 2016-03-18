@@ -19,7 +19,7 @@
 - [x] POST /claimdevice/:uuid (claim device)
 - [ ] POST /devices/:uuid/token (reset root token)
 - [ ] POST /devices/:uuid/tokens (create session tokens)
-- [ ] DELETE /devices/:uuid/tokens/:token (revoke root token)
+- [ ] DELETE /devices/:uuid/tokens/:token (revoke session token)
 - [x] GET /mydevices (devices with owner)
 - [x] GET /authenticate/:uuid (authenticate uuid)
 
