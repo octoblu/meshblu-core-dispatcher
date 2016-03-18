@@ -4,6 +4,21 @@ Authenticate:
     'authenticate':
       filter: 'Authenticate'
 
+CreateSubscription:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
+      on:
+        204: 'create-subscription'
+    'create-subscription':
+      task: 'meshblu-core-task-create-subscription'
+      datastoreCollection: 'subscriptions'
+
 DeliverWebhook:
   start: 'authenticate'
   tasks:
@@ -176,6 +191,21 @@ RegisterDevice:
       task: 'meshblu-core-task-register-device'
       cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
+
+RemoveSubscription:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
+      on:
+        204: 'remove-subscription'
+    'remove-subscription':
+      task: 'meshblu-core-task-remove-subscription'
+      datastoreCollection: 'subscriptions'
 
 RevokeTokenByQuery:
   start: 'authenticate'
