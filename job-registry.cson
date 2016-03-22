@@ -239,6 +239,22 @@ ResetToken:
       cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
 
+RevokeSessionToken:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
+      on:
+        204: 'revoke-session-token'
+    'revoke-session-token':
+      task: 'meshblu-core-task-revoke-session-token'
+      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'devices'
+
 RevokeTokenByQuery:
   start: 'authenticate'
   tasks:
