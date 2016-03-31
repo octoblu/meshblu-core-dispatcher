@@ -1,4 +1,4 @@
-_ = require 'lodash'
+_     = require 'lodash'
 async = require 'async'
 
 class ArrayLogger

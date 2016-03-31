@@ -1,8 +1,8 @@
-_          = require 'lodash'
-debug      = require('debug')('meshblu-core-dispatcher:task-runner')
-moment     = require 'moment'
+_              = require 'lodash'
+debug          = require('debug')('meshblu-core-dispatcher:task-runner')
+moment         = require 'moment'
 TaskJobManager = require './task-job-manager'
-{Tasks} = require('./task-loader')
+{Tasks}        = require('./task-loader')
 
 class TaskRunner
   @TASKS = Tasks

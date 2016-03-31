@@ -1,9 +1,9 @@
-_          = require 'lodash'
-async      = require 'async'
+_                 = require 'lodash'
+async             = require 'async'
 UuidAliasResolver = require 'meshblu-uuid-alias-resolver'
-JobManager = require 'meshblu-core-job-manager'
-debug      = require('debug')('meshblu-core-dispatcher:queue-worker')
-TaskRunner = require './task-runner'
+JobManager        = require 'meshblu-core-job-manager'
+debug             = require('debug')('meshblu-core-dispatcher:queue-worker')
+TaskRunner        = require './task-runner'
 
 class QueueWorker
   constructor: (options={}) ->

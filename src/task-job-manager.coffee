@@ -1,4 +1,4 @@
-_ = require 'lodash'
+_            = require 'lodash'
 TokenManager = require 'meshblu-core-manager-token'
 
 class TaskJobManager

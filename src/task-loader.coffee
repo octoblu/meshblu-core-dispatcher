@@ -1,4 +1,4 @@
-_ = require 'lodash'
+_           = require 'lodash'
 packageJSON = require('../package.json')
 
 loadTasks = =>
