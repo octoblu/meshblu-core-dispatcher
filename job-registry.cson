@@ -146,7 +146,7 @@ DeliverSubscriptionMessageReceived:
       on:
         204: 'publish-message-received':
     'publish-message-received':
-      task: 'meshblu-core-task-publish-message'
+      task: 'meshblu-core-task-publish-message-received'
       on:
         204: 'enqueue-jobs-for-subscriptions-message-received'
     'enqueue-jobs-for-subscriptions-message-received':
