@@ -81,17 +81,6 @@ EnforceDiscoverAsWhitelist:
       task: 'meshblu-core-task-check-discover-as-whitelist'
       datastoreCollection: 'devices'
 
-EnforceMessageSentWhitelists:
-  start: 'enforce-message-sent-as-whitelist'
-  tasks:
-    'enforce-message-sent-as-whitelist':
-      filter: 'EnforceMessageAsWhitelists'
-      on:
-        204: 'check-whitelist-message-sent'
-    'check-whitelist-message-sent':
-      task: 'meshblu-core-task-check-whitelist-message-sent'
-      datastoreCollection: 'devices'
-
 EnforceMessageAsWhitelists:
   start: 'check-message-as-protect-your-as'
   tasks:
@@ -101,6 +90,17 @@ EnforceMessageAsWhitelists:
         204: 'check-whitelist-message-as'
     'check-whitelist-message-as':
       task: 'meshblu-core-task-check-whitelist-message-as'
+      datastoreCollection: 'devices'
+
+EnforceMessageSentWhitelists:
+  start: 'enforce-message-sent-as-whitelist'
+  tasks:
+    'enforce-message-sent-as-whitelist':
+      filter: 'EnforceMessageAsWhitelists'
+      on:
+        204: 'check-whitelist-message-sent'
+    'check-whitelist-message-sent':
+      task: 'meshblu-core-task-check-whitelist-message-sent'
       datastoreCollection: 'devices'
 
 EnforceSendWhitelists:
