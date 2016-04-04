@@ -134,6 +134,25 @@ DeliverSubscriptionMessageSent:
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
       datastoreCollection: 'subscriptions'
 
+DeliverSubscriptionMessageReceived:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-message-received-whitelists'
+    'enforce-message-received-whitelists':
+      filter: 'EnforceMessageReceivedWhitelists'
+      on:
+        204: 'publish-message-received':
+    'publish-message-received':
+      task: 'meshblu-core-task-publish-message'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-message-received'
+    'enqueue-jobs-for-subscriptions-message-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
+      datastoreCollection: 'subscriptions'
+
 GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
   tasks:
