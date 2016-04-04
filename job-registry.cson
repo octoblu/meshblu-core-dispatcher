@@ -98,6 +98,7 @@ DeliverMessageSent:
         204: 'enqueue-jobs-for-subscriptions-message-sent'
     'enqueue-jobs-for-subscriptions-message-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
+      datastoreCollection: 'subscriptions'
 
 DeliverSentMessage:
   start: 'authenticate'

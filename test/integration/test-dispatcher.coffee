@@ -4,14 +4,16 @@ cson             = require 'cson'
 async            = require 'async'
 MeshbluConfig    = require 'meshblu-config'
 mongojs          = require 'mongojs'
-redis            = require 'redis'
+redis            = require 'ioredis'
 RedisNS          = require '@octoblu/redis-ns'
 debug            = require('debug')('meshblu-core-dispatcher:test-dispatcher')
+JobManager       = require 'meshblu-core-job-manager'
 CacheFactory     = require '../../src/cache-factory'
 DatastoreFactory = require '../../src/datastore-factory'
 Dispatcher       = require '../../src/dispatcher'
 JobAssembler     = require '../../src/job-assembler'
 JobRegistry      = require '../../src/job-registry'
+
 QueueWorker      = require '../../src/queue-worker'
 JobLogger        = require 'job-logger'
 
@@ -107,24 +109,19 @@ class TestDispatcher
     @logClient
 
   getDispatchClient: =>
-    @dispatchClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
-    @dispatchClient
+    _.bindAll new RedisNS @namespace, redis.createClient @redisUri
 
   getLocalJobHandlerClient: =>
-    @localJobHandlerClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
-    @localJobHandlerClient
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
 
   getLocalQueueWorkerClient: =>
-    @localQueueWorkerClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
-    @localQueueWorkerClient
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
 
   getRemoteJobHandlerClient: =>
-    @remoteClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
-    @remoteClient
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
 
   getTaskJobManagerClient: =>
-    @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
-    @taskJobManagerClient
+    _.bindAll new RedisNS @namespace, redis.createClient @redisUri
 
   getTaskLogger: =>
     @taskLogger ?= new JobLogger
@@ -134,5 +131,39 @@ class TestDispatcher
       jobLogQueue: 'some-queue'
       sampleRate: 1.00
     @taskLogger
+
+  generateJobs: (job, callback) =>
+    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+
+    jobManager = new JobManager
+      client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+      timeoutSeconds: 1
+
+    jobManager.do 'request', 'response', job, (error, response) =>
+      return callback (error) if error?
+
+      @getGeneratedJobs {jobManager, client}, (error, newJobs) =>
+        return callback error if error?
+        return callback null, [] if _.isEmpty newJobs
+
+        async.map newJobs, @generateJobs, (error, newerJobs) =>
+          return callback(error) if error?
+          newerJobs = _.flatten newerJobs
+          allJobs = newJobs.concat newerJobs
+          callback null, allJobs
+
+    @doSingleRun (error) => throw error if error?
+
+  getGeneratedJobs: ({client, jobManager}, callback) =>
+    requests = []
+    client.llen 'request:queue', (error, responseCount) =>
+      getJob = (number, callback) =>
+        jobManager.getRequest ['request'], (error, request) =>
+          requests.push request
+          callback()
+
+      async.times responseCount, getJob, (error) =>
+        return callback error if error?
+        callback null, requests
 
 module.exports = TestDispatcher
