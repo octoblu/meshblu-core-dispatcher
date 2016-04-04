@@ -4,7 +4,7 @@ cson             = require 'cson'
 async            = require 'async'
 MeshbluConfig    = require 'meshblu-config'
 mongojs          = require 'mongojs'
-redis            = require 'redis'
+redis            = require 'ioredis'
 RedisNS          = require '@octoblu/redis-ns'
 debug            = require('debug')('meshblu-core-dispatcher:test-dispatcher')
 CacheFactory     = require '../../src/cache-factory'
@@ -107,24 +107,19 @@ class TestDispatcher
     @logClient
 
   getDispatchClient: =>
-    @dispatchClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
-    @dispatchClient
+    _.bindAll new RedisNS @namespace, redis.createClient @redisUri
 
   getLocalJobHandlerClient: =>
-    @localJobHandlerClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
-    @localJobHandlerClient
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
 
   getLocalQueueWorkerClient: =>
-    @localQueueWorkerClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
-    @localQueueWorkerClient
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
 
   getRemoteJobHandlerClient: =>
-    @remoteClient ?= _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
-    @remoteClient
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
 
   getTaskJobManagerClient: =>
-    @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
-    @taskJobManagerClient
+    _.bindAll new RedisNS @namespace, redis.createClient @redisUri
 
   getTaskLogger: =>
     @taskLogger ?= new JobLogger

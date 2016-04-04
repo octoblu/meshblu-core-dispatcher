@@ -1,6 +1,6 @@
 _              = require 'lodash'
 mongojs        = require 'mongojs'
-redis          = require 'redis'
+redis          = require 'ioredis'
 bcrypt         = require 'bcrypt'
 RedisNS        = require '@octoblu/redis-ns'
 
