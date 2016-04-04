@@ -9,24 +9,25 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 
 describe 'SendMessage2: broadcast+send', ->
-  before (done)->
+  beforeEach (done)->
     @db = mongojs 'meshblu-core-test'
     @collection = @db.collection 'devices'
     @collection.drop => done()
 
-  before ->
+  beforeEach ->
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
 
-    client = new RedisNS 'meshblu-test', redis.createClient(redisUri)
+    @client = new RedisNS 'meshblu-test', redis.createClient(redisUri)
 
-    client.del 'request:queue'
+    @client.del 'request:queue'
+
 
     @jobManager = new JobManager
-      client: client
+      client: new RedisNS 'meshblu-test', redis.createClient(redisUri)
       timeoutSeconds: 1
 
-  before (done) ->
+  beforeEach (done) ->
     @auth =
       uuid: 'sender-uuid'
       token: 'leak'
@@ -39,7 +40,7 @@ describe 'SendMessage2: broadcast+send', ->
 
     @collection.insert @senderDevice, done
 
-  before (done) ->
+  beforeEach (done) ->
     @receiverDevice =
       uuid: 'receiver-uuid'
       type: 'device:receiver'
@@ -47,7 +48,7 @@ describe 'SendMessage2: broadcast+send', ->
     @collection.insert @receiverDevice, done
 
   describe "sending to a device with sendWhitelist", ->
-    before (done) ->
+    beforeEach (done) ->
       job =
         metadata:
           auth: @auth
@@ -70,7 +71,7 @@ describe 'SendMessage2: broadcast+send', ->
 
     describe 'JobManager gets DeliverBroadcastSent job', (done) ->
       @timeout 5000
-      before (done) ->
+      beforeEach (done) ->
         @requests = []
         @request = null
 
@@ -81,6 +82,15 @@ describe 'SendMessage2: broadcast+send', ->
             callback()
 
         async.doUntil getJob, (=> @request == null), done
+
+      beforeEach (done) ->
+        job = _.find @requests, metadata: jobType: 'DeliverMessageSent'
+        @jobManager.do 'request', 'response', job, (error, @response) =>
+          console.log {@response}
+          done error
+
+        @dispatcher.doSingleRun (error) =>
+          throw error if error?
 
       it 'should send a DeliverBroadcastSent', ->
         deliverBroadcastSent =
