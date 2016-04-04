@@ -103,26 +103,15 @@ EnforceMessageSentWhitelists:
       task: 'meshblu-core-task-check-whitelist-message-sent'
       datastoreCollection: 'devices'
 
-EnforceSendWhitelists:
-  start: 'enforce-send-as-whitelist'
+EnforceReceiveAsWhitelist:
+  start: 'check-receive-as-protect-your-as'
   tasks:
-    'enforce-send-as-whitelist':
-      filter: 'EnforceSendAsWhitelist'
-      on:
-        204: 'check-send-whitelist'
-    'check-send-whitelist':
-      task: 'meshblu-core-task-check-send-whitelist'
-      datastoreCollection: 'devices'
-
-EnforceSendAsWhitelist:
-  start: 'check-send-as-protect-your-as'
-  tasks:
-    'check-send-as-protect-your-as':
+    'check-receive-as-protect-your-as':
       task: 'meshblu-core-task-protect-your-as'
       on:
-        204: 'check-send-as-whitelist'
-    'check-send-as-whitelist':
-      task: 'meshblu-core-task-check-send-as-whitelist'
+        204: 'check-receive-as-whitelist'
+    'check-receive-as-whitelist':
+      task: 'meshblu-core-task-check-receive-as-whitelist'
       datastoreCollection: 'devices'
 
 EnforceReceiveWhitelists:
@@ -136,15 +125,26 @@ EnforceReceiveWhitelists:
       task: 'meshblu-core-task-check-receive-whitelist'
       datastoreCollection: 'devices'
 
-EnforceReceiveAsWhitelist:
-  start: 'check-receive-as-protect-your-as'
+EnforceSendAsWhitelist:
+  start: 'check-send-as-protect-your-as'
   tasks:
-    'check-receive-as-protect-your-as':
+    'check-send-as-protect-your-as':
       task: 'meshblu-core-task-protect-your-as'
       on:
-        204: 'check-receive-as-whitelist'
-    'check-receive-as-whitelist':
-      task: 'meshblu-core-task-check-receive-as-whitelist'
+        204: 'check-send-as-whitelist'
+    'check-send-as-whitelist':
+      task: 'meshblu-core-task-check-send-as-whitelist'
+      datastoreCollection: 'devices'
+
+EnforceSendWhitelists:
+  start: 'enforce-send-as-whitelist'
+  tasks:
+    'enforce-send-as-whitelist':
+      filter: 'EnforceSendAsWhitelist'
+      on:
+        204: 'check-send-whitelist'
+    'check-send-whitelist':
+      task: 'meshblu-core-task-check-send-whitelist'
       datastoreCollection: 'devices'
 
 HandleDeliverMessage:
