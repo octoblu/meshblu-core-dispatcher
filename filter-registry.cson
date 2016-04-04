@@ -105,7 +105,7 @@ EnforceMessageSentWhitelists:
     'enforce-message-sent-as-whitelist':
       filter: 'EnforceMessageAsWhitelists'
       on:
-        204: 'check-whitelist-message-sent'
+        403: 'check-whitelist-message-sent'
     'check-whitelist-message-sent':
       task: 'meshblu-core-task-check-whitelist-message-sent'
       datastoreCollection: 'devices'

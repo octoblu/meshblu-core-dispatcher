@@ -45,9 +45,17 @@ xdescribe 'SendMessage2: broadcast+send', ->
 
     @devices.insert @receiverDevice, done
 
-  beforeEach 'create subscription', (done) ->
+  beforeEach 'create message sent subscription', (done) ->
     subscription =
       type: 'message.sent'
+      emitterUuid: 'sender-uuid'
+      subscriberUuid: 'sender-uuid'
+
+    @subscriptions.insert subscription, done
+
+  beforeEach 'create message received subscription', (done) ->
+    subscription =
+      type: 'message.received'
       emitterUuid: 'sender-uuid'
       subscriberUuid: 'sender-uuid'
 
