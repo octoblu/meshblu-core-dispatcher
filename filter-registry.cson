@@ -92,6 +92,13 @@ EnforceMessageAsWhitelists:
       task: 'meshblu-core-task-check-whitelist-message-as'
       datastoreCollection: 'devices'
 
+EnforceMessageReceivedWhitelists:
+  start: 'check-whitelist-message-received'
+  tasks:
+    'check-whitelist-message-received':
+      task: 'meshblu-core-task-check-whitelist-message-received'
+      datastoreCollection: 'devices'
+
 EnforceMessageSentWhitelists:
   start: 'enforce-message-sent-as-whitelist'
   tasks:
