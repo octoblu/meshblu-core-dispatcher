@@ -22,7 +22,6 @@ describe 'SendMessage2: broadcast+send', ->
 
     @client.del 'request:queue'
 
-
     @jobManager = new JobManager
       client: new RedisNS 'meshblu-test', redis.createClient(redisUri)
       timeoutSeconds: 1
@@ -47,14 +46,14 @@ describe 'SendMessage2: broadcast+send', ->
 
     @collection.insert @receiverDevice, done
 
-  describe "sending to a device with sendWhitelist", ->
+  context "sending to a device with sendWhitelist", ->
     beforeEach (done) ->
       job =
         metadata:
           auth: @auth
           toUuid: @auth.uuid
           jobType: 'SendMessage2'
-        rawData: JSON.stringify devices:['*', 'red-dawn'], payload: 'boo'
+        rawData: JSON.stringify devices:['receiver-uuid'], payload: 'boo'
 
       @jobManager.do 'request', 'response', job, (error, @response) => done error
 
@@ -69,22 +68,22 @@ describe 'SendMessage2: broadcast+send', ->
 
       expect(@response).to.containSubset expectedResponse
 
-    describe 'JobManager gets DeliverBroadcastSent job', (done) ->
-      @timeout 5000
+    context.only 'The dispatcher has generated the new jobs' ->
       beforeEach (done) ->
         @requests = []
-        @request = null
 
-        getJob = (callback) =>
-          @jobManager.getRequest ['request'], (error, @request) =>
-            return callback() unless @request?
-            @requests.push @request
-            callback()
+        @client.llen 'request:queue', (error, responseCount) =>
+          getJob = (number, callback) =>
+            @jobManager.getRequest ['request'], (error, request) =>
+              @requests.push request
+              callback()
 
-        async.doUntil getJob, (=> @request == null), done
+          async.times responseCount, getJob, done
 
+    context 'DeliverMessageSent', ->
       beforeEach (done) ->
         job = _.find @requests, metadata: jobType: 'DeliverMessageSent'
+
         @jobManager.do 'request', 'response', job, (error, @response) =>
           console.log {@response}
           done error
