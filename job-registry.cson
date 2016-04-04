@@ -127,6 +127,11 @@ DeliverSubscriptionMessageSent:
     'enqueue-jobs-for-subscriptions-message-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
       datastoreCollection: 'subscriptions'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-message-sent'
+    'enqueue-jobs-for-subscriptions-message-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
+      datastoreCollection: 'subscriptions'
 
 GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
