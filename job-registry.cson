@@ -4,21 +4,6 @@ Authenticate:
     'authenticate':
       filter: 'Authenticate'
 
-CreateSubscription:
-  start: 'authenticate'
-  tasks:
-    'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'enforce-configure-whitelists'
-    'enforce-configure-whitelists':
-      filter: 'EnforceConfigureWhitelists'
-      on:
-        204: 'create-subscription'
-    'create-subscription':
-      task: 'meshblu-core-task-create-subscription'
-      datastoreCollection: 'subscriptions'
-
 CreateSessionToken:
   start: 'authenticate'
   tasks:
@@ -35,17 +20,20 @@ CreateSessionToken:
       datastoreCollection: 'devices'
       cacheNamespace: 'meshblu-token-cache'
 
-DeliverWebhook:
+CreateSubscription:
   start: 'authenticate'
   tasks:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'deliver-webhook'
-    'deliver-webhook':
-      task: 'meshblu-core-task-deliver-webhook'
-      cacheNamespace: 'meshblu-token-cache'
-      datastoreCollection: 'devices'
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
+      on:
+        204: 'create-subscription'
+    'create-subscription':
+      task: 'meshblu-core-task-create-subscription'
+      datastoreCollection: 'subscriptions'
 
 DeliverBroadcastMessage:
   start: 'authenticate'
@@ -75,6 +63,17 @@ DeliverConfigMessage:
     'deliver-message':
       filter: 'HandleDeliverMessage'
 
+DeliverMessageSent:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-message-sent'
+    'enqueue-jobs-for-subscriptions-message-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
+      datastoreCollection: 'subscriptions'
+
 DeliverReceivedMessage:
   start: 'authenticate'
   tasks:
@@ -89,17 +88,6 @@ DeliverReceivedMessage:
     'deliver-message':
       filter: 'HandleDeliverMessage'
 
-DeliverMessageSent:
-  start: 'authenticate'
-  tasks:
-    'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'enqueue-jobs-for-subscriptions-message-sent'
-    'enqueue-jobs-for-subscriptions-message-sent':
-      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
-      datastoreCollection: 'subscriptions'
-
 DeliverSentMessage:
   start: 'authenticate'
   tasks:
@@ -113,6 +101,25 @@ DeliverSentMessage:
         204: 'deliver-message'
     'deliver-message':
       filter: 'HandleDeliverMessage'
+
+DeliverSubscriptionMessageReceived:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-message-received-whitelists'
+    'enforce-message-received-whitelists':
+      filter: 'EnforceMessageReceivedWhitelists'
+      on:
+        204: 'publish-message-received'
+    'publish-message-received':
+      task: 'meshblu-core-task-publish-message-received'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-message-received'
+    'enqueue-jobs-for-subscriptions-message-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
+      datastoreCollection: 'subscriptions'
 
 DeliverSubscriptionMessageSent:
   start: 'authenticate'
@@ -134,24 +141,17 @@ DeliverSubscriptionMessageSent:
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
       datastoreCollection: 'subscriptions'
 
-DeliverSubscriptionMessageReceived:
+DeliverWebhook:
   start: 'authenticate'
   tasks:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'enforce-message-received-whitelists'
-    'enforce-message-received-whitelists':
-      filter: 'EnforceMessageReceivedWhitelists'
-      on:
-        204: 'publish-message-received'
-    'publish-message-received':
-      task: 'meshblu-core-task-publish-message-received'
-      on:
-        204: 'enqueue-jobs-for-subscriptions-message-received'
-    'enqueue-jobs-for-subscriptions-message-received':
-      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
-      datastoreCollection: 'subscriptions'
+        204: 'deliver-webhook'
+    'deliver-webhook':
+      task: 'meshblu-core-task-deliver-webhook'
+      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'devices'
 
 GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
