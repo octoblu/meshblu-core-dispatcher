@@ -4,7 +4,7 @@
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha -- -R spec"
+    "test": "istanbul cover _mocha -- -R spec --require coffee-coverage/register-istanbul"
   },
   "repository": {
     "type": "git",
@@ -96,6 +96,7 @@
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-publish-deprecated-subscriptions": "^1.0.2",
     "meshblu-core-task-publish-message": "^1.0.0",
+    "meshblu-core-task-publish-message-received": "^1.0.7",
     "meshblu-core-task-publish-subscriptions": "^2.0.10",
     "meshblu-core-task-register-device": "^1.0.1",
     "meshblu-core-task-remove-device-cache": "^1.0.1",

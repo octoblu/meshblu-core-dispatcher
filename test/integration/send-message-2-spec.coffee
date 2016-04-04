@@ -16,8 +16,9 @@ xdescribe 'SendMessage2: broadcast+send', ->
     @subscriptions = @db.collection 'subscriptions'
 
     @subscriptions.drop =>
-      @devices.drop => done()
-      
+      @devices.drop =>
+        done()
+
   beforeEach ->
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
@@ -50,7 +51,7 @@ xdescribe 'SendMessage2: broadcast+send', ->
       emitterUuid: 'sender-uuid'
       subscriberUuid: 'sender-uuid'
 
-    @subscriptions.insert subscription
+    @subscriptions.insert subscription, done
 
   context "sending to a device with sendWhitelist", ->
     beforeEach (done) ->

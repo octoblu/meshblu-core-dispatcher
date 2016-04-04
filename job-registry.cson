@@ -144,7 +144,7 @@ DeliverSubscriptionMessageReceived:
     'enforce-message-received-whitelists':
       filter: 'EnforceMessageReceivedWhitelists'
       on:
-        204: 'publish-message-received':
+        204: 'publish-message-received'
     'publish-message-received':
       task: 'meshblu-core-task-publish-message-received'
       on:

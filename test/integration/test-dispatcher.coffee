@@ -17,6 +17,8 @@ JobRegistry      = require '../../src/job-registry'
 QueueWorker      = require '../../src/queue-worker'
 JobLogger        = require 'job-logger'
 
+debug            = require('debug')('meshblu:test-dispatcher')
+
 class TestDispatcher
   constructor: ({@publicKey} = {})->
     jobs = cson.parseFile( path.join __dirname, '../../job-registry.cson')
@@ -133,6 +135,7 @@ class TestDispatcher
     @taskLogger
 
   generateJobs: (job, callback) =>
+    debug 'generateJobs for', JSON.stringify job, null, 2
     client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
 
     jobManager = new JobManager
@@ -145,7 +148,7 @@ class TestDispatcher
       @getGeneratedJobs {jobManager, client}, (error, newJobs) =>
         return callback error if error?
         return callback null, [] if _.isEmpty newJobs
-
+        debug 'generatedJobs', JSON.stringify newJobs, null, 2
         async.map newJobs, @generateJobs, (error, newerJobs) =>
           return callback(error) if error?
           newerJobs = _.flatten newerJobs
