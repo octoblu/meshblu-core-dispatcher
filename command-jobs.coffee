@@ -11,8 +11,8 @@ class CommandJobs
 
   run: =>
     @parseOptions()
-
-    jobRegistry = new JobRegistry
+    jobs = (new JobRegistry).toJSON()
+    console.log JSON.stringify(jobs, null, 2)
 
   panic: (error) =>
     console.error error.stack
