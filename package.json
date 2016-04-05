@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "4.5.3",
+  "version": "4.5.4",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -60,7 +60,7 @@
     "meshblu-core-task-check-receive-as-whitelist": "^1.0.2",
     "meshblu-core-task-check-receive-whitelist": "^1.0.1",
     "meshblu-core-task-check-send-as-whitelist": "^1.0.2",
-    "meshblu-core-task-check-send-whitelist": "^1.0.4",
+    "meshblu-core-task-check-send-whitelist": "^1.0.6",
     "meshblu-core-task-check-token": "^2.0.0",
     "meshblu-core-task-check-token-black-list": "^2.0.0",
     "meshblu-core-task-check-token-cache": "^1.0.8",
