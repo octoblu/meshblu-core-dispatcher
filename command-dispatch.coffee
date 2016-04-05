@@ -94,10 +94,6 @@ class CommandDispatch
 
     @database = mongojs @mongoDBUri
     @database.on 'error', @panic
-    setInterval =>
-      @database.runCommand {ping: 1}, (error) =>
-        @panic error if error?
-    , @timeout
 
     return @doSingleRun @closeAndTentativePanic if @singleRun
     async.until @terminated, @runDispatcher, @closeAndTentativePanic
