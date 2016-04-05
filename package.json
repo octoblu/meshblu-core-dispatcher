@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "4.5.1",
+  "version": "4.5.5",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "coffee-coverage": "^0.6.3",
     "coffee-script": "^1.10.0",
     "istanbul": "^0.4.0",
+    "meshblu-core-manager-hydrant": "^1.1.0",
     "meshblu-http": "^3.6.0",
     "mocha": "^2.3.3",
     "mocha-istanbul": "^0.2.0",
@@ -60,7 +61,7 @@
     "meshblu-core-task-check-receive-as-whitelist": "^1.0.2",
     "meshblu-core-task-check-receive-whitelist": "^1.0.1",
     "meshblu-core-task-check-send-as-whitelist": "^1.0.2",
-    "meshblu-core-task-check-send-whitelist": "^1.0.1",
+    "meshblu-core-task-check-send-whitelist": "^1.0.6",
     "meshblu-core-task-check-token": "^2.0.0",
     "meshblu-core-task-check-token-black-list": "^2.0.0",
     "meshblu-core-task-check-token-cache": "^1.0.8",
@@ -96,7 +97,7 @@
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-publish-deprecated-subscriptions": "^1.0.2",
     "meshblu-core-task-publish-message": "^1.0.0",
-    "meshblu-core-task-publish-message-received": "^1.0.7",
+    "meshblu-core-task-publish-message-received": "^1.0.9",
     "meshblu-core-task-publish-subscriptions": "^2.0.10",
     "meshblu-core-task-register-device": "^1.0.1",
     "meshblu-core-task-reject-your-as": "^1.0.0",
