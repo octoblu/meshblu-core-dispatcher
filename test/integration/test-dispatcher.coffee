@@ -17,8 +17,6 @@ JobRegistry      = require '../../src/job-registry'
 QueueWorker      = require '../../src/queue-worker'
 JobLogger        = require 'job-logger'
 
-debug            = require('debug')('meshblu:test-dispatcher')
-
 class TestDispatcher
   constructor: ({@publicKey} = {})->
     jobs = cson.parseFile( path.join __dirname, '../../job-registry.cson')
@@ -135,9 +133,7 @@ class TestDispatcher
     @taskLogger
 
   generateJobs: (job, callback) =>
-    debug 'generateJobs for', JSON.stringify job, null, 2
-    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
-
+    debug 'generateJobs for', job?.metadata?.jobType, job?.metadata?.responseId
     jobManager = new JobManager
       client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
       timeoutSeconds: 1
@@ -145,11 +141,11 @@ class TestDispatcher
     jobManager.do 'request', 'response', job, (error, response) =>
       return callback (error) if error?
 
-      @getGeneratedJobs {jobManager, client}, (error, newJobs) =>
+      @getGeneratedJobs (error, newJobs) =>
         return callback error if error?
         return callback null, [] if _.isEmpty newJobs
-        debug 'generatedJobs', JSON.stringify newJobs, null, 2
-        async.map newJobs, @generateJobs, (error, newerJobs) =>
+        # debug 'generatedJobs', JSON.stringify newJobs, null, 2
+        async.mapSeries newJobs, @generateJobs, (error, newerJobs) =>
           return callback(error) if error?
           newerJobs = _.flatten newerJobs
           allJobs = newJobs.concat newerJobs
@@ -157,7 +153,12 @@ class TestDispatcher
 
     @doSingleRun (error) => throw error if error?
 
-  getGeneratedJobs: ({client, jobManager}, callback) =>
+  getGeneratedJobs: (callback) =>
+    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+    jobManager = new JobManager
+      client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+      timeoutSeconds: 1
+
     requests = []
     client.llen 'request:queue', (error, responseCount) =>
       getJob = (number, callback) =>
