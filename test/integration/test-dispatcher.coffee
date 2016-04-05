@@ -133,7 +133,7 @@ class TestDispatcher
     @taskLogger
 
   generateJobs: (job, callback) =>
-    debug 'generateJobs for', job?.metadata?.jobType, job?.metadata?.responseId
+    debug 'generateJobs for', job.metadata.jobType, job.metadata.responseId
     jobManager = new JobManager
       client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
       timeoutSeconds: 1

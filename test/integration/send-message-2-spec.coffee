@@ -7,23 +7,27 @@ RedisNS        = require '@octoblu/redis-ns'
 
 TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
+HydrantManager = require 'meshblu-core-manager-hydrant'
 
-
-describe 'SendMessage2: broadcast+send', ->
+describe.only 'SendMessage2: broadcast+send', ->
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
     @devices    = @db.collection 'devices'
     @subscriptions = @db.collection 'subscriptions'
+    @uuidAliasResolver =
+      resolve: (uuid, callback) =>
+        callback null, uuid
 
     @subscriptions.drop =>
       @devices.drop =>
         done()
 
   beforeEach (done) ->
-    redisUri = process.env.REDIS_URI
+    @redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
-    client = new RedisNS 'meshblu-test', redis.createClient(redisUri)
+    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
     client.del 'request:queue', done
+
 
   beforeEach 'create sender device', (done) ->
     @auth =
@@ -72,22 +76,16 @@ describe 'SendMessage2: broadcast+send', ->
             jobType: 'SendMessage2'
           rawData: JSON.stringify devices:['receiver-uuid'], payload: 'boo'
 
-        @dispatcher.generateJobs job, (error, @generatedJobs) => done error
+        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        @hydrant = new HydrantManager {client, @uuidAliasResolver}
+        @hydrant.connect uuid: @auth.uuid, (error) =>
+          return done(error) if error?
+
+          @hydrant.once 'message', (@message) =>
+            @hydrant.close()
+            done()
+
+          @dispatcher.generateJobs job, (error, @generatedJobs) =>
 
       it 'should deliver the sent message to the sender', ->
-        deliverSubscriptionMessageReceived =
-          metadata:
-            jobType: 'DeliverSubscriptionMessageReceived'
-            messageRoute: [
-              {
-                fromUuid: 'sender-uuid'
-                toUuid: 'sender-uuid'
-                type: 'message.received'
-              },
-              {
-                fromUuid: 'sender-uuid'
-                toUuid: 'sender-uuid'
-                type: 'message.sent'
-              }
-            ]
-        expect(@generatedJobs).to.containSubset [deliverSubscriptionMessageReceived]
+        expect(@message).to.exist
