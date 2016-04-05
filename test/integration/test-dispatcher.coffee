@@ -133,7 +133,7 @@ class TestDispatcher
     @taskLogger
 
   generateJobs: (job, callback) =>
-    debug 'generateJobs for', job.metadata.jobType, job.metadata.responseId
+    debug 'generateJobs for', job?.metadata?.jobType, job?.metadata?.responseId
     jobManager = new JobManager
       client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
       timeoutSeconds: 1
@@ -166,7 +166,7 @@ class TestDispatcher
           requests.push request
           callback()
 
-      async.times responseCount, getJob, (error) =>
+      async.timesSeries responseCount, getJob, (error) =>
         return callback error if error?
         callback null, requests
 

@@ -84,6 +84,7 @@ describe 'SendMessage2: broadcast+send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
+        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -98,9 +99,9 @@ describe 'SendMessage2: broadcast+send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            done()
+            doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent message to the sender', ->
         expect(@message).to.exist
@@ -116,6 +117,7 @@ describe 'SendMessage2: broadcast+send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
+        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -130,9 +132,9 @@ describe 'SendMessage2: broadcast+send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            done()
+            doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
@@ -156,6 +158,7 @@ describe 'SendMessage2: broadcast+send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
+        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -170,9 +173,9 @@ describe 'SendMessage2: broadcast+send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            done()
+            doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
