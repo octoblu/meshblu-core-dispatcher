@@ -69,9 +69,43 @@ DeliverMessageSent:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'protect-your-as'
+    'protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-whitelist-message-as'
+    'check-whitelist-message-as':
+      task: 'meshblu-core-task-check-whitelist-message-as'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-message-sent'
     'enqueue-jobs-for-subscriptions-message-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
+      datastoreCollection: 'subscriptions'
+
+DeliverMessageReceived:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'protect-your-as'
+    'protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-whitelist-message-as'
+    'check-whitelist-message-as':
+      task: 'meshblu-core-task-check-whitelist-message-as'
+      datastoreCollection: 'devices'
+      on:
+        204: 'check-whitelist-message-from'
+    'check-whitelist-message-from':
+      task: 'meshblu-core-task-check-whitelist-message-from'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-message-received'
+    'enqueue-jobs-for-subscriptions-message-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
       datastoreCollection: 'subscriptions'
 
 DeliverReceivedMessage:

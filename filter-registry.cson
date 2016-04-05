@@ -82,24 +82,23 @@ EnforceDiscoverAsWhitelist:
       datastoreCollection: 'devices'
 
 EnforceMessageReceivedWhitelists:
-  start: 'check-whitelist-message-received'
+  start: 'check-message-as-reject-your-as'
   tasks:
+    'check-message-as-reject-your-as':
+      task: 'meshblu-core-task-reject-your-as'
+      on:
+        204: 'check-whitelist-message-received'
     'check-whitelist-message-received':
       task: 'meshblu-core-task-check-whitelist-message-received'
       datastoreCollection: 'devices'
 
 EnforceMessageSentWhitelists:
-  start: 'check-message-as-protect-your-as'
+  start: 'check-message-as-reject-your-as'
   tasks:
-    'check-message-as-protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
+    'check-message-as-reject-your-as':
+      task: 'meshblu-core-task-reject-your-as'
       on:
-        204: 'check-whitelist-message-as'
-    'check-whitelist-message-as':
-      task: 'meshblu-core-task-check-whitelist-message-as'
-      datastoreCollection: 'devices'
-      on:
-        403: 'check-whitelist-message-sent'
+        204: 'check-whitelist-message-sent'
     'check-whitelist-message-sent':
       task: 'meshblu-core-task-check-whitelist-message-sent'
       datastoreCollection: 'devices'
