@@ -9,10 +9,10 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-describe 'SendMessage2: send', ->
+xdescribe 'BroadcastSent(2): send', ->
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
-    @devices    = @db.collection 'devices'
+    @devices       = @db.collection 'devices'
     @subscriptions = @db.collection 'subscriptions'
     @uuidAliasResolver =
       resolve: (uuid, callback) =>
@@ -40,23 +40,10 @@ describe 'SendMessage2: send', ->
       meshblu:
         version: '2.0.0'
         whitelists:
-          message:
+          broadcast:
             sent: 'spy-uuid': {}
 
     @devices.insert @senderDevice, done
-
-  beforeEach 'create receiver device', (done) ->
-    @receiverDevice =
-      uuid: 'receiver-uuid'
-      type: 'device:receiver'
-      meshblu:
-        version: '2.0.0'
-        whitelists:
-          message:
-            from: 'sender-uuid': {}
-            received: 'nsa-uuid': {}
-
-    @devices.insert @receiverDevice, done
 
   beforeEach 'create spy device', (done) ->
     @spyDevice =
@@ -72,20 +59,20 @@ describe 'SendMessage2: send', ->
 
     @devices.insert @nsaDevice, done
 
-  context 'When sending a message to another device', ->
+  context 'When sending a broadcast message', ->
     context "sender-uuid receiving its sent messages", ->
       @timeout 5000
-      beforeEach 'create message sent subscription', (done) ->
+      beforeEach 'create broadcast sent subscription', (done) ->
         subscription =
-          type: 'message.sent'
+          type: 'broadcast.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'sender-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create message received subscription', (done) ->
+      beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'sender-uuid'
 
@@ -96,10 +83,9 @@ describe 'SendMessage2: send', ->
         job =
           metadata:
             auth: @auth
-            toUuid: @auth.uuid
+            fromUuid: @auth.uuid
             jobType: 'SendMessage2'
-          data:
-            devices: ['receiver-uuid'], payload: 'boo'
+          rawData: JSON.stringify devices:['*'], payload: 'boo'
 
         client = new RedisNS 'messages', redis.createClient(@redisUri)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
@@ -112,56 +98,22 @@ describe 'SendMessage2: send', ->
 
           @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
-      it 'should deliver the sent message to the sender', ->
+      it 'should deliver the sent broadcast to the sender', ->
         expect(@message).to.exist
 
-    context 'receiving a direct message', ->
+    context 'subscribed to someone elses sent broadcasts', ->
       @timeout 5000
-      beforeEach 'create message sent subscription', (done) ->
+      beforeEach 'create broadcast sent subscription', (done) ->
         subscription =
-          type: 'message.received'
-          emitterUuid: 'receiver-uuid'
-          subscriberUuid: 'receiver-uuid'
-
-        @subscriptions.insert subscription, done
-
-      beforeEach (done) ->
-        doneTwice = _.after 2, done
-        job =
-          metadata:
-            auth: @auth
-            toUuid: @auth.uuid
-            jobType: 'SendMessage2'
-          data:
-            devices: ['receiver-uuid'], payload: 'boo'
-
-        client = new RedisNS 'messages', redis.createClient(@redisUri)
-        @hydrant = new HydrantManager {client, @uuidAliasResolver}
-        @hydrant.connect uuid: 'receiver-uuid', (error) =>
-          return done(error) if error?
-
-          @hydrant.once 'message', (@message) =>
-            @hydrant.close()
-            doneTwice()
-
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
-
-      it 'should deliver the sent message to the receiver', ->
-        expect(@message).to.exist
-
-    context 'subscribed to someone elses sent messages', ->
-      @timeout 5000
-      beforeEach 'create message sent subscription', (done) ->
-        subscription =
-          type: 'message.sent'
+          type: 'broadcast.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create message received subscription', (done) ->
+      beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'spy-uuid'
           subscriberUuid: 'spy-uuid'
 
@@ -172,10 +124,11 @@ describe 'SendMessage2: send', ->
         job =
           metadata:
             auth: @auth
-            toUuid: @auth.uuid
+            fromUuid: @auth.uuid
             jobType: 'SendMessage2'
           data:
-            devices: ['receiver-uuid'], payload: 'boo'
+            devices: ['*']
+            payload: 'boo'
 
         client = new RedisNS 'messages', redis.createClient(@redisUri)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
@@ -188,22 +141,22 @@ describe 'SendMessage2: send', ->
 
           @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
-      it 'should deliver the sent message to the receiver', ->
+      it 'should deliver the sent broadcast to the receiver', ->
         expect(@message).to.exist
 
-    context 'subscribed to someone elses sent messages, but is not authorized', ->
+    context 'subscribed to someone elses sent broadcasts, but is not authorized', ->
       @timeout 5000
-      beforeEach 'create message sent subscription', (done) ->
+      beforeEach 'create broadcast sent subscription', (done) ->
         subscription =
-          type: 'message.sent'
+          type: 'broadcast.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create message received subscription', (done) ->
+      beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'nsa-uuid'
           subscriberUuid: 'nsa-uuid'
 
@@ -213,10 +166,11 @@ describe 'SendMessage2: send', ->
         job =
           metadata:
             auth: @auth
-            toUuid: @auth.uuid
+            fromUuid: @auth.uuid
             jobType: 'SendMessage2'
           data:
-            devices: ['receiver-uuid'], payload: 'boo'
+            devices: ['*']
+            payload: 'boo'
 
         client = new RedisNS 'messages', redis.createClient(@redisUri)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
@@ -228,22 +182,22 @@ describe 'SendMessage2: send', ->
           @dispatcher.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
 
-      it 'should not deliver the sent message to the receiver', ->
+      it 'should not deliver the sent broadcast to the receiver', ->
         expect(@message).to.not.exist
 
-    context 'subscribed to someone elses received messages', ->
+    context 'subscribed to someone elses received broadcasts', ->
       @timeout 5000
-      beforeEach 'create message received subscription', (done) ->
+      beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'receiver-uuid'
           subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create message received subscription', (done) ->
+      beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'nsa-uuid'
           subscriberUuid: 'nsa-uuid'
 
@@ -254,10 +208,10 @@ describe 'SendMessage2: send', ->
         job =
           metadata:
             auth: @auth
-            toUuid: @auth.uuid
+            fromUuid: @auth.uuid
             jobType: 'SendMessage2'
           data:
-            devices: ['receiver-uuid'], payload: 'boo'
+            devices: ['*'], payload: 'boo'
 
         client = new RedisNS 'messages', redis.createClient(@redisUri)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
@@ -275,17 +229,17 @@ describe 'SendMessage2: send', ->
 
     context 'subscribed to someone elses received messages, but is not authorized', ->
       @timeout 5000
-      beforeEach 'create message sent subscription', (done) ->
+      beforeEach 'create broadcast sent subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'receiver-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create message received subscription', (done) ->
+      beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'message.received'
+          type: 'broadcast.received'
           emitterUuid: 'spy-uuid'
           subscriberUuid: 'spy-uuid'
 
@@ -295,10 +249,11 @@ describe 'SendMessage2: send', ->
         job =
           metadata:
             auth: @auth
-            toUuid: @auth.uuid
+            fromUuid: @auth.uuid
             jobType: 'SendMessage2'
           data:
-            devices: ['receiver-uuid'], payload: 'boo'
+            devices: ['*']
+            payload: 'boo'
 
         client = new RedisNS 'messages', redis.createClient(@redisUri)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}

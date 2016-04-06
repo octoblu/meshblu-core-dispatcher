@@ -49,6 +49,26 @@ DeliverBroadcastMessage:
     'deliver-message':
       filter: 'HandleDeliverMessage'
 
+DeliverBroadcastSent:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'protect-your-as'
+    'protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-whitelist-broadcast-as'
+    'check-whitelist-broadcast-as':
+      task: 'meshblu-core-task-check-whitelist-broadcast-as'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-broadcast-sent'
+    'enqueue-jobs-for-subscriptions-broadcast-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent'
+      datastoreCollection: 'subscriptions'
+
 DeliverConfigMessage:
   start: 'authenticate'
   tasks:
