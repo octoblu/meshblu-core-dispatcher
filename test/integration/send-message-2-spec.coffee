@@ -64,6 +64,13 @@ describe 'SendMessage2: send', ->
 
     @devices.insert @spyDevice, done
 
+  beforeEach 'create nsa device', (done) ->
+    @nsaDevice =
+      uuid: 'nsa-uuid'
+      type: 'device:nsa'
+
+    @devices.insert @nsaDevice, done
+
   context 'When sending a message to another device', ->
     context "sender-uuid receiving its sent messages", ->
       @timeout 5000
@@ -179,3 +186,42 @@ describe 'SendMessage2: send', ->
 
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
+
+    context 'subscribed to someone elses received messages, but is not authorized', ->
+      @timeout 5000
+      beforeEach 'create message sent subscription', (done) ->
+        subscription =
+          type: 'message.sent'
+          emitterUuid: 'sender-uuid'
+          subscriberUuid: 'nsa-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach 'create message received subscription', (done) ->
+        subscription =
+          type: 'message.received'
+          emitterUuid: 'nsa-uuid'
+          subscriberUuid: 'nsa-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach (done) ->
+        job =
+          metadata:
+            auth: @auth
+            toUuid: @auth.uuid
+            jobType: 'SendMessage2'
+          rawData: JSON.stringify devices:['receiver-uuid'], payload: 'boo'
+
+        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        @hydrant = new HydrantManager {client, @uuidAliasResolver}
+        @hydrant.connect uuid: 'nsa-uuid', (error) =>
+          return done(error) if error?
+
+          @hydrant.once 'message', (@message) => @hydrant.close()
+
+          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+            setTimeout done, 2000
+
+      it 'should not deliver the sent message to the receiver', ->
+        expect(@message).to.not.exist
