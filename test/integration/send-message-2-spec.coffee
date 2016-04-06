@@ -42,6 +42,7 @@ describe 'SendMessage2: send', ->
         whitelists:
           message:
             sent: 'spy-uuid': {}
+            received: 'nsa-uuid': {}
 
     @devices.insert @senderDevice, done
 
@@ -146,7 +147,7 @@ describe 'SendMessage2: send', ->
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
 
-    context 'subscribed to someone elses received messages', ->
+    context 'subscribed to someone elses sent messages', ->
       @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
@@ -187,7 +188,7 @@ describe 'SendMessage2: send', ->
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
 
-    context 'subscribed to someone elses received messages, but is not authorized', ->
+    context 'subscribed to someone elses sent messages, but is not authorized', ->
       @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
