@@ -9,7 +9,8 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-xdescribe 'SendMessage2: send-as', ->
+describe 'SendMessage2: send-as', ->
+  @timeout 5000
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
     @devices       = @db.collection 'devices'
@@ -29,9 +30,6 @@ xdescribe 'SendMessage2: send-as', ->
     client.del 'request:queue', done
 
   beforeEach 'create sender device', (done) ->
-    @auth =
-      uuid: 'imposter-uuid'
-      token: 'leak'
 
     @senderDevice =
       uuid: 'sender-uuid'
@@ -59,19 +57,18 @@ xdescribe 'SendMessage2: send-as', ->
   beforeEach 'create imposter device', (done) ->
     @imposterDevice =
       uuid: 'imposter-uuid'
-      token: bcrypt.hashSync @auth.token, 8
+      token: bcrypt.hashSync 'leak', 8
       type: 'device:imposter'
 
     @devices.insert @imposterDevice, done
 
   context 'When sending a message as another device', ->
     context "sender-uuid receiving it's sent messages", ->
-      @timeout 5000
       beforeEach 'create message received subscription', (done) ->
         subscription =
           type: 'message.received'
-          emitterUuid: 'received-uuid'
-          subscriberUuid: 'received-uuid'
+          emitterUuid: 'receiver-uuid'
+          subscriberUuid: 'receiver-uuid'
 
         @subscriptions.insert subscription, done
 
@@ -83,6 +80,7 @@ xdescribe 'SendMessage2: send-as', ->
               uuid: 'imposter-uuid'
               token: 'leak'
               as: 'sender-uuid'
+            fromUuid: 'sender-uuid'
             jobType: 'SendMessage2'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
