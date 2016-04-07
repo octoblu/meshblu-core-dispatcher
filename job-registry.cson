@@ -50,10 +50,8 @@ DeliverBroadcastMessage:
       filter: 'HandleDeliverMessage'
 
 DeliverBroadcastSent:
-  start: 'crash'
+  start: 'authenticate'
   tasks:
-    'crash':
-      task: 'crash'
     'authenticate':
       filter: 'Authenticate'
       on:
