@@ -49,6 +49,11 @@ describe 'BroadcastSent(2): send', ->
     @spyDevice =
       uuid: 'spy-uuid'
       type: 'device:spy'
+      meshblu:
+        version: '2.0.0'
+        whitelists:
+          broadcast:
+            received: 'nsa-uuid': {}
 
     @devices.insert @spyDevice, done
 
@@ -124,7 +129,7 @@ describe 'BroadcastSent(2): send', ->
         job =
           metadata:
             auth: @auth
-            fromUuid: @auth.uuid
+            fromUuid: 'sender-uuid'
             jobType: 'SendMessage2'
           data:
             devices: ['*']
@@ -166,7 +171,7 @@ describe 'BroadcastSent(2): send', ->
         job =
           metadata:
             auth: @auth
-            fromUuid: @auth.uuid
+            fromUuid: 'sender-uuid'
             jobType: 'SendMessage2'
           data:
             devices: ['*']
@@ -187,10 +192,18 @@ describe 'BroadcastSent(2): send', ->
 
     context 'subscribed to someone elses received broadcasts', ->
       @timeout 5000
+      beforeEach 'create broadcast sent subscription', (done) ->
+        subscription =
+          type: 'broadcast.sent'
+          emitterUuid: 'sender-uuid'
+          subscriberUuid: 'spy-uuid'
+
+        @subscriptions.insert subscription, done
+
       beforeEach 'create broadcast received subscription', (done) ->
         subscription =
           type: 'broadcast.received'
-          emitterUuid: 'receiver-uuid'
+          emitterUuid: 'spy-uuid'
           subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
@@ -208,7 +221,7 @@ describe 'BroadcastSent(2): send', ->
         job =
           metadata:
             auth: @auth
-            fromUuid: @auth.uuid
+            fromUuid: 'sender-uuid'
             jobType: 'SendMessage2'
           data:
             devices: ['*'], payload: 'boo'
@@ -231,8 +244,8 @@ describe 'BroadcastSent(2): send', ->
       @timeout 5000
       beforeEach 'create broadcast sent subscription', (done) ->
         subscription =
-          type: 'broadcast.received'
-          emitterUuid: 'receiver-uuid'
+          type: 'broadcast.sent'
+          emitterUuid: 'sender-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
@@ -241,7 +254,15 @@ describe 'BroadcastSent(2): send', ->
         subscription =
           type: 'broadcast.received'
           emitterUuid: 'spy-uuid'
-          subscriberUuid: 'spy-uuid'
+          subscriberUuid: 'nsa-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach 'create broadcast received subscription', (done) ->
+        subscription =
+          type: 'broadcast.received'
+          emitterUuid: 'nsa-uuid'
+          subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
 
