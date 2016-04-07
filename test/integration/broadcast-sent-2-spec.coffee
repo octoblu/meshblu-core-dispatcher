@@ -9,7 +9,7 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-describe 'BroadcastSent(2): send', ->
+xdescribe 'BroadcastSent(2): send', ->
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
     @devices       = @db.collection 'devices'
