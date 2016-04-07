@@ -9,7 +9,8 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-xdescribe 'ConfigSent: send', ->
+xdescribe 'ConfigureSent', ->
+  @timeout 5000
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
     @devices       = @db.collection 'devices'
@@ -64,20 +65,19 @@ xdescribe 'ConfigSent: send', ->
 
     @devices.insert @nsaDevice, done
 
-  context 'When sending a config message', ->
-    context "sender-uuid receiving its sent messages", ->
-      @timeout 5000
-      beforeEach 'create config sent subscription', (done) ->
+  context 'When sending a configuring a device', ->
+    context "sender-uuid receiving own configure.sent events", ->
+      beforeEach 'create configure sent subscription', (done) ->
         subscription =
-          type: 'config.sent'
+          type: 'configure.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'sender-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create config received subscription', (done) ->
+      beforeEach 'create configure received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'sender-uuid'
 
@@ -89,6 +89,7 @@ xdescribe 'ConfigSent: send', ->
           metadata:
             auth: @auth
             toUuid: 'sender-uuid'
+            fromUuid: 'sender-uuid'
             jobType: 'UpdateDevice'
           data:
             $set:
@@ -105,22 +106,21 @@ xdescribe 'ConfigSent: send', ->
 
           @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
-      it 'should deliver the sent config to the sender', ->
+      it 'should deliver the sent configure to the sender', ->
         expect(@message).to.exist
 
     context 'subscribed to someone elses sent configs', ->
-      @timeout 5000
-      beforeEach 'create config sent subscription', (done) ->
+      beforeEach 'create configure sent subscription', (done) ->
         subscription =
-          type: 'config.sent'
+          type: 'configure.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create config received subscription', (done) ->
+      beforeEach 'create configure received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'spy-uuid'
           subscriberUuid: 'spy-uuid'
 
@@ -148,14 +148,13 @@ xdescribe 'ConfigSent: send', ->
 
           @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
-      it 'should deliver the sent config to the receiver', ->
+      it 'should deliver the sent configure to the receiver', ->
         expect(@message).to.exist
 
     context 'subscribed to someone elses sent config, but is not authorized', ->
-      @timeout 5000
-      beforeEach 'create config sent subscription', (done) ->
+      beforeEach 'create configure sent subscription', (done) ->
         subscription =
-          type: 'config.sent'
+          type: 'configure.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'nsa-uuid'
 
@@ -163,7 +162,7 @@ xdescribe 'ConfigSent: send', ->
 
       beforeEach 'create broadcast received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'nsa-uuid'
           subscriberUuid: 'nsa-uuid'
 
@@ -189,30 +188,29 @@ xdescribe 'ConfigSent: send', ->
           @dispatcher.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
 
-      it 'should not deliver the sent config to the receiver', ->
+      it 'should not deliver the sent configure to the receiver', ->
         expect(@message).to.not.exist
 
     context 'subscribed to someone elses received config', ->
-      @timeout 5000
-      beforeEach 'create config sent subscription', (done) ->
+      beforeEach 'create configure sent subscription', (done) ->
         subscription =
-          type: 'config.sent'
+          type: 'configure.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create config received subscription', (done) ->
+      beforeEach 'create configure received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'spy-uuid'
           subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create config received subscription', (done) ->
+      beforeEach 'create configure received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'nsa-uuid'
           subscriberUuid: 'nsa-uuid'
 
@@ -240,30 +238,29 @@ xdescribe 'ConfigSent: send', ->
 
           @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
-      it 'should deliver the sent config to the receiver', ->
+      it 'should deliver the sent configure to the receiver', ->
         expect(@message).to.exist
 
     context 'subscribed to someone elses received configs, but is not authorized', ->
-      @timeout 5000
-      beforeEach 'create config sent subscription', (done) ->
+      beforeEach 'create configure sent subscription', (done) ->
         subscription =
-          type: 'config.sent'
+          type: 'configure.sent'
           emitterUuid: 'sender-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create config received subscription', (done) ->
+      beforeEach 'create configure received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'spy-uuid'
           subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create config received subscription', (done) ->
+      beforeEach 'create configure received subscription', (done) ->
         subscription =
-          type: 'config.received'
+          type: 'configure.received'
           emitterUuid: 'nsa-uuid'
           subscriberUuid: 'nsa-uuid'
 
