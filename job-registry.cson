@@ -338,6 +338,10 @@ SendMessage:
         204: 'send-message'
     'send-message':
       task: 'meshblu-core-task-send-message'
+      on:
+        204: 'send-message-2'
+    'send-message-2':
+      task: 'meshblu-core-task-send-message-2'
 
 SendMessage2:
   start: 'authenticate'
