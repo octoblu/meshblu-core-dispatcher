@@ -10,13 +10,14 @@ JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
 describe 'SendMessage2: send', ->
+  @timeout 5000
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
-    @devices    = @db.collection 'devices'
+    @devices       = @db.collection 'devices'
     @subscriptions = @db.collection 'subscriptions'
+
     @uuidAliasResolver =
-      resolve: (uuid, callback) =>
-        callback null, uuid
+      resolve: (uuid, callback) => callback null, uuid
 
     @subscriptions.drop =>
       @devices.drop =>
@@ -74,7 +75,6 @@ describe 'SendMessage2: send', ->
 
   context 'When sending a message to another device', ->
     context "sender-uuid receiving its sent messages", ->
-      @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
           type: 'message.sent'
@@ -116,7 +116,6 @@ describe 'SendMessage2: send', ->
         expect(@message).to.exist
 
     context 'receiving a direct message', ->
-      @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
           type: 'message.received'
@@ -144,13 +143,13 @@ describe 'SendMessage2: send', ->
             @hydrant.close()
             doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+            doneTwice()
 
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
 
     context 'subscribed to someone elses sent messages', ->
-      @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
           type: 'message.sent'
@@ -192,7 +191,6 @@ describe 'SendMessage2: send', ->
         expect(@message).to.exist
 
     context 'subscribed to someone elses sent messages, but is not authorized', ->
-      @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
           type: 'message.sent'
@@ -232,7 +230,6 @@ describe 'SendMessage2: send', ->
         expect(@message).to.not.exist
 
     context 'subscribed to someone elses received messages', ->
-      @timeout 5000
       beforeEach 'create message received subscription', (done) ->
         subscription =
           type: 'message.received'
@@ -274,7 +271,6 @@ describe 'SendMessage2: send', ->
         expect(@message).to.exist
 
     context 'subscribed to someone elses received messages, but is not authorized', ->
-      @timeout 5000
       beforeEach 'create message sent subscription', (done) ->
         subscription =
           type: 'message.received'
