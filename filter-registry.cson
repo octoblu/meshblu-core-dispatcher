@@ -81,17 +81,6 @@ EnforceDiscoverAsWhitelist:
       task: 'meshblu-core-task-check-discover-as-whitelist'
       datastoreCollection: 'devices'
 
-EnforceMessageReceivedWhitelists:
-  start: 'check-message-as-reject-your-as'
-  tasks:
-    'check-message-as-reject-your-as':
-      task: 'meshblu-core-task-reject-your-as'
-      on:
-        204: 'check-whitelist-message-received'
-    'check-whitelist-message-received':
-      task: 'meshblu-core-task-check-whitelist-message-received'
-      datastoreCollection: 'devices'
-
 EnforceMessageSentWhitelists:
   start: 'check-message-as-reject-your-as'
   tasks:
