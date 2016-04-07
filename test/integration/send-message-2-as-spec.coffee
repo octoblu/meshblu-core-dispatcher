@@ -62,8 +62,16 @@ describe 'SendMessage2: send-as', ->
 
     @devices.insert @imposterDevice, done
 
+  beforeEach 'create bananas device', (done) ->
+    @imposterDevice =
+      uuid: 'bananas-uuid'
+      token: bcrypt.hashSync 'leak', 8
+      type: 'device:bananas'
+
+    @devices.insert @imposterDevice, done
+
   context 'When sending a message as another device', ->
-    context "sender-uuid receiving it's sent messages", ->
+    context "receiver-uuid receiving it's received messages", ->
       beforeEach 'create message received subscription', (done) ->
         subscription =
           type: 'message.received'
@@ -96,5 +104,126 @@ describe 'SendMessage2: send-as', ->
 
           @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
 
+      it 'should deliver the received message to the receiver', ->
+        expect(@message).to.exist
+    context "sender-uuid receiving it's sent messages", ->
+      beforeEach 'create message received subscription', (done) ->
+        subscription =
+          type: 'message.received'
+          emitterUuid: 'sender-uuid'
+          subscriberUuid: 'sender-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach 'create message sent subscription', (done) ->
+        subscription =
+          type: 'message.sent'
+          emitterUuid: 'sender-uuid'
+          subscriberUuid: 'sender-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach (done) ->
+        doneTwice = _.after 2, done
+        job =
+          metadata:
+            auth:
+              uuid: 'imposter-uuid'
+              token: 'leak'
+              as: 'sender-uuid'
+            fromUuid: 'sender-uuid'
+            jobType: 'SendMessage2'
+          data:
+            devices: ['receiver-uuid'], payload: 'boo'
+
+        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        @hydrant = new HydrantManager {client, @uuidAliasResolver}
+        @hydrant.connect uuid: 'sender-uuid', (error) =>
+          return done(error) if error?
+
+          @hydrant.once 'message', (@message) =>
+            @hydrant.close()
+            doneTwice()
+
+          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+
       it 'should deliver the sent message to the sender', ->
         expect(@message).to.exist
+
+  context 'When sending a message as another device, and not in the as whitelist', ->
+    context "receiver-uuid receiving it's received messages", ->
+      beforeEach 'create message received subscription', (done) ->
+        subscription =
+          type: 'message.received'
+          emitterUuid: 'receiver-uuid'
+          subscriberUuid: 'receiver-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach (done) ->
+        job =
+          metadata:
+            auth:
+              uuid: 'bananas-uuid'
+              token: 'leak'
+              as: 'sender-uuid'
+            fromUuid: 'sender-uuid'
+            jobType: 'SendMessage2'
+          data:
+            devices: ['receiver-uuid'], payload: 'boo'
+
+        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        @hydrant = new HydrantManager {client, @uuidAliasResolver}
+        @hydrant.connect uuid: 'receiver-uuid', (error) =>
+          return done(error) if error?
+
+          @hydrant.once 'message', (@message) =>
+            @hydrant.close()
+
+          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+            setTimeout done, 2000
+
+      it 'should not deliver the received message to the receiver', ->
+        expect(@message).not.to.exist
+    context "sender-uuid receiving it's sent messages", ->
+      beforeEach 'create message received subscription', (done) ->
+        subscription =
+          type: 'message.received'
+          emitterUuid: 'sender-uuid'
+          subscriberUuid: 'sender-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach 'create message sent subscription', (done) ->
+        subscription =
+          type: 'message.sent'
+          emitterUuid: 'sender-uuid'
+          subscriberUuid: 'sender-uuid'
+
+        @subscriptions.insert subscription, done
+
+      beforeEach (done) ->
+        job =
+          metadata:
+            auth:
+              uuid: 'bananas-uuid'
+              token: 'leak'
+              as: 'sender-uuid'
+            fromUuid: 'sender-uuid'
+            jobType: 'SendMessage2'
+          data:
+            devices: ['receiver-uuid'], payload: 'boo'
+
+        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        @hydrant = new HydrantManager {client, @uuidAliasResolver}
+        @hydrant.connect uuid: 'sender-uuid', (error) =>
+          return done(error) if error?
+
+          @hydrant.once 'message', (@message) =>
+            @hydrant.close()
+
+          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+            setTimeout done, 2000
+
+      it 'should deliver the sent message to the sender', ->
+        expect(@message).not.to.exist
