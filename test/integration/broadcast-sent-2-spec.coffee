@@ -78,7 +78,7 @@ xdescribe 'BroadcastSent(2): send', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach (done) ->
+      beforeEach 'create SendMessage2 job', (done) ->
         doneTwice = _.after 2, done
         job =
           metadata:
