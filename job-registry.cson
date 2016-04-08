@@ -84,24 +84,28 @@ DeliverConfigMessage:
       filter: 'HandleDeliverMessage'
 
 DeliverConfigureSent:
-  start: 'authenticate'
+  start: 'no-content'
   tasks:
-    'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'protect-your-as'
-    'protect-your-as':
-      task: 'meshblu-core-task-protect-your-as'
-      on:
-        204: 'check-whitelist-configure-as'
-    'check-whitelist-configure-as':
-      task: 'meshblu-core-task-check-whitelist-configure-as'
-      datastoreCollection: 'devices'
-      on:
-        204: 'enqueue-jobs-for-subscriptions-configure-sent'
-    'enqueue-jobs-for-subscriptions-configure-sent':
-      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent'
-      datastoreCollection: 'subscriptions'
+    'no-content':
+      task: 'meshblu-core-task-no-content'
+  # start: 'authenticate'
+  # tasks:
+  #   'authenticate':
+  #     filter: 'Authenticate'
+  #     on:
+  #       204: 'protect-your-as'
+  #   'protect-your-as':
+  #     task: 'meshblu-core-task-protect-your-as'
+  #     on:
+  #       204: 'check-whitelist-configure-as'
+  #   'check-whitelist-configure-as':
+  #     task: 'meshblu-core-task-check-whitelist-configure-as'
+  #     datastoreCollection: 'devices'
+  #     on:
+  #       204: 'enqueue-jobs-for-subscriptions-configure-sent'
+  #   'enqueue-jobs-for-subscriptions-configure-sent':
+  #     task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent'
+  #     datastoreCollection: 'subscriptions'
 
 DeliverMessageSent:
   start: 'authenticate'
