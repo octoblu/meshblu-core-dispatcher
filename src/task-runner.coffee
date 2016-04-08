@@ -30,7 +30,7 @@ class TaskRunner
     @buildTaskJobManager()
 
   buildTaskJobManager: =>
-    cache  = @cacheFactory.build 'meshblu-token-one-time'
+    cache = @cacheFactory.build 'meshblu-token-one-time'
     @taskJobManager = new TaskJobManager {@jobManager, cache, @pepper, @uuidAliasResolver}
 
   run: (callback) =>

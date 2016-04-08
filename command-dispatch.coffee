@@ -93,15 +93,21 @@ class CommandDispatch
       @terminate = true
 
     @database = mongojs @mongoDBUri
-    @database.on 'error', @panic
-    setInterval =>
-      @database.runCommand {ping: 1}, (error) =>
-        @panic error if error?
-    , @timeout * 1000
 
-    return @doSingleRun @closeAndTentativePanic if @singleRun
-    async.until @terminated, @runDispatcher, @closeAndTentativePanic
-    async.until @terminated, @runQueueWorker, @closeAndTentativePanic
+    # ensure we are connected to mongo before proceeding
+    @database.runCommand {ping: 1}, (error) =>
+      @panic error if error?
+
+      @database.on 'error', @panic
+
+      setInterval =>
+        @database.runCommand {ping: 1}, (error) =>
+          @panic error if error?
+      , @timeout * 1000
+
+      return @doSingleRun @closeAndTentativePanic if @singleRun
+      async.until @terminated, @runDispatcher, @closeAndTentativePanic
+      async.until @terminated, @runQueueWorker, @closeAndTentativePanic
 
   doSingleRun: (callback) =>
     async.parallel [
