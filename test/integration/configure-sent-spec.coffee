@@ -9,7 +9,7 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-xdescribe 'ConfigureSent', ->
+describe 'ConfigureSent', ->
   @timeout 5000
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
@@ -31,17 +31,17 @@ xdescribe 'ConfigureSent', ->
 
   beforeEach 'create sender device', (done) ->
     @auth =
-      uuid: 'sender-uuid'
+      uuid: 'emitter-uuid'
       token: 'leak'
 
     @senderDevice =
-      uuid: 'sender-uuid'
+      uuid: 'emitter-uuid'
       type: 'device:sender'
       token: bcrypt.hashSync @auth.token, 8
       meshblu:
         version: '2.0.0'
         whitelists:
-          config:
+          configure:
             sent: 'spy-uuid': {}
 
     @devices.insert @senderDevice, done
@@ -53,7 +53,7 @@ xdescribe 'ConfigureSent', ->
       meshblu:
         version: '2.0.0'
         whitelists:
-          config:
+          configure:
             received: 'nsa-uuid': {}
 
     @devices.insert @spyDevice, done
@@ -66,20 +66,20 @@ xdescribe 'ConfigureSent', ->
     @devices.insert @nsaDevice, done
 
   context 'When sending a configuring a device', ->
-    context "sender-uuid receiving own configure.sent events", ->
+    context "emitter-uuid receiving own configure.sent events", ->
       beforeEach 'create configure sent subscription', (done) ->
         subscription =
           type: 'configure.sent'
-          emitterUuid: 'sender-uuid'
-          subscriberUuid: 'sender-uuid'
+          emitterUuid: 'emitter-uuid'
+          subscriberUuid: 'emitter-uuid'
 
         @subscriptions.insert subscription, done
 
       beforeEach 'create configure received subscription', (done) ->
         subscription =
           type: 'configure.received'
-          emitterUuid: 'sender-uuid'
-          subscriberUuid: 'sender-uuid'
+          emitterUuid: 'emitter-uuid'
+          subscriberUuid: 'emitter-uuid'
 
         @subscriptions.insert subscription, done
 
@@ -88,8 +88,8 @@ xdescribe 'ConfigureSent', ->
         job =
           metadata:
             auth: @auth
-            toUuid: 'sender-uuid'
-            fromUuid: 'sender-uuid'
+            toUuid: 'emitter-uuid'
+            fromUuid: 'emitter-uuid'
             jobType: 'UpdateDevice'
           data:
             $set:
@@ -113,7 +113,7 @@ xdescribe 'ConfigureSent', ->
       beforeEach 'create configure sent subscription', (done) ->
         subscription =
           type: 'configure.sent'
-          emitterUuid: 'sender-uuid'
+          emitterUuid: 'emitter-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
@@ -131,7 +131,7 @@ xdescribe 'ConfigureSent', ->
         job =
           metadata:
             auth: @auth
-            toUuid: 'sender-uuid'
+            toUuid: 'emitter-uuid'
             jobType: 'UpdateDevice'
           data:
             $set:
@@ -155,7 +155,7 @@ xdescribe 'ConfigureSent', ->
       beforeEach 'create configure sent subscription', (done) ->
         subscription =
           type: 'configure.sent'
-          emitterUuid: 'sender-uuid'
+          emitterUuid: 'emitter-uuid'
           subscriberUuid: 'nsa-uuid'
 
         @subscriptions.insert subscription, done
@@ -172,7 +172,7 @@ xdescribe 'ConfigureSent', ->
         job =
           metadata:
             auth: @auth
-            toUuid: 'sender-uuid'
+            toUuid: 'emitter-uuid'
             jobType: 'UpdateDevice'
           data:
             $set:
@@ -195,7 +195,7 @@ xdescribe 'ConfigureSent', ->
       beforeEach 'create configure sent subscription', (done) ->
         subscription =
           type: 'configure.sent'
-          emitterUuid: 'sender-uuid'
+          emitterUuid: 'emitter-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
@@ -221,7 +221,7 @@ xdescribe 'ConfigureSent', ->
         job =
           metadata:
             auth: @auth
-            toUuid: 'sender-uuid'
+            toUuid: 'emitter-uuid'
             jobType: 'UpdateDevice'
           data:
             $set:
@@ -245,7 +245,7 @@ xdescribe 'ConfigureSent', ->
       beforeEach 'create configure sent subscription', (done) ->
         subscription =
           type: 'configure.sent'
-          emitterUuid: 'sender-uuid'
+          emitterUuid: 'emitter-uuid'
           subscriberUuid: 'spy-uuid'
 
         @subscriptions.insert subscription, done
@@ -270,7 +270,7 @@ xdescribe 'ConfigureSent', ->
         job =
           metadata:
             auth: @auth
-            toUuid: 'sender-uuid'
+            toUuid: 'emitter-uuid'
             jobType: 'UpdateDevice'
           data:
             $set:

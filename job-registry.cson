@@ -221,11 +221,50 @@ DeliverSubscriptionBroadcastSent:
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received'
       datastoreCollection: 'subscriptions'
 
-DeliverSubscriptionConfigureSent:
-  start: 'no-content'
+DeliverSubscriptionConfigureReceived:
+  start: 'authenticate'
   tasks:
-    'no-content':
-      task: 'meshblu-core-task-no-content'
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'check-configure-as-reject-your-as'
+    'check-configure-as-reject-your-as':
+      task: 'meshblu-core-task-reject-your-as'
+      on:
+        204: 'check-whitelist-configure-received'
+    'check-whitelist-configure-received':
+      task: 'meshblu-core-task-check-whitelist-configure-received'
+      datastoreCollection: 'devices'
+      on:
+        204: 'publish-configure-received'
+    'publish-configure-received':
+      task: 'meshblu-core-task-publish-configure-received'
+      cacheNamespace: 'messages'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-configure-received'
+    'enqueue-jobs-for-subscriptions-configure-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received'
+      datastoreCollection: 'subscriptions'
+
+DeliverSubscriptionConfigureSent:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'check-configure-as-reject-your-as'
+    'check-configure-as-reject-your-as':
+      task: 'meshblu-core-task-reject-your-as'
+      on:
+        204: 'check-whitelist-configure-sent'
+    'check-whitelist-configure-sent':
+      task: 'meshblu-core-task-check-whitelist-configure-sent'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-configure-received'
+    'enqueue-jobs-for-subscriptions-configure-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received'
+      datastoreCollection: 'subscriptions'
 
 DeliverSubscriptionMessageReceived:
   start: 'authenticate'
