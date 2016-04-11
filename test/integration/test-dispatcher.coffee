@@ -144,7 +144,6 @@ class TestDispatcher
       @getGeneratedJobs (error, newJobs) =>
         return callback error if error?
         return callback null, [] if _.isEmpty newJobs
-        # debug 'generatedJobs', JSON.stringify newJobs, null, 2
         async.mapSeries newJobs, @generateJobs, (error, newerJobs) =>
           return callback(error) if error?
           newerJobs = _.flatten newerJobs

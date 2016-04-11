@@ -105,7 +105,7 @@
     "meshblu-core-task-publish-deprecated-subscriptions": "^1.0.2",
     "meshblu-core-task-publish-message": "^1.0.0",
     "meshblu-core-task-publish-message-received": "^4.0.0",
-    "meshblu-core-task-publish-subscriptions": "^2.0.10",
+    "meshblu-core-task-publish-subscriptions": "^3.0.0",
     "meshblu-core-task-register-device": "^1.0.1",
     "meshblu-core-task-reject-your-as": "^1.0.0",
     "meshblu-core-task-remove-device-cache": "^1.0.1",
