@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "4.7.2",
+  "version": "4.7.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -109,7 +109,7 @@
     "meshblu-core-task-register-device": "^1.0.1",
     "meshblu-core-task-reject-your-as": "^1.0.0",
     "meshblu-core-task-remove-device-cache": "^1.0.1",
-    "meshblu-core-task-remove-subscription": "^2.0.0",
+    "meshblu-core-task-remove-subscription": "^2.0.1",
     "meshblu-core-task-remove-token-cache": "^1.0.0",
     "meshblu-core-task-reset-token": "^1.0.1",
     "meshblu-core-task-revoke-session-token": "^1.0.0",
