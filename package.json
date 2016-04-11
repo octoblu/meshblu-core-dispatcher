@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "4.7.3",
+  "version": "4.7.4",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -100,8 +100,8 @@
     "meshblu-core-task-get-subscriptions": "^1.1.3",
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-protect-your-as": "^1.0.4",
-    "meshblu-core-task-publish-broadcast-received": "^1.0.0",
-    "meshblu-core-task-publish-configure-received": "^1.0.0",
+    "meshblu-core-task-publish-broadcast-received": "^2.0.1",
+    "meshblu-core-task-publish-configure-received": "^2.0.0",
     "meshblu-core-task-publish-deprecated-subscriptions": "^1.0.2",
     "meshblu-core-task-publish-message": "^1.0.0",
     "meshblu-core-task-publish-message-received": "^4.0.0",
