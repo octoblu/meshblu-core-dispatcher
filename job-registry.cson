@@ -118,6 +118,11 @@ DeliverMessageSent:
       task: 'meshblu-core-task-check-whitelist-message-as'
       datastoreCollection: 'devices'
       on:
+        204: 'enqueue-jobs-for-webhooks-message-sent'
+    'enqueue-jobs-for-webhooks-message-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-webhooks-message-sent'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-message-sent'
     'enqueue-jobs-for-subscriptions-message-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
