@@ -286,6 +286,11 @@ DeliverSubscriptionMessageReceived:
       task: 'meshblu-core-task-publish-message-received'
       cacheNamespace: 'messages'
       on:
+        204: 'enqueue-jobs-for-webhooks-message-received'
+    'enqueue-jobs-for-webhooks-message-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-webhooks-message-received'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-message-received'
     'enqueue-jobs-for-subscriptions-message-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'

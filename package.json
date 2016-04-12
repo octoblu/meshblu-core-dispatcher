@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "4.7.5",
+  "version": "4.8.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -81,7 +81,7 @@
     "meshblu-core-task-check-whitelist-message-sent": "^2.0.1",
     "meshblu-core-task-create-session-token": "^1.0.3",
     "meshblu-core-task-create-subscription": "^2.0.1",
-    "meshblu-core-task-deliver-webhook": "^1.0.7",
+    "meshblu-core-task-deliver-webhook": "^1.1.0",
     "meshblu-core-task-enqueue-deprecated-webhooks": "^1.1.0",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received": "^3.0.1",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent": "^3.0.0",
@@ -89,6 +89,7 @@
     "meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent": "^1.0.1",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-message-received": "^4.0.1",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent": "^3.0.0",
+    "meshblu-core-task-enqueue-jobs-for-webhooks-message-received": "^1.0.2",
     "meshblu-core-task-enqueue-webhooks": "^1.1.0",
     "meshblu-core-task-forbidden": "^1.0.0",
     "meshblu-core-task-get-authorized-subscription-types": "^1.0.1",
