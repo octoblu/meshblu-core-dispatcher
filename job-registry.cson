@@ -103,6 +103,11 @@ DeliverConfigureSent:
       task: 'meshblu-core-task-check-whitelist-configure-as'
       datastoreCollection: 'devices'
       on:
+        204: 'enqueue-jobs-for-webhooks-configure-sent'
+    'enqueue-jobs-for-webhooks-configure-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-webhooks-configure-sent'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-configure-sent'
     'enqueue-jobs-for-subscriptions-configure-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent'
