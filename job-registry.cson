@@ -196,6 +196,11 @@ DeliverSubscriptionBroadcastReceived:
       task: 'meshblu-core-task-publish-broadcast-received'
       cacheNamespace: 'messages'
       on:
+        204: 'enqueue-jobs-for-webhooks-broadcast-received'
+    'enqueue-jobs-for-webhooks-broadcast-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-webhooks-broadcast-received'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-broadcast-received'
     'enqueue-jobs-for-subscriptions-broadcast-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received'
