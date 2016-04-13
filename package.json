@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "5.3.2",
+  "version": "5.3.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -81,7 +81,7 @@
     "meshblu-core-task-check-whitelist-message-sent": "^2.0.1",
     "meshblu-core-task-create-session-token": "^1.0.3",
     "meshblu-core-task-create-subscription": "^2.0.1",
-    "meshblu-core-task-deliver-webhook": "^1.2.0",
+    "meshblu-core-task-deliver-webhook": "^2.0.0",
     "meshblu-core-task-enqueue-deprecated-webhooks": "^1.1.0",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received": "^4.0.0",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent": "^3.0.0",
@@ -124,7 +124,7 @@
     "meshblu-core-task-send-message": "^2.1.1",
     "meshblu-core-task-send-message-2": "^1.0.6",
     "meshblu-core-task-unregister-device": "^1.0.1",
-    "meshblu-core-task-update-device": "^1.2.0",
+    "meshblu-core-task-update-device": "^2.0.0",
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.11.1",
     "mongojs": "^2.3.0",
