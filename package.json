@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "5.3.3",
+  "version": "5.3.4",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -95,7 +95,7 @@
     "meshblu-core-task-enqueue-jobs-for-webhooks-configure-sent": "^1.0.0",
     "meshblu-core-task-enqueue-jobs-for-webhooks-message-received": "^2.0.0",
     "meshblu-core-task-enqueue-jobs-for-webhooks-message-sent": "^2.0.0",
-    "meshblu-core-task-enqueue-webhooks": "^1.1.0",
+    "meshblu-core-task-enqueue-webhooks": "^1.1.1",
     "meshblu-core-task-forbidden": "^1.0.0",
     "meshblu-core-task-get-authorized-subscription-types": "^1.0.1",
     "meshblu-core-task-get-broadcast-subscription-types": "^1.0.0",
