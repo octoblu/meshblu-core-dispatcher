@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -103,7 +103,7 @@
     "meshblu-core-task-get-device-public-key": "^1.0.0",
     "meshblu-core-task-get-global-public-key": "^1.0.0",
     "meshblu-core-task-get-status": "^2.0.0",
-    "meshblu-core-task-get-subscriptions": "^1.1.3",
+    "meshblu-core-task-get-subscriptions": "^2.0.2",
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-publish-broadcast-received": "^3.0.0",
