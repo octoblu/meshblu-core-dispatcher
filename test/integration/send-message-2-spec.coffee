@@ -97,7 +97,7 @@ describe 'SendMessage2: send', ->
           metadata:
             auth: @auth
             toUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -130,7 +130,7 @@ describe 'SendMessage2: send', ->
           metadata:
             auth: @auth
             toUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -172,7 +172,7 @@ describe 'SendMessage2: send', ->
           metadata:
             auth: @auth
             toUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -212,7 +212,7 @@ describe 'SendMessage2: send', ->
           metadata:
             auth: @auth
             toUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -252,7 +252,7 @@ describe 'SendMessage2: send', ->
           metadata:
             auth: @auth
             toUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -292,7 +292,7 @@ describe 'SendMessage2: send', ->
           metadata:
             auth: @auth
             toUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 

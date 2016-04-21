@@ -69,8 +69,13 @@ describe 'SendMessage: direct', ->
 
     describe 'JobManager gets DeliverSentMessage job', (done) ->
       beforeEach (done) ->
-        @jobManager.getRequest ['request'], (error, @request) =>
-          done error
+        getJob = =>
+          @jobManager.getRequest ['request'], (error, request) =>
+            return done error if error?
+            return getJob() unless request.metadata.jobType == 'DeliverSentMessage'
+            @request = request
+            return done()
+        getJob()
 
       it 'should be a sent messageType', ->
         auth =

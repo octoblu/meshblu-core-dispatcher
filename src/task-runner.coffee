@@ -44,8 +44,6 @@ class TaskRunner
     Task = TaskRunner.TASKS[taskName]
     return callback new Error "Task Definition '#{name}' missing task class" unless Task?
 
-    debug '_doTask', taskName
-
     datastore = @datastoreFactory.build taskConfig.datastoreCollection if taskConfig.datastoreCollection?
     cache  = @cacheFactory.build taskConfig.cacheNamespace if taskConfig.cacheNamespace?
 
@@ -62,7 +60,7 @@ class TaskRunner
     }
     task.do @request, (error, response) =>
       return callback error if error?
-      debug taskName, response
+      debug taskName, response.metadata.code
       {metadata} = response
 
       codeStr = metadata?.code?.toString()

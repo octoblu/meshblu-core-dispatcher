@@ -430,11 +430,11 @@ SendMessage:
     'authenticate':
       filter: 'Authenticate'
       on:
-        204: 'send-message'
+        204: 'send-message-2'
     'send-message-2':
       task: 'meshblu-core-task-send-message-2'
       on:
-        204: 'send-message-2'
+        204: 'send-message'
     'send-message':
       task: 'meshblu-core-task-send-message'
 
