@@ -105,9 +105,12 @@ class CommandDispatch
           @panic error if error?
       , @timeout * 1000
 
-      return @doSingleRun @closeAndTentativePanic if @singleRun
-      async.until @terminated, @runDispatcher, @closeAndTentativePanic
-      async.until @terminated, @runQueueWorker, @closeAndTentativePanic
+      @prepareConnections (error) =>
+        @panic error if error?
+
+        return @doSingleRun @closeAndTentativePanic if @singleRun
+        async.until @terminated, @runDispatcher, @closeAndTentativePanic
+        async.until @terminated, @runQueueWorker, @closeAndTentativePanic
 
   doSingleRun: (callback) =>
     async.parallel [
@@ -115,9 +118,74 @@ class CommandDispatch
       async.apply @runQueueWorker
     ], callback
 
+  prepareConnections: (callback) =>
+    async.series [
+      async.apply @prepareCacheFactory
+      async.apply @prepareDispatchClient
+      async.apply @prepareLogClient
+      async.apply @prepareLocalJobHandlerClient
+      async.apply @prepareLocalQueueWorkerClient
+      async.apply @prepareRemoteJobHandlerClient
+      async.apply @prepareTaskJobManagerClient
+    ], callback
+
+  getReadyRedis: (redisUri, callback) =>
+    callback = _.once callback
+    client = redis.createClient redisUri
+    client.once 'ready', =>
+      callback null, client
+    client.once 'error', (error) =>
+      callback error
+
+  prepareCacheFactory: (callback) =>
+    @getReadyRedis @redisUri, (error, client) =>
+      return callback error if error?
+      @cacheFactory = new CacheFactory {client}
+      callback()
+
+  prepareDispatchClient: (callback) =>
+    @getReadyRedis @redisUri, (error, client) =>
+      return callback error if error?
+      @dispatchClient = new RedisNS @namespace, client
+      callback()
+
+  prepareLogClient: (callback) =>
+    @getReadyRedis @jobLogRedisUri, (error, client) =>
+      return callback error if error?
+      @logClient = client
+      callback()
+
+  prepareLocalJobHandlerClient: (callback) =>
+    @getReadyRedis @redisUri, (error, client) =>
+      return callback error if error?
+      @localJobHandlerClient = new RedisNS @internalNamespace, client
+      callback()
+
+  prepareLocalQueueWorkerClient: (callback) =>
+    @getReadyRedis @redisUri, (error, client) =>
+      return callback error if error?
+      @localQueueWorkerClient = new RedisNS @internalNamespace, client
+      callback()
+
+  prepareRemoteJobHandlerClient: (callback) =>
+    @getReadyRedis @redisUri, (error, client) =>
+      return callback error if error?
+      @remoteJobHandlerClient = new RedisNS @internalNamespace, client
+      callback()
+
+  prepareTaskJobManagerClient: (callback) =>
+    @getReadyRedis @redisUri, (error, client) =>
+      return callback error if error?
+      @taskJobManagerClient = new RedisNS @namespace, client
+      callback()
+
+  getDatastoreFactory: =>
+    @datastoreFactory ?= new DatastoreFactory database: @database
+    @datastoreFactory
+
   runDispatcher: (callback) =>
     dispatcher = new Dispatcher
-      client:  @getDispatchClient()
+      client:  @dispatchClient
       timeout:   @timeout
       jobHandlers: @assembleJobHandlers()
       logJobs: @logJobs
@@ -135,13 +203,13 @@ class CommandDispatch
       publicKey:           @publicKey
       timeout:             @timeout
       jobs:                @localHandlers
-      client:              @getLocalQueueWorkerClient()
+      client:              @localQueueWorkerClient
       jobRegistry:         @getJobRegistry()
-      cacheFactory:        @getCacheFactory()
+      cacheFactory:        @cacheFactory
       datastoreFactory:    @getDatastoreFactory()
       meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
-      externalClient:      @getTaskJobManagerClient()
+      externalClient:      @taskJobManagerClient
       logJobs:             @logJobs
       workerName:          @workerName
       taskLogger:          @getTaskLogger()
@@ -153,28 +221,16 @@ class CommandDispatch
 
     jobAssembler = new JobAssembler
       timeout: @timeout
-      localClient: @getLocalJobHandlerClient()
-      remoteClient: @getRemoteJobHandlerClient()
+      localClient: @localJobHandlerClient
+      remoteClient: @remoteJobHandlerClient
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
 
     @assembledJobHandlers = jobAssembler.assemble()
 
-  getCacheFactory: =>
-    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
-    @cacheFactory
-
-  getDatastoreFactory: =>
-    @datastoreFactory ?= new DatastoreFactory database: @database
-    @datastoreFactory
-
-  getDispatchClient: =>
-    @dispatchClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
-    @dispatchClient
-
   getDispatchLogger: =>
     @dispatchLogger ?= new JobLogger
-      client: @getLogClient()
+      client: @logClient
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
@@ -183,7 +239,7 @@ class CommandDispatch
 
   getJobLogger: =>
     @jobLogger ?= new JobLogger
-      client: @getLogClient()
+      client: @logClient
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: @jobLogQueue
@@ -194,38 +250,18 @@ class CommandDispatch
     @jobRegistry ?= (new JobRegistry).toJSON()
     @jobRegistry
 
-  getLogClient: =>
-    @logClient ?= redis.createClient @jobLogRedisUri
-    @logClient
-
-  getLocalJobHandlerClient: =>
-    @localJobHandlerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
-    @localJobHandlerClient
-
-  getLocalQueueWorkerClient: =>
-    @localQueueWorkerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
-    @localQueueWorkerClient
-
-  getRemoteJobHandlerClient: =>
-    @remoteClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
-    @remoteClient
-
-  getTaskJobManagerClient: =>
-    @taskJobManagerClient ?= _.bindAll new RedisNS @namespace, redis.createClient @redisUri
-    @taskJobManagerClient
-
   getTaskLogger: =>
     return @taskLogger if @taskLogger?
 
     jobLogger = new JobLogger
-      client: @getLogClient()
+      client: @logClient
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @jobLogQueue
       sampleRate: @jobLogSampleRate
 
     deviceLogger = new DeviceLogger
-      client: @getLogClient()
+      client: @logClient
       indexPrefix: 'metric:meshblu-core-dispatcher-device'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @deviceLogQueue

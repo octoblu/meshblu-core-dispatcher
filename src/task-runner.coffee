@@ -26,7 +26,6 @@ class TaskRunner
       @taskLogger
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
-
     @buildTaskJobManager()
 
   buildTaskJobManager: =>

@@ -6,7 +6,7 @@ class CacheFactory
   constructor: ({@client}) ->
 
   build: (namespace) =>
-    redisNSClientWithRedisClient = _.bindAll new RedisNS namespace, @client
+    redisNSClientWithRedisClient = new RedisNS namespace, @client
     new Cache client: redisNSClientWithRedisClient
 
 module.exports = CacheFactory
