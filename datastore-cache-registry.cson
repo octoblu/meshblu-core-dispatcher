@@ -1,0 +1,10 @@
+subscriptions:
+  cache: [
+    'emitterUuid'
+    'subscriberUuid'
+    'type'
+  ]
+devices:
+  cache: [
+    'uuid'
+  ]

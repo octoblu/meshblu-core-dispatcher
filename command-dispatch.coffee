@@ -180,7 +180,7 @@ class CommandDispatch
       callback()
 
   getDatastoreFactory: =>
-    @datastoreFactory ?= new DatastoreFactory database: @database
+    @datastoreFactory ?= new DatastoreFactory database: @database, cacheFactory: @cacheFactory
     @datastoreFactory
 
   runDispatcher: (callback) =>

@@ -19,7 +19,7 @@ JobLogger        = require 'job-logger'
 
 class TestDispatcher
   constructor: ({@publicKey} = {})->
-    jobs = cson.parseFile( path.join __dirname, '../../job-registry.cson')
+    jobs = cson.parseFile(path.join __dirname, '../../job-registry.cson')
 
     @redisUri          = process.env.REDIS_URI
     @mongoDBUri        = 'localhost:27017/meshblu-core-test'
@@ -79,7 +79,8 @@ class TestDispatcher
     @cacheFactory
 
   getDatastoreFactory: =>
-    @datastoreFactory ?= new DatastoreFactory database: mongojs @mongoDBUri
+    database = mongojs @mongoDBUri
+    @datastoreFactory ?= new DatastoreFactory {database, @cacheFactory}
     @datastoreFactory
 
   getDispatchLogger: =>
