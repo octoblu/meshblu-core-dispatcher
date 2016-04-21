@@ -42,7 +42,7 @@ describe 'SendMessage2: send', ->
         version: '2.0.0'
         whitelists:
           message:
-            sent: 'spy-uuid': {}
+            sent: [{uuid: 'spy-uuid'}]
 
     @devices.insert @senderDevice, done
 
@@ -54,8 +54,8 @@ describe 'SendMessage2: send', ->
         version: '2.0.0'
         whitelists:
           message:
-            from: 'sender-uuid': {}
-            received: 'nsa-uuid': {}
+            from: [{uuid: 'sender-uuid'}]
+            received: [{uuid: 'nsa-uuid'}]
 
     @devices.insert @receiverDevice, done
 
@@ -246,7 +246,7 @@ describe 'SendMessage2: send', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach (done) ->
+      beforeEach 'wait-for-the-hydrant', (done) ->
         doneTwice = _.after 2, done
         job =
           metadata:

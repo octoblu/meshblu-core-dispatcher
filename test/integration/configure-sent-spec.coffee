@@ -42,7 +42,7 @@ describe 'ConfigureSent', ->
         version: '2.0.0'
         whitelists:
           configure:
-            sent: 'spy-uuid': {}
+            sent: [{uuid: 'spy-uuid'}]
 
     @devices.insert @senderDevice, done
 
@@ -54,7 +54,7 @@ describe 'ConfigureSent', ->
         version: '2.0.0'
         whitelists:
           configure:
-            received: 'nsa-uuid': {}
+            received: [{uuid: 'nsa-uuid'}]
 
     @devices.insert @spyDevice, done
 

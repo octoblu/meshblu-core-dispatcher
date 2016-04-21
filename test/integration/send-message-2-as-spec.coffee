@@ -38,7 +38,7 @@ describe 'SendMessage2: send-as', ->
         version: '2.0.0'
         whitelists:
           message:
-            as: 'imposter-uuid': {}
+            as: [{uuid: 'imposter-uuid'}]
 
     @devices.insert @senderDevice, done
 
@@ -50,7 +50,7 @@ describe 'SendMessage2: send-as', ->
         version: '2.0.0'
         whitelists:
           message:
-            from: 'sender-uuid': {}
+            from: [{uuid: 'sender-uuid'}]
 
     @devices.insert @receiverDevice, done
 
