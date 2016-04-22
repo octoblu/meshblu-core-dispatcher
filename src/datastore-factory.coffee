@@ -10,7 +10,7 @@ class DatastoreFactory
 
   build: (collection) =>
     cache = @cacheFactory.build "datastore:#{collection}"
-    cacheAttributes = @cacheRegistry[collection]
+    cacheAttributes = @cacheRegistry[collection]?.attributes
     new Datastore {@database, collection, cache, cacheAttributes}
 
 module.exports = DatastoreFactory

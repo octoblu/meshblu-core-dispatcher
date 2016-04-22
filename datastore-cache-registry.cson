@@ -1,10 +1,10 @@
 subscriptions:
-  cache: [
+  attributes: [
     'emitterUuid'
     'subscriberUuid'
     'type'
   ]
 devices:
-  cache: [
+  attributes: [
     'uuid'
   ]

@@ -31,9 +31,17 @@ class TestDispatcher
 
   doSingleRun: (callback) =>
     async.parallel [
+      async.apply @clearRedis
       async.apply @runDispatcher
       async.apply @runQueueWorker
     ], callback
+
+  clearRedis: (callback) =>
+    @getCacheFactory()
+    @cacheFactory.client.keys 'datastore:*', (error, keys) =>
+      async.eachSeries keys, (key, done) =>
+        @cacheFactory.client.del key, done
+      , callback
 
   runDispatcher: (callback) =>
     dispatcher = new Dispatcher
