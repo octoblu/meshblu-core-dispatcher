@@ -10,13 +10,13 @@ describe 'DatastoreFactory', ->
     cacheFactory = new CacheFactory client
     mongoHost = process.env.MONGODB_HOST ? 'localhost'
     mongoPort = process.env.MONGODB_PORT ? '27017'
-    database = mongojs "#{mongoHost}:#{mongoPort}/helicopter"
+    database = mongojs "#{mongoHost}:#{mongoPort}/helicopter", ['choppers']
     @sut = new DatastoreFactory {database, cacheFactory}
-    @datastore = new Datastore database: database, collection: 'ToTheChopper'
-    @datastore.remove done
+    @datastore = new Datastore database: database, collection: 'choppers'
+    database.choppers.remove done
 
   beforeEach (done) ->
-    datastore = @sut.build 'ToTheChopper'
+    datastore = @sut.build 'choppers'
     datastore.insert uuid: 'shoelace', token: 'maybe-just-stick-with-velcro', done
 
   it 'should use my datastore', (done) ->

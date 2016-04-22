@@ -10,30 +10,23 @@ Datastore   = require 'meshblu-core-datastore'
 RedisNS     = require '@octoblu/redis-ns'
 moment      = require 'moment'
 JobLogger   = require 'job-logger'
+CacheFactory = require '../src/cache-factory'
+DatastoreFactory = require '../src/datastore-factory'
 
 describe 'QueueWorker', ->
   beforeEach ->
     mongoHost = process.env.MONGODB_HOST ? 'localhost'
     mongoPort = process.env.MONGODB_PORT ? '27017'
-    @database = mongojs "#{mongoHost}:#{mongoPort}/meshblu-core-test"
+    @database = mongojs "#{mongoHost}:#{mongoPort}/meshblu-core-test", ['theDevices']
 
     @redisKey = uuid.v1()
     @cacheClientId = uuid.v1()
     @client = _.bindAll redis.createClient @redisKey
     @externalClient = _.bindAll redis.createClient @redisKey
 
-    @datastoreFactory =
-      build: (collection) =>
-        new Datastore
-          database: @database
-          collection: collection
-
-    @cacheFactory =
-      build: (namespace) =>
-        rawClient = redis.createClient @cacheClientId
-        client = _.bindAll new RedisNS namespace, rawClient
-        new Cache
-          client: client
+    client = redis.createClient @cacheClientId
+    @cacheFactory = new CacheFactory {client}
+    @datastoreFactory = new DatastoreFactory {@database, @cacheFactory}
 
   beforeEach ->
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
@@ -126,6 +119,9 @@ describe 'QueueWorker', ->
 
     describe 'when called with an CheckToken job', ->
       beforeEach (done) ->
+        @database['theDevices'].remove done
+
+      beforeEach (done) ->
         datastore = new Datastore
           database: @database
           collection: 'theDevices'
@@ -136,10 +132,7 @@ describe 'QueueWorker', ->
           meshblu:
             tokens: 'sUQVYy0qd0YLNSkulRP1fCAJeVBjrD9ppZoMo/p51YE=': {}
 
-        async.series [
-          async.apply datastore.remove
-          async.apply datastore.insert, record
-        ], done
+        datastore.insert record, done
 
       beforeEach (done) ->
         @timeout 3000
