@@ -9,7 +9,7 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-describe 'SendMessage2: send-as', ->
+describe 'SendMessage: send-as', ->
   @timeout 5000
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
@@ -89,7 +89,7 @@ describe 'SendMessage2: send-as', ->
               token: 'leak'
               as: 'sender-uuid'
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -132,7 +132,7 @@ describe 'SendMessage2: send-as', ->
               token: 'leak'
               as: 'sender-uuid'
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -168,7 +168,7 @@ describe 'SendMessage2: send-as', ->
               token: 'leak'
               as: 'sender-uuid'
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
@@ -210,7 +210,7 @@ describe 'SendMessage2: send-as', ->
               token: 'leak'
               as: 'sender-uuid'
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 

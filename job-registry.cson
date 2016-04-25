@@ -438,16 +438,6 @@ SendMessage:
     'send-message':
       task: 'meshblu-core-task-send-message'
 
-SendMessage2:
-  start: 'authenticate'
-  tasks:
-    'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'send-message-2'
-    'send-message-2':
-      task: 'meshblu-core-task-send-message-2'
-
 SubscriptionList:
   start: 'authenticate'
   tasks:

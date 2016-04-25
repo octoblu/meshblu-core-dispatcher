@@ -83,13 +83,13 @@ describe 'BroadcastSent(2): send', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create SendMessage2 job', (done) ->
+      beforeEach 'create SendMessage job', (done) ->
         doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
             fromUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           rawData: JSON.stringify devices:['*'], payload: 'boo'
 
         client = new RedisNS 'messages', redis.createClient(@redisUri)
@@ -130,7 +130,7 @@ describe 'BroadcastSent(2): send', ->
           metadata:
             auth: @auth
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['*']
             payload: 'boo'
@@ -172,7 +172,7 @@ describe 'BroadcastSent(2): send', ->
           metadata:
             auth: @auth
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['*']
             payload: 'boo'
@@ -222,7 +222,7 @@ describe 'BroadcastSent(2): send', ->
           metadata:
             auth: @auth
             fromUuid: 'sender-uuid'
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['*'], payload: 'boo'
 
@@ -271,7 +271,7 @@ describe 'BroadcastSent(2): send', ->
           metadata:
             auth: @auth
             fromUuid: @auth.uuid
-            jobType: 'SendMessage2'
+            jobType: 'SendMessage'
           data:
             devices: ['*']
             payload: 'boo'

@@ -141,7 +141,7 @@ describe 'Dispatcher', ->
                   responseId: 'a-response-id'
                   jobType: 'Authenticate'
 
-            expect(job.body.elapsedTime).to.be.within 0, 300 #ms
+            expect(job.body.elapsedTime).to.be.within 0, 500 #ms
 
       context 'when the queue is empty', ->
         beforeEach (done) ->

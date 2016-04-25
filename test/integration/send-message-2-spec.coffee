@@ -9,7 +9,7 @@ TestDispatcher = require './test-dispatcher'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
-describe 'SendMessage2: send', ->
+describe 'SendMessage: send', ->
   @timeout 5000
   beforeEach (done) ->
     @db            = mongojs 'meshblu-core-test'
