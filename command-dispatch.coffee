@@ -185,13 +185,15 @@ class CommandDispatch
 
   runDispatcher: (callback) =>
     dispatcher = new Dispatcher
-      client:  @dispatchClient
-      timeout:   @timeout
-      jobHandlers: @assembleJobHandlers()
-      logJobs: @logJobs
-      workerName: @workerName
-      dispatchLogger: @getDispatchLogger()
-      jobLogger: @getJobLogger()
+      client:              @dispatchClient
+      timeout:             @timeout
+      jobHandlers:         @assembleJobHandlers()
+      logJobs:             @logJobs
+      workerName:          @workerName
+      dispatchLogger:      @getDispatchLogger()
+      createPopLogger:     @getCreatePopLogger()
+      createRespondLogger: @getCreateRespondLogger()
+      jobLogger:           @getJobLogger()
 
     dispatcher.dispatch callback
 
@@ -236,6 +238,24 @@ class CommandDispatch
       jobLogQueue: @jobLogQueue
       sampleRate: @jobLogSampleRate
     @dispatchLogger
+
+  getCreatePopLogger: =>
+    @createPopLogger ?= new JobLogger
+      client: @logClient
+      indexPrefix: 'metric:meshblu'
+      type: 'create-pop'
+      jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
+    @createPopLogger
+
+  getCreateRespondLogger: =>
+    @createRespondLogger ?= new JobLogger
+      client: @logClient
+      indexPrefix: 'metric:meshblu'
+      type: 'create-respond'
+      jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
+    @createRespondLogger
 
   getJobLogger: =>
     @jobLogger ?= new JobLogger

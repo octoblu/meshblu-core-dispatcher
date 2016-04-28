@@ -5,17 +5,22 @@ async           = require 'async'
 moment          = require 'moment'
 {EventEmitter2} = require 'eventemitter2'
 JobManager      = require 'meshblu-core-job-manager'
+Benchmark = require 'simple-benchmark'
+
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout,@logJobs,@workerName,@jobLogger,@dispatchLogger} = options
-    @startDispatchTime = Date.now()
+    {client,@timeout,@logJobs,@workerName,@jobLogger} = options
+    {@dispatchLogger,@createRespondLogger,@createPopLogger} = options
+    @dispatchBenchmark = new Benchmark label: 'Dispatcher'
     @client = _.bindAll client
     {@jobHandlers} = options
     @timeout ?= 30
 
     throw new Error('Missing @jobLogger') unless @jobLogger?
     throw new Error('Missing @dispatchLogger') unless @dispatchLogger?
+    throw new Error('Missing @createPopLogger') unless @createPopLogger?
+    throw new Error('Missing @createRespondLogger') unless @createRespondLogger?
 
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -27,16 +32,17 @@ class Dispatcher extends EventEmitter2
     @jobManager.getRequest ['request'], (error, request) =>
       return callback error if error?
       return callback() unless request?
-      debug 'dispatch: got a job'
-
-      @logDispatcher {startTime: @startDispatchTime, request}, =>
-        startTime = Date.now()
+      async.parallel [
+        async.apply @createPopLogger.log, {request, elapsedTime: @dispatchBenchmark.elapsed()}
+        async.apply @dispatchLogger.log, {request, elapsedTime: @dispatchBenchmark.elapsed()}
+      ], =>
+        benchmark = new Benchmark label: 'do-job'
 
         @doJob request, (error, response) =>
-          return @sendError {startTime, request, error}, callback if error?
-          @sendResponse {startTime, request, response}, callback
+          return @sendError {benchmark, request, error}, callback if error?
+          @sendResponse {benchmark, request, response}, callback
 
-  sendResponse: ({startTime, request, response}, callback) =>
+  sendResponse: ({benchmark, request, response}, callback) =>
     {metadata,rawData} = response
 
     response =
@@ -44,17 +50,23 @@ class Dispatcher extends EventEmitter2
       rawData: rawData
 
     @jobManager.createResponse 'response', response, (error) =>
-      @logJob {startTime, request, response}, =>
+      async.parallel [
+        async.apply @createRespondLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+        async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+      ], =>
         callback error
 
-  sendError: ({startTime, request, error}, callback) =>
+  sendError: ({benchmark, request, error}, callback) =>
     response =
       metadata:
         code: 504
         responseId: request.metadata.responseId
         status: error.message
 
-    @logJob {startTime, request, response}, =>
+    async.parallel [
+      async.apply @createRespondLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+      async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+    ], =>
       @jobManager.createResponse 'response', response, callback
 
   doJob: (request, callback) =>
@@ -64,13 +76,5 @@ class Dispatcher extends EventEmitter2
     return @jobHandlers[type] request, callback if @jobHandlers[type]?
 
     callback new Error "jobType Not Found: #{type}"
-
-  logDispatcher: ({startTime, request, response}, callback) =>
-    elapsedTime = Date.now() - startTime
-    @dispatchLogger.log {request, response, elapsedTime}, callback
-
-  logJob: ({startTime, request, response}, callback) =>
-    elapsedTime = Date.now() - startTime
-    @jobLogger.log {request, response, elapsedTime}, callback
 
 module.exports = Dispatcher
