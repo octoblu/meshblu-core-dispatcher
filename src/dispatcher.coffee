@@ -32,17 +32,20 @@ class Dispatcher extends EventEmitter2
     @jobManager.getRequest ['request'], (error, request) =>
       return callback error if error?
       return callback() unless request?
+      requestBenchmark = new Benchmark label: 'Job'
+      requestBenchmark.startTime = request.createdAt if request.createdAt?
+
       async.parallel [
-        async.apply @createPopLogger.log, {request, elapsedTime: @dispatchBenchmark.elapsed()}
+        async.apply @createPopLogger.log, {request, elapsedTime: requestBenchmark.elapsed()}
         async.apply @dispatchLogger.log, {request, elapsedTime: @dispatchBenchmark.elapsed()}
       ], =>
         benchmark = new Benchmark label: 'do-job'
 
         @doJob request, (error, response) =>
-          return @sendError {benchmark, request, error}, callback if error?
-          @sendResponse {benchmark, request, response}, callback
+          return @sendError {requestBenchmark, benchmark, request, error}, callback if error?
+          @sendResponse {requestBenchmark, benchmark, request, response}, callback
 
-  sendResponse: ({benchmark, request, response}, callback) =>
+  sendResponse: ({requestBenchmark, benchmark, request, response}, callback) =>
     {metadata,rawData} = response
 
     response =
@@ -51,12 +54,12 @@ class Dispatcher extends EventEmitter2
 
     @jobManager.createResponse 'response', response, (error) =>
       async.parallel [
-        async.apply @createRespondLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+        async.apply @createRespondLogger.log, {request, response, elapsedTime: requestBenchmark.elapsed()}
         async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
       ], =>
         callback error
 
-  sendError: ({benchmark, request, error}, callback) =>
+  sendError: ({requestBenchmark, benchmark, request, error}, callback) =>
     response =
       metadata:
         code: 504
@@ -64,7 +67,7 @@ class Dispatcher extends EventEmitter2
         status: error.message
 
     async.parallel [
-      async.apply @createRespondLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+      async.apply @createRespondLogger.log, {request, response, elapsedTime: requestBenchmark.elapsed()}
       async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
     ], =>
       @jobManager.createResponse 'response', response, callback
