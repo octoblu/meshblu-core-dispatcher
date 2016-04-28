@@ -7,4 +7,5 @@ subscriptions:
 devices:
   attributes: [
     'uuid'
+    'meshblu.hash'
   ]

@@ -48,7 +48,7 @@
     "lodash": "^3.10.1",
     "meshblu-config": "^3.1.1",
     "meshblu-core-cache": "^1.7.0",
-    "meshblu-core-datastore": "^4.3.1",
+    "meshblu-core-datastore": "^4.4.0",
     "meshblu-core-job-manager": "^3.1.8",
     "meshblu-core-manager-token": "^4.0.3",
     "meshblu-core-task-black-list-token": "^1.0.0",
