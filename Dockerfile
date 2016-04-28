@@ -1,4 +1,4 @@
-FROM node:6
+FROM node:5
 MAINTAINER Octoblu <docker@octoblu.com>
 
 RUN mkdir -p /usr/src/app
