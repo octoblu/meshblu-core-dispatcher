@@ -7,7 +7,6 @@ moment          = require 'moment'
 JobManager      = require 'meshblu-core-job-manager'
 Benchmark = require 'simple-benchmark'
 
-
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
     {client,@timeout,@logJobs,@workerName,@jobLogger} = options
