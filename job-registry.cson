@@ -48,11 +48,6 @@ DeliverBroadcastMessage:
         204: 'deliver-message'
     'deliver-message':
       filter: 'HandleDeliverMessage'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverBroadcastSent:
   start: 'authenticate'
@@ -78,11 +73,6 @@ DeliverBroadcastSent:
     'enqueue-jobs-for-subscriptions-broadcast-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverConfigMessage:
   start: 'authenticate'
@@ -97,11 +87,6 @@ DeliverConfigMessage:
         204: 'deliver-message'
     'deliver-message':
       filter: 'HandleDeliverMessage'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverConfigureSent:
   start: 'authenticate'
@@ -127,11 +112,6 @@ DeliverConfigureSent:
     'enqueue-jobs-for-subscriptions-configure-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverMessageSent:
   start: 'authenticate'
@@ -157,11 +137,6 @@ DeliverMessageSent:
     'enqueue-jobs-for-subscriptions-message-sent':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverMessageReceived:
   start: 'authenticate'
@@ -187,11 +162,6 @@ DeliverMessageReceived:
     'enqueue-jobs-for-subscriptions-message-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverReceivedMessage:
   start: 'authenticate'
@@ -206,11 +176,6 @@ DeliverReceivedMessage:
         204: 'deliver-message'
     'deliver-message':
       filter: 'HandleDeliverMessage'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSentMessage:
   start: 'authenticate'
@@ -225,11 +190,6 @@ DeliverSentMessage:
         204: 'deliver-message'
     'deliver-message':
       filter: 'HandleDeliverMessage'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSubscriptionBroadcastReceived:
   start: 'authenticate'
@@ -260,11 +220,6 @@ DeliverSubscriptionBroadcastReceived:
     'enqueue-jobs-for-subscriptions-broadcast-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSubscriptionBroadcastSent:
   start: 'authenticate'
@@ -285,11 +240,6 @@ DeliverSubscriptionBroadcastSent:
     'enqueue-jobs-for-subscriptions-broadcast-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSubscriptionConfigureReceived:
   start: 'authenticate'
@@ -320,11 +270,6 @@ DeliverSubscriptionConfigureReceived:
     'enqueue-jobs-for-subscriptions-configure-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSubscriptionConfigureSent:
   start: 'authenticate'
@@ -345,11 +290,6 @@ DeliverSubscriptionConfigureSent:
     'enqueue-jobs-for-subscriptions-configure-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSubscriptionMessageReceived:
   start: 'authenticate'
@@ -380,11 +320,6 @@ DeliverSubscriptionMessageReceived:
     'enqueue-jobs-for-subscriptions-message-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverSubscriptionMessageSent:
   start: 'authenticate'
@@ -405,11 +340,6 @@ DeliverSubscriptionMessageSent:
     'enqueue-jobs-for-subscriptions-message-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
       datastoreCollection: 'subscriptions'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 DeliverWebhook:
   start: 'authenticate'
@@ -422,11 +352,6 @@ DeliverWebhook:
       task: 'meshblu-core-task-deliver-webhook'
       cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
-      on:
-        204: 'remove-task-token'
-    'remove-task-token':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
 
 GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
