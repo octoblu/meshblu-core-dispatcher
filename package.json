@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "6.8.2",
+  "version": "6.9.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -130,11 +130,8 @@
     "meshblu-core-task-update-device": "^2.1.0",
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.11.1",
-    "mongojs": "^2.3.0",
+    "mongojs": "^2.4.0",
     "request": "^2.67.0",
     "simple-benchmark": "^1.0.11"
-  },
-  "optionalDependencies": {
-    "hiredis": "^0.4.1"
   }
 }
