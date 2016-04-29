@@ -24,13 +24,14 @@ class TaskRunner
       @privateKey
       @publicKey
       @taskLogger
+      @ignoreResponse
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
     @buildTaskJobManager()
 
   buildTaskJobManager: =>
     cache = @cacheFactory.build 'meshblu-token-one-time'
-    @taskJobManager = new TaskJobManager {@jobManager, cache, @pepper, @uuidAliasResolver}
+    @taskJobManager = new TaskJobManager {@jobManager, cache, @pepper, @uuidAliasResolver, @ignoreResponse}
 
   run: (callback) =>
     @_doTask @config.start, callback

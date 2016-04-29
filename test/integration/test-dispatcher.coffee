@@ -57,19 +57,20 @@ class TestDispatcher
 
   runQueueWorker: (callback) =>
     queueWorker = new QueueWorker
-      aliasServerUri:   undefined
-      timeout:          15
-      pepper:           @pepper
-      publicKey:        @publicKey
-      jobs:             @jobNames
-      client:           @getLocalQueueWorkerClient()
-      jobRegistry:      @getJobRegistry()
-      cacheFactory:     @getCacheFactory()
-      datastoreFactory: @getDatastoreFactory()
-      meshbluConfig:    @meshbluConfig
+      aliasServerUri:      undefined
+      timeout:             15
+      pepper:              @pepper
+      publicKey:           @publicKey
+      jobs:                @jobNames
+      client:              @getLocalQueueWorkerClient()
+      jobRegistry:         @getJobRegistry()
+      cacheFactory:        @getCacheFactory()
+      datastoreFactory:    @getDatastoreFactory()
+      meshbluConfig:       @meshbluConfig
       forwardEventDevices: []
       externalClient:      @getTaskJobManagerClient()
-      taskLogger:       @getTaskLogger()
+      taskLogger:          @getTaskLogger()
+      ignoreResponse:      false
 
     queueWorker.run callback
 

@@ -9,7 +9,7 @@ class QueueWorker
   constructor: (options={}) ->
     {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig,@forwardEventDevices} = options
     {@externalClient,@logJobs,@workerName,@privateKey,@publicKey} = options
-    {@datastoreFactory,@cacheFactory,@taskLogger} = options
+    {@datastoreFactory,@cacheFactory,@taskLogger,@ignoreResponse} = options
     @client = _.bindAll client
     @timeout ?= 30
     @jobManager = new JobManager timeoutSeconds: @timeout, client: @client
@@ -48,6 +48,7 @@ class QueueWorker
       @privateKey
       @publicKey
       @taskLogger
+      @ignoreResponse
     }).run (error, response) =>
       return callback error if error?
       @sendResponse jobType, responseId, response, callback
