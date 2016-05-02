@@ -52,6 +52,7 @@ class CommandDispatch
     @deviceLogQueue      = process.env.DEVICE_LOG_QUEUE
     @deviceLogSampleRate = process.env.DEVICE_LOG_SAMPLE_RATE
     @deviceLogUuid       = process.env.DEVICE_LOG_UUID
+    @intervalBetweenJobs = parseInt(process.env.INTERVAL_BETWEEN_JOBS || 0)
 
     unless @redisUri?
       throw new Error 'Missing mandatory parameter: REDIS_URI'
@@ -113,6 +114,9 @@ class CommandDispatch
         async.until @terminated, @runQueueWorker, @closeAndTentativePanic
 
   doSingleRun: (callback) =>
+    _.delay @_doSingleRun, @intervalBetweenJobs, callback
+
+  _doSingleRun: (callback) =>
     async.parallel [
       async.apply @runDispatcher
       async.apply @runQueueWorker
