@@ -2,7 +2,7 @@ _                      = require 'lodash'
 debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
 moment                 = require 'moment'
 TaskJobManager         = require './task-job-manager'
-{Tasks}                = require('./task-loader')
+{Tasks}                = require './task-loader'
 
 class TaskRunner
   @TASKS = Tasks
@@ -71,7 +71,7 @@ class TaskRunner
         @_doTask nextTask, callback
 
   logTask: ({startTime, request, response, taskName}, callback) =>
-    request = _.cloneDeep request
+    request.metadata = _.cloneDeep request.metadata
     request.metadata.workerName = @workerName
     request.metadata.taskName = taskName
     elapsedTime = Date.now() - startTime
