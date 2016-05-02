@@ -28,7 +28,6 @@ class Dispatcher extends EventEmitter2
       timeoutSeconds: @timeout
 
   dispatch: (callback) =>
-    global.gc?()
     @jobManager.getRequest ['request'], (error, request) =>
       return callback error if error?
       return callback() unless request?
