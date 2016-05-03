@@ -216,6 +216,11 @@ DeliverSubscriptionBroadcastReceived:
       task: 'meshblu-core-task-enqueue-jobs-for-webhooks-broadcast-received'
       datastoreCollection: 'devices'
       on:
+        204: 'enqueue-jobs-for-forward-broadcast-received'
+    'enqueue-jobs-for-forward-broadcast-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-forward-broadcast-received'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-broadcast-received'
     'enqueue-jobs-for-subscriptions-broadcast-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received'
