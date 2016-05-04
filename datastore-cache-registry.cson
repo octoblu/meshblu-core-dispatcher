@@ -1,11 +1,12 @@
 subscriptions:
-  attributes: [
+  useQueryCache: true
+  cacheAttributes: [
     'emitterUuid'
     'subscriberUuid'
     'type'
   ]
 devices:
-  attributes: [
+  cacheAttributes: [
     'uuid'
     'meshblu.hash'
   ]
