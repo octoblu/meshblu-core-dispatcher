@@ -49,6 +49,7 @@ class TestDispatcher
       timeout:   15
       jobHandlers: @assembleJobHandlers()
       jobLogger: @getJobLogger()
+      memoryLogger: @getMemoryLogger()
       dispatchLogger: @getDispatchLogger()
       createPopLogger: @getCreatePopLogger()
       createRespondLogger: @getCreateRespondLogger()
@@ -102,6 +103,15 @@ class TestDispatcher
       jobLogQueue: 'some-queue'
       sampleRate: 1.00
     @dispatchLogger
+
+  getMemoryLogger: =>
+    @memoryLogger ?= new JobLogger
+      client: @getLogClient()
+      indexPrefix: 'metric:meshblu-core-dispatcher-memory'
+      type: 'meshblu-core-dispatcher:dispatch'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
+    @memoryLogger
 
   getCreatePopLogger: =>
     @createPopLogger ?= new JobLogger

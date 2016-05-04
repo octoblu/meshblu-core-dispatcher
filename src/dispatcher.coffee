@@ -26,6 +26,7 @@ class Dispatcher extends EventEmitter2
     @timeout ?= 30
 
     throw new Error('Missing @jobLogger') unless @jobLogger?
+    throw new Error('Missing @memoryLogger') unless @memoryLogger?
     throw new Error('Missing @dispatchLogger') unless @dispatchLogger?
     throw new Error('Missing @createPopLogger') unless @createPopLogger?
     throw new Error('Missing @createRespondLogger') unless @createRespondLogger?
