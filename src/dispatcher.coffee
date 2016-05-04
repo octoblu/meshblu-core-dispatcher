@@ -9,8 +9,17 @@ Benchmark = require 'simple-benchmark'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
-    {client,@timeout,@logJobs,@workerName,@jobLogger} = options
-    {@dispatchLogger,@createRespondLogger,@createPopLogger} = options
+    {
+      client
+      @timeout
+      @logJobs
+      @workerName
+      @jobLogger
+      @memoryLogger
+      @dispatchLogger
+      @createRespondLogger
+      @createPopLogger
+    } = options
     @dispatchBenchmark = new Benchmark label: 'Dispatcher'
     @client = _.bindAll client
     {@jobHandlers} = options
@@ -55,6 +64,7 @@ class Dispatcher extends EventEmitter2
       async.parallel [
         async.apply @createRespondLogger.log, {request, response, elapsedTime: requestBenchmark.elapsed()}
         async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
+        async.apply @memoryLogger.log, {request, response, elapsedTime: process.memoryUsage().rss}
       ], =>
         callback error
 

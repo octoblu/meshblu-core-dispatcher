@@ -120,7 +120,9 @@ class CommandDispatch
     async.parallel [
       async.apply @runDispatcher
       async.apply @runQueueWorker
-    ], callback
+    ], (error) =>
+
+      callback error
 
   prepareConnections: (callback) =>
     async.series [
@@ -195,6 +197,7 @@ class CommandDispatch
       logJobs:             @logJobs
       workerName:          @workerName
       dispatchLogger:      @getDispatchLogger()
+      memoryLogger:        @getMemoryLogger()
       createPopLogger:     @getCreatePopLogger()
       createRespondLogger: @getCreateRespondLogger()
       jobLogger:           @getJobLogger()
@@ -242,6 +245,15 @@ class CommandDispatch
       jobLogQueue: @jobLogQueue
       sampleRate: @jobLogSampleRate
     @dispatchLogger
+
+  getMemoryLogger: =>
+    @memoryLogger ?= new JobLogger
+      client: @logClient
+      indexPrefix: 'metric:meshblu-core-dispatcher-memory'
+      type: 'meshblu-core-dispatcher:dispatch'
+      jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
+    @memoryLogger
 
   getCreatePopLogger: =>
     @createPopLogger ?= new JobLogger
