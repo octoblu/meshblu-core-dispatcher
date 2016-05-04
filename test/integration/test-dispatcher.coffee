@@ -109,7 +109,7 @@ class TestDispatcher
       client: @getLogClient()
       indexPrefix: 'metric:meshblu-core-dispatcher-memory'
       type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'some-queue'
+      jobLogQueue: 'some-other-queue'
       sampleRate: 1.00
     @memoryLogger
 

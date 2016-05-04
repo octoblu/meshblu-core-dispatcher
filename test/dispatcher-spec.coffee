@@ -22,7 +22,7 @@ describe 'Dispatcher', ->
       client: redis.createClient @redisKey
       indexPrefix: 'metric:meshblu-core-dispatcher-memory'
       type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'some-queue'
+      jobLogQueue: 'some-other-queue'
       sampleRate: 1.00
 
     @createPopLogger = new JobLogger
