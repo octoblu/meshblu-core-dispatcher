@@ -233,6 +233,7 @@ describe 'Dispatcher', ->
           jobHandlers:
             Authenticate: @doAuthenticateJob
           dispatchLogger: @dispatchLogger
+          memoryLogger: @memoryLogger
           jobLogger: @jobLogger
           createPopLogger: @createPopLogger
           createRespondLogger: @createRespondLogger
