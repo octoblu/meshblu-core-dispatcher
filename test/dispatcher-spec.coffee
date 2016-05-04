@@ -18,6 +18,13 @@ describe 'Dispatcher', ->
       jobLogQueue: 'some-queue'
       sampleRate: 1.00
 
+    @memoryLogger = new JobLogger
+      client: redis.createClient @redisKey
+      indexPrefix: 'metric:meshblu-core-dispatcher-memory'
+      type: 'meshblu-core-dispatcher:dispatch'
+      jobLogQueue: 'some-queue'
+      sampleRate: 1.00
+
     @createPopLogger = new JobLogger
       client: redis.createClient @redisKey
       indexPrefix: 'metric:meshblu'
@@ -59,6 +66,7 @@ describe 'Dispatcher', ->
           jobHandlers:
             Authenticate: @doAuthenticateJob
           dispatchLogger: @dispatchLogger
+          memoryLogger: @memoryLogger
           jobLogger: @jobLogger
           createPopLogger: @createPopLogger
           createRespondLogger: @createRespondLogger
