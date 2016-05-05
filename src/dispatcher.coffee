@@ -1,6 +1,4 @@
 _               = require 'lodash'
-http            = require 'http'
-debug           = require('debug')('meshblu-core-dispatcher:dispatcher')
 async           = require 'async'
 moment          = require 'moment'
 {EventEmitter2} = require 'eventemitter2'
@@ -65,7 +63,7 @@ class Dispatcher extends EventEmitter2
       async.parallel [
         async.apply @createRespondLogger.log, {request, response, elapsedTime: requestBenchmark.elapsed()}
         async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
-        async.apply @memoryLogger.log, {request, response, elapsedTime: process.memoryUsage().rss}
+        async.apply @memoryLogger.log, {request, response, elapsedTime: process.memoryUsage().rss, date: Date.now()}
       ], =>
         callback error
 

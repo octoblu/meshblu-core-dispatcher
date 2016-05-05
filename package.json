@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "6.15.4",
+  "version": "6.15.5",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -44,7 +44,7 @@
     "eventemitter2": "^0.4.14",
     "fakeredis": "^0.3.4",
     "ioredis": "^1.15.1",
-    "job-logger": "^2.0.0",
+    "job-logger": "^2.1.0",
     "lodash": "^3.10.1",
     "meshblu-config": "^3.1.1",
     "meshblu-core-cache": "^1.7.0",
