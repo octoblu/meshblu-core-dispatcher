@@ -3,7 +3,7 @@ async           = require 'async'
 moment          = require 'moment'
 {EventEmitter2} = require 'eventemitter2'
 JobManager      = require 'meshblu-core-job-manager'
-Benchmark = require 'simple-benchmark'
+Benchmark       = require 'simple-benchmark'
 
 class Dispatcher extends EventEmitter2
   constructor: (options={}) ->
