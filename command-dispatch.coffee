@@ -99,8 +99,6 @@ class CommandDispatch
     @database.runCommand {ping: 1}, (error) =>
       @panic error if error?
 
-      @database.on 'error', @panic
-
       setInterval =>
         @database.runCommand {ping: 1}, (error) =>
           @panic error if error?
@@ -121,7 +119,6 @@ class CommandDispatch
       async.apply @runDispatcher
       async.apply @runQueueWorker
     ], (error) =>
-
       callback error
 
   prepareConnections: (callback) =>
