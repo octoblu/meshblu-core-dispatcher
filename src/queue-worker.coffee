@@ -26,7 +26,7 @@ class QueueWorker
 
   runJob: (request={}, callback=->) =>
     return callback new Error("Missing metadata") unless request.metadata?
-    {jobType,responseId} = request.metadata
+    {jobType,responseId,metrics} = request.metadata
 
     config = @jobRegistry[jobType]
     debug 'jobRegistry keys', _.keys @jobRegistry
@@ -51,6 +51,7 @@ class QueueWorker
       @ignoreResponse
     }).run (error, response) =>
       return callback error if error?
+      response.metadata.metrics = metrics
       @sendResponse jobType, responseId, response, callback
 
   sendResponse: (jobType, responseId, response, callback) =>
