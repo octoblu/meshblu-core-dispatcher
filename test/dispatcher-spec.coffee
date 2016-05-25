@@ -110,7 +110,7 @@ describe 'Dispatcher', ->
         it 'should set the response:metadata hkey', (done) ->
           @client.hget 'a-response-id', 'response:metadata', (error, metadataStr) =>
             expect(metadataStr).to.exist
-            expect(JSON.parse(metadataStr)).to.deep.equal
+            expect(JSON.parse(metadataStr)).to.containSubset
               code: 200
               jobType: 'Authenticate'
               responseId: 'a-response-id'
@@ -277,7 +277,7 @@ describe 'Dispatcher', ->
         it 'should set the response:metadata hkey', (done) ->
           @client.hget 'a-response-id', 'response:metadata', (error, metadataStr) =>
             expect(metadataStr).to.exist
-            expect(JSON.parse(metadataStr)).to.deep.equal
+            expect(JSON.parse(metadataStr)).to.containSubset
               code: 504
               responseId: 'a-response-id'
               status: 'Could not rehabilitate server'

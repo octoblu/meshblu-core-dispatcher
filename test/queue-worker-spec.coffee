@@ -156,7 +156,7 @@ describe 'QueueWorker', ->
             done error
 
       it 'should have a valid response', ->
-        expect(@response).to.deep.equal
+        expect(@response).to.containSubset
           metadata:
             responseId: 'tragic-flaw'
             code: 204
@@ -210,7 +210,7 @@ describe 'QueueWorker', ->
             done error
 
       it 'should have a valid response', ->
-        expect(@response).to.deep.equal
+        expect(@response).to.containSubset
           metadata:
             responseId: 'roasted'
             code: 401
