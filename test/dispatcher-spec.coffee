@@ -25,20 +25,6 @@ describe 'Dispatcher', ->
       jobLogQueue: 'some-other-queue'
       sampleRate: 1.00
 
-    @createPopLogger = new JobLogger
-      client: redis.createClient @redisKey
-      indexPrefix: 'metric:meshblu'
-      type: 'create-pop'
-      jobLogQueue: 'some-queue-pop'
-      sampleRate: 1.00
-
-    @createRespondLogger = new JobLogger
-      client: redis.createClient @redisKey
-      indexPrefix: 'metric:meshblu'
-      type: 'create-respond'
-      jobLogQueue: 'some-queue-respond'
-      sampleRate: 1.00
-
     @jobLogger = new JobLogger
       client: redis.createClient @redisKey
       indexPrefix: 'metric:meshblu-core-dispatcher'
@@ -68,8 +54,6 @@ describe 'Dispatcher', ->
           dispatchLogger: @dispatchLogger
           memoryLogger: @memoryLogger
           jobLogger: @jobLogger
-          createPopLogger: @createPopLogger
-          createRespondLogger: @createRespondLogger
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
@@ -124,30 +108,10 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'some-queue-pop', (error, @createPopStr) => done error
-
-          beforeEach (done) ->
-            @client.rpop 'some-queue-respond', (error, @createRespondStr) => done error
-
-          beforeEach (done) ->
             @client.rpop 'some-queue', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
             @client.rpop 'some-queue', (error, @jobStr) => done error
-
-          it 'should log the create-pop elapsed and error', ->
-            job = JSON.parse @createPopStr
-
-            expect(job).to.containSubset
-              index: "metric:meshblu-#{@todaySuffix}"
-              type: 'create-pop'
-              body:
-                request:
-                  metadata:
-                    jobType: 'Authenticate'
-                    responseId: 'a-response-id'
-                    auth:
-                      uuid: 'a-uuid'
 
           it 'should log the dispatcher elapsed and error', ->
             job = JSON.parse @dispatcherJobStr
@@ -164,28 +128,6 @@ describe 'Dispatcher', ->
                       uuid: 'a-uuid'
 
             expect(job.body.elapsedTime).to.be.within 0, 300 #ms
-
-          it 'should log the job elapsed and error', ->
-            job = JSON.parse @createRespondStr
-
-            expect(job).to.containSubset
-              index: "metric:meshblu-#{@todaySuffix}"
-              type: 'create-respond'
-
-            expect(job.body).to.containSubset
-              request:
-                metadata:
-                  jobType: 'Authenticate'
-                  responseId: 'a-response-id'
-                  auth:
-                    uuid: 'a-uuid'
-              response:
-                metadata:
-                  code: 200
-                  responseId: 'a-response-id'
-                  jobType: 'Authenticate'
-
-            expect(job.body.elapsedTime).to.be.within 0, 500 #ms
 
           it 'should log the job elapsed and error', ->
             job = JSON.parse @jobStr
@@ -235,8 +177,6 @@ describe 'Dispatcher', ->
           dispatchLogger: @dispatchLogger
           memoryLogger: @memoryLogger
           jobLogger: @jobLogger
-          createPopLogger: @createPopLogger
-          createRespondLogger: @createRespondLogger
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->

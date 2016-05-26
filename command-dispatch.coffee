@@ -195,8 +195,6 @@ class CommandDispatch
       workerName:          @workerName
       dispatchLogger:      @getDispatchLogger()
       memoryLogger:        @getMemoryLogger()
-      createPopLogger:     @getCreatePopLogger()
-      createRespondLogger: @getCreateRespondLogger()
       jobLogger:           @getJobLogger()
 
     dispatcher.dispatch callback
@@ -251,24 +249,6 @@ class CommandDispatch
       jobLogQueue: @jobLogQueue
       sampleRate: @jobLogSampleRate
     @memoryLogger
-
-  getCreatePopLogger: =>
-    @createPopLogger ?= new JobLogger
-      client: @logClient
-      indexPrefix: 'metric:meshblu'
-      type: 'create-pop'
-      jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
-    @createPopLogger
-
-  getCreateRespondLogger: =>
-    @createRespondLogger ?= new JobLogger
-      client: @logClient
-      indexPrefix: 'metric:meshblu'
-      type: 'create-respond'
-      jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
-    @createRespondLogger
 
   getJobLogger: =>
     @jobLogger ?= new JobLogger

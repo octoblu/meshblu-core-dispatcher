@@ -51,8 +51,6 @@ class TestDispatcher
       jobLogger: @getJobLogger()
       memoryLogger: @getMemoryLogger()
       dispatchLogger: @getDispatchLogger()
-      createPopLogger: @getCreatePopLogger()
-      createRespondLogger: @getCreateRespondLogger()
 
     dispatcher.dispatch callback
 
@@ -112,24 +110,6 @@ class TestDispatcher
       jobLogQueue: 'some-other-queue'
       sampleRate: 1.00
     @memoryLogger
-
-  getCreatePopLogger: =>
-    @createPopLogger ?= new JobLogger
-      client: @getLogClient()
-      indexPrefix: 'metric:meshblu'
-      type: 'create-pop'
-      jobLogQueue: 'some-queue'
-      sampleRate: 1.00
-    @createPopLogger
-
-  getCreateRespondLogger: =>
-    @createRespondLogger ?= new JobLogger
-      client: @getLogClient()
-      indexPrefix: 'metric:meshblu'
-      type: 'create-respond'
-      jobLogQueue: 'some-queue'
-      sampleRate: 1.00
-    @createRespondLogger
 
   getJobLogger: =>
     @jobLogger ?= new JobLogger
