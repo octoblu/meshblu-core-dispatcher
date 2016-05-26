@@ -52,6 +52,8 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
+    response.metadata.metrics = request.metadata.metrics
+
     @jobManager.createResponse 'response', response, (error) =>
       async.parallel [
         async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
@@ -65,6 +67,8 @@ class Dispatcher extends EventEmitter2
         code: 504
         responseId: request.metadata.responseId
         status: error.message
+
+    response.metadata.metrics = request.metadata.metrics
 
     async.parallel [
       async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
