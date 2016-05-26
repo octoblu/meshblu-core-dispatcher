@@ -2,6 +2,7 @@ _                      = require 'lodash'
 debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
 moment                 = require 'moment'
 TaskJobManager         = require './task-job-manager'
+SimpleBenchmark        = require 'simple-benchmark'
 {Tasks}                = require './task-loader'
 
 class TaskRunner
@@ -37,7 +38,7 @@ class TaskRunner
     @_doTask @config.start, callback
 
   _doTask: (name, callback) =>
-    startTime = Date.now()
+    benchmark = new SimpleBenchmark label: 'task-runner'
     taskConfig = @config.tasks[name]
     return callback new Error "Task Definition '#{name}' not found" unless taskConfig?
 
@@ -66,15 +67,14 @@ class TaskRunner
 
       codeStr = metadata?.code?.toString()
       nextTask = taskConfig.on?[codeStr]
-      @logTask {startTime, @request, response, taskName}, =>
+      @logTask {benchmark, @request, response, taskName}, =>
         return callback null, response unless nextTask?
         @_doTask nextTask, callback
 
-  logTask: ({startTime, request, response, taskName}, callback) =>
+  logTask: ({benchmark, request, response, taskName}, callback) =>
     request.metadata = _.cloneDeep request.metadata
     request.metadata.workerName = @workerName
     request.metadata.taskName = taskName
-    elapsedTime = Date.now() - startTime
-    @taskLogger.log {request, response, elapsedTime}, callback
+    @taskLogger.log {request, response, response, elapsedTime: benchmark.elapsed()}, callback
 
 module.exports = TaskRunner

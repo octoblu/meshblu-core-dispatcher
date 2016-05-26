@@ -39,29 +39,29 @@ class Dispatcher extends EventEmitter2
       requestBenchmark.startTime = request.createdAt if request.createdAt?
 
       @dispatchLogger.log {request, elapsedTime: @dispatchBenchmark.elapsed()}, =>
-        benchmark = new Benchmark label: 'do-job'
-
         @doJob request, (error, response) =>
-          return @sendError {requestBenchmark, benchmark, request, error}, callback if error?
-          @sendResponse {requestBenchmark, benchmark, request, response}, callback
+          return @sendError {requestBenchmark, request, error}, callback if error?
+          @sendResponse {requestBenchmark, request, response}, callback
 
-  sendResponse: ({requestBenchmark, benchmark, request, response}, callback) =>
+  sendResponse: ({requestBenchmark, request, response}, callback) =>
     {metadata,rawData} = response
 
     response =
       metadata: metadata
       rawData: rawData
 
+    logResponse = _.clone response
+    logResponse.metadata = _.cloneDeep metadata
     response.metadata.metrics = request.metadata.metrics
 
     @jobManager.createResponse 'response', response, (error) =>
       async.parallel [
-        async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
-        async.apply @memoryLogger.log, {request, response, elapsedTime: process.memoryUsage().rss, date: Date.now()}
+        async.apply @jobLogger.log, {request, response: logResponse}
+        async.apply @memoryLogger.log, {request, response: logResponse, elapsedTime: process.memoryUsage().rss, date: Date.now()}
       ], =>
         callback error
 
-  sendError: ({requestBenchmark, benchmark, request, error}, callback) =>
+  sendError: ({requestBenchmark, request, error}, callback) =>
     response =
       metadata:
         code: 504
@@ -70,10 +70,9 @@ class Dispatcher extends EventEmitter2
 
     response.metadata.metrics = request.metadata.metrics
 
-    async.parallel [
-      async.apply @jobLogger.log, {request, response, elapsedTime: benchmark.elapsed()}
-    ], =>
-      @jobManager.createResponse 'response', response, callback
+    @jobManager.createResponse 'response', response, (createResponseError) =>
+      @jobLogger.log {request, response}, =>
+        callback createResponseError
 
   doJob: (request, callback) =>
     {metadata} = request
