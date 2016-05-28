@@ -12,21 +12,21 @@ describe 'Dispatcher', ->
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
     @dispatchLogger = new JobLogger
-      client: redis.createClient @redisKey
+      client: redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: 'some-queue'
       sampleRate: 1.00
 
     @memoryLogger = new JobLogger
-      client: redis.createClient @redisKey
+      client: redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher-memory'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: 'some-other-queue'
       sampleRate: 1.00
 
     @jobLogger = new JobLogger
-      client: redis.createClient @redisKey
+      client: redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: 'some-queue'
@@ -43,10 +43,10 @@ describe 'Dispatcher', ->
           rawData: '{ "authenticated": true }'
 
         @doAuthenticateJob = sinon.stub().yields null, response
-        @client = _.bindAll redis.createClient @redisKey
+        @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
 
         @sut = new Dispatcher
-          client: redis.createClient(@redisKey)
+          client: redis.createClient(@redisKey, dropBufferSupport: true)
           logJobs: true
           timeout: 1
           jobHandlers:
@@ -163,7 +163,7 @@ describe 'Dispatcher', ->
     describe 'when doAuthenticateJob yields an error', ->
       beforeEach ->
         @doAuthenticateJob = sinon.stub().yields new Error('Could not rehabilitate server')
-        @client = _.bindAll redis.createClient @redisKey
+        @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
         @elasticsearch = create: sinon.stub().yields(null)
 
         @sut = new Dispatcher

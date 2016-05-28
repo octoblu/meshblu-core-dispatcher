@@ -21,10 +21,10 @@ describe 'QueueWorker', ->
 
     @redisKey = uuid.v1()
     @cacheClientId = uuid.v1()
-    @client = _.bindAll redis.createClient @redisKey
-    @externalClient = _.bindAll redis.createClient @redisKey
+    @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+    @externalClient = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
 
-    client = redis.createClient @cacheClientId
+    client = redis.createClient @cacheClientId, dropBufferSupport: true
     @cacheFactory = new CacheFactory {client}
     @datastoreFactory = new DatastoreFactory {@database, @cacheFactory}
 
@@ -32,7 +32,7 @@ describe 'QueueWorker', ->
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
     @taskLogger = new JobLogger
-      client: redis.createClient @redisKey
+      client: redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: 'some-queue'
@@ -50,7 +50,7 @@ describe 'QueueWorker', ->
                 datastoreCollection: 'devices'
 
         @sut = new QueueWorker
-          client: _.bindAll redis.createClient @redisKey
+          client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
           localHandlers: ['CheckToken']
           remoteHandlers: []
           tasks: @tasks
@@ -105,7 +105,7 @@ describe 'QueueWorker', ->
               datastoreCollection: 'theDevices'
 
       @sut = new QueueWorker
-        client: _.bindAll redis.createClient @redisKey
+        client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
         localHandlers: ['CheckToken']
         remoteHandlers: []
         tasks: @tasks
@@ -149,7 +149,7 @@ describe 'QueueWorker', ->
           return done error if error?
 
           jobManager = new JobManager
-            client: _.bindAll redis.createClient @redisKey
+            client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
             timeoutSeconds: 1
 
           jobManager.getResponse 'CheckToken', 'tragic-flaw', (error, @response) =>
@@ -174,7 +174,7 @@ describe 'QueueWorker', ->
               cacheNamespace: 'black-list'
 
       @sut = new QueueWorker
-        client: _.bindAll redis.createClient @redisKey
+        client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
         localHandlers: ['CheckBlackList']
         remoteHandlers: []
         tasks: @tasks
@@ -187,7 +187,7 @@ describe 'QueueWorker', ->
 
     describe 'when called with an CheckBlackList job', ->
       beforeEach (done) ->
-        cacheClient = _.bindAll new RedisNS 'black-list', redis.createClient @cacheClientId
+        cacheClient = _.bindAll new RedisNS 'black-list', redis.createClient @cacheClientId, dropBufferSupport: true
         cacheClient.set 'things-go-wrong:but-didnt-it-feel-so-right', '', done
 
       beforeEach (done) ->
@@ -204,7 +204,7 @@ describe 'QueueWorker', ->
         @sut.runJob request, (error) =>
           return done error if error?
           jobManager = new JobManager
-            client: _.bindAll redis.createClient @redisKey
+            client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
             timeoutSeconds: 1
           jobManager.getResponse 'CheckBlackList', 'roasted', (error, @response) =>
             done error

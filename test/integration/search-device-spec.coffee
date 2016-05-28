@@ -16,7 +16,7 @@ describe 'SearchDevice', ->
     redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
 
-    client = _.bindAll new RedisNS 'meshblu-test', redis.createClient(redisUri)
+    client = _.bindAll new RedisNS 'meshblu-test', redis.createClient(redisUri, dropBufferSupport: true)
 
     client.del 'request:queue'
 

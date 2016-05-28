@@ -24,7 +24,7 @@ describe 'DeliverReceivedMessage', ->
   beforeEach (done) ->
     @redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
-    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
     client.del 'request:queue', done
 
   beforeEach 'create sender device', (done) ->

@@ -85,7 +85,7 @@ class TestDispatcher
     @assembledJobHandlers = jobAssembler.assemble()
 
   getCacheFactory: =>
-    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
+    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri, dropBufferSupport: true
     @cacheFactory
 
   getDatastoreFactory: =>
@@ -125,23 +125,23 @@ class TestDispatcher
     @jobRegistry
 
   getLogClient: =>
-    @logClient ?= redis.createClient @redisUri
+    @logClient ?= redis.createClient @redisUri, dropBufferSupport: true
     @logClient
 
   getDispatchClient: =>
-    _.bindAll new RedisNS @namespace, redis.createClient @redisUri
+    _.bindAll new RedisNS @namespace, redis.createClient @redisUri, dropBufferSupport: true
 
   getLocalJobHandlerClient: =>
-    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri, dropBufferSupport: true
 
   getLocalQueueWorkerClient: =>
-    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri, dropBufferSupport: true
 
   getRemoteJobHandlerClient: =>
-    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri
+    _.bindAll new RedisNS @namespaceInternal, redis.createClient @redisUri, dropBufferSupport: true
 
   getTaskJobManagerClient: =>
-    _.bindAll new RedisNS @namespace, redis.createClient @redisUri
+    _.bindAll new RedisNS @namespace, redis.createClient @redisUri, dropBufferSupport: true
 
   getTaskLogger: =>
     @taskLogger ?= new JobLogger
@@ -155,7 +155,7 @@ class TestDispatcher
   generateJobs: (job, callback) =>
     debug 'generateJobs for', job?.metadata?.jobType, job?.metadata?.responseId
     jobManager = new JobManager
-      client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+      client: new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
       timeoutSeconds: 1
 
     jobManager.do 'request', 'response', job, (error, response) =>
@@ -173,9 +173,9 @@ class TestDispatcher
     @doSingleRun (error) => throw error if error?
 
   getGeneratedJobs: (callback) =>
-    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
     jobManager = new JobManager
-      client: new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+      client: new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
       timeoutSeconds: 1
 
     requests = []

@@ -56,7 +56,7 @@ class CommandWork
       datastoreFactory:    @getDatastoreFactory()
       meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
-        
+
     @database = mongojs @mongoDBUri
     @database.on 'error', @panic
 
@@ -65,7 +65,7 @@ class CommandWork
     async.until @terminated, queueWorker.run, @closeAndTentativePanic
 
   getCacheFactory: =>
-    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri
+    @cacheFactory ?= new CacheFactory client: redis.createClient @redisUri, dropBufferSupport: true
     @cacheFactory
 
   getDatastoreFactory: =>
@@ -77,7 +77,7 @@ class CommandWork
     @jobRegistry
 
   getLocalQueueWorkerClient: =>
-    @localQueueWorkerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri
+    @localQueueWorkerClient ?= _.bindAll new RedisNS @internalNamespace, redis.createClient @redisUri, dropBufferSupport: true
     @localQueueWorkerClient
 
   panic: (error) =>

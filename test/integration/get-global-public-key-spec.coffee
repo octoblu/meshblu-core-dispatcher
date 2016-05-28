@@ -13,7 +13,7 @@ describe 'GetGlobalPublicKey', ->
       redisUri = process.env.REDIS_URI
       @sut = new TestDispatcher publicKey: 'hi mom!'
 
-      client = _.bindAll new RedisNS 'meshblu-test', redis.createClient(redisUri)
+      client = _.bindAll new RedisNS 'meshblu-test', redis.createClient(redisUri, dropBufferSupport: true)
       client.del 'request:queue'
 
       @jobManager = new JobManager
@@ -43,7 +43,7 @@ describe 'GetGlobalPublicKey', ->
       redisUri = process.env.REDIS_URI
       @sut = new TestDispatcher publicKey: undefined
 
-      client = _.bindAll new RedisNS 'meshblu-test', redis.createClient(redisUri)
+      client = _.bindAll new RedisNS 'meshblu-test', redis.createClient(redisUri, dropBufferSupport: true)
       client.del 'request:queue'
 
       @jobManager = new JobManager

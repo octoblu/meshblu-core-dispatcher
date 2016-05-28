@@ -134,7 +134,7 @@ class CommandDispatch
 
   getReadyRedis: (redisUri, callback) =>
     callback = _.once callback
-    client = redis.createClient redisUri
+    client = redis.createClient redisUri, dropBufferSupport: true
     client.once 'ready', =>
       callback null, client
     client.once 'error', (error) =>

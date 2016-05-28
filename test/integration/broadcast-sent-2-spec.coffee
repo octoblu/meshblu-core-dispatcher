@@ -25,7 +25,7 @@ describe 'BroadcastSent(2): send', ->
   beforeEach (done) ->
     @redisUri = process.env.REDIS_URI
     @dispatcher = new TestDispatcher
-    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri)
+    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
     client.del 'request:queue', done
 
   beforeEach 'create sender device', (done) ->
@@ -92,7 +92,7 @@ describe 'BroadcastSent(2): send', ->
             jobType: 'SendMessage'
           rawData: JSON.stringify devices:['*'], payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: @auth.uuid, (error) =>
           return done(error) if error?
@@ -135,7 +135,7 @@ describe 'BroadcastSent(2): send', ->
             devices: ['*']
             payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'spy-uuid', (error) =>
           return done(error) if error?
@@ -177,7 +177,7 @@ describe 'BroadcastSent(2): send', ->
             devices: ['*']
             payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'nsa-uuid', (error) =>
           return done(error) if error?
@@ -226,7 +226,7 @@ describe 'BroadcastSent(2): send', ->
           data:
             devices: ['*'], payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'nsa-uuid', (error) =>
           return done(error) if error?
@@ -276,7 +276,7 @@ describe 'BroadcastSent(2): send', ->
             devices: ['*']
             payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri)
+        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
         @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'spy-uuid', (error) =>
           return done(error) if error?
