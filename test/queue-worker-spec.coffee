@@ -36,7 +36,6 @@ describe 'QueueWorker', ->
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: 'some-queue'
-      sampleRate: 1.00
 
   describe '->run', ->
     describe 'when using client', ->
@@ -49,8 +48,18 @@ describe 'QueueWorker', ->
                 task: 'meshblu-core-task-check-token'
                 datastoreCollection: 'devices'
 
-        @sut = new QueueWorker
+        jobManager = new JobManager
           client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+          timeoutSeconds: 1
+          jobLogSampleRate: 0
+
+        externalJobManager = new JobManager
+          client: @externalClient
+          timeoutSeconds: 1
+          jobLogSampleRate: 0
+
+        @sut = new QueueWorker
+          jobManager: jobManager
           localHandlers: ['CheckToken']
           remoteHandlers: []
           tasks: @tasks
@@ -58,7 +67,7 @@ describe 'QueueWorker', ->
           datastoreFactory: @datastoreFactory
           cacheFactory: @cacheFactory
           jobRegistry: jobRegistry
-          externalClient: @externalClient
+          externalJobManager: externalJobManager
           taskLogger: @taskLogger
 
       describe 'when called and job is pushed into queue', ->
@@ -104,8 +113,17 @@ describe 'QueueWorker', ->
               task: 'meshblu-core-task-check-token'
               datastoreCollection: 'theDevices'
 
-      @sut = new QueueWorker
+      jobManager = new JobManager
         client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+        timeoutSeconds: 1
+        jobLogSampleRate: 0
+
+      externalJobManager = new JobManager
+        client: @externalClient
+        timeoutSeconds: 1
+        jobLogSampleRate: 0
+
+      @sut = new QueueWorker
         localHandlers: ['CheckToken']
         remoteHandlers: []
         tasks: @tasks
@@ -114,8 +132,9 @@ describe 'QueueWorker', ->
         cacheFactory: @cacheFactory
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
-        externalClient: @externalClient
         taskLogger: @taskLogger
+        jobManager: jobManager
+        externalJobManager: externalJobManager
 
     describe 'when called with an CheckToken job', ->
       beforeEach (done) ->
@@ -151,6 +170,7 @@ describe 'QueueWorker', ->
           jobManager = new JobManager
             client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
             timeoutSeconds: 1
+            jobLogSampleRate: 0
 
           jobManager.getResponse 'CheckToken', 'tragic-flaw', (error, @response) =>
             done error
@@ -173,8 +193,17 @@ describe 'QueueWorker', ->
               task: 'meshblu-core-task-check-token-black-list'
               cacheNamespace: 'black-list'
 
-      @sut = new QueueWorker
+      jobManager = new JobManager
         client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+        timeoutSeconds: 1
+        jobLogSampleRate: 0
+
+      externalJobManager = new JobManager
+        client: @externalClient
+        timeoutSeconds: 1
+        jobLogSampleRate: 0
+
+      @sut = new QueueWorker
         localHandlers: ['CheckBlackList']
         remoteHandlers: []
         tasks: @tasks
@@ -182,8 +211,9 @@ describe 'QueueWorker', ->
         cacheFactory: @cacheFactory
         jobRegistry: jobRegistry
         pepper: 'super-duper-secret'
-        externalClient: @externalClient
         taskLogger: @taskLogger
+        jobManager: jobManager
+        externalJobManager: externalJobManager
 
     describe 'when called with an CheckBlackList job', ->
       beforeEach (done) ->
@@ -206,6 +236,7 @@ describe 'QueueWorker', ->
           jobManager = new JobManager
             client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
             timeoutSeconds: 1
+            jobLogSampleRate: 0
           jobManager.getResponse 'CheckBlackList', 'roasted', (error, @response) =>
             done error
 

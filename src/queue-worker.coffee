@@ -1,18 +1,28 @@
 _                 = require 'lodash'
 async             = require 'async'
 UuidAliasResolver = require 'meshblu-uuid-alias-resolver'
-JobManager        = require 'meshblu-core-job-manager'
 debug             = require('debug')('meshblu-core-dispatcher:queue-worker')
 TaskRunner        = require './task-runner'
 
 class QueueWorker
   constructor: (options={}) ->
-    {client,@timeout,@jobs,@jobRegistry,@pepper,aliasServerUri,@meshbluConfig,@forwardEventDevices} = options
-    {@externalClient,@logJobs,@workerName,@privateKey,@publicKey} = options
-    {@datastoreFactory,@cacheFactory,@taskLogger,@ignoreResponse} = options
-    @client = _.bindAll client
-    @timeout ?= 30
-    @jobManager = new JobManager timeoutSeconds: @timeout, client: @client
+    {
+      @jobs
+      @jobRegistry
+      @pepper
+      aliasServerUri
+      @meshbluConfig
+      @forwardEventDevices
+      @workerName
+      @privateKey
+      @publicKey
+      @datastoreFactory
+      @cacheFactory
+      @taskLogger
+      @ignoreResponse
+      @jobManager
+      @externalJobManager
+    } = options
     @uuidAliasResolver = new UuidAliasResolver
       cache: @cacheFactory.build 'uuid-alias'
       aliasServerUri: aliasServerUri
@@ -41,14 +51,12 @@ class QueueWorker
       @pepper
       @meshbluConfig
       @forwardEventDevices
-      jobManager: new JobManager timeoutSeconds: @timeout, client: @externalClient
-      @logJobs
-      @client
       @workerName
       @privateKey
       @publicKey
       @taskLogger
       @ignoreResponse
+      jobManager: @externalJobManager
     }).run (error, response) =>
       return callback error if error?
       response.metadata.metrics = metrics

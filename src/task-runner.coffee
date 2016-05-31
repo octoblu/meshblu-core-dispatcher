@@ -19,8 +19,6 @@ class TaskRunner
       @meshbluConfig
       @forwardEventDevices
       @jobManager
-      @logJobs
-      @client
       @workerName
       @privateKey
       @publicKey

@@ -6,20 +6,8 @@ JobHandler      = require './job-handler'
 
 class JobAssembler extends EventEmitter2
   constructor: (options={}) ->
-    {localClient,remoteClient,@timeout} = options
-    @localClient  = _.bindAll localClient
-    @remoteClient = _.bindAll remoteClient
-
+    {@localJobManager,@remoteJobManager} = options
     {@localHandlers,@remoteHandlers} = options
-    @timeout ?= 30
-
-    @localJobManager = new JobManager
-      timeoutSeconds: @timeout
-      client: @localClient
-
-    @remoteJobManager = new JobManager
-      timeoutSeconds: @timeout
-      client: @remoteClient
 
   assemble: =>
     jobs = {}

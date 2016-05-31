@@ -13,9 +13,8 @@ Dispatcher       = require './src/dispatcher'
 JobAssembler     = require './src/job-assembler'
 JobRegistry      = require './src/job-registry'
 QueueWorker      = require './src/queue-worker'
-ArrayLogger      = require './src/array-logger'
-DeviceLogger     = require './src/device-logger'
 JobLogger        = require 'job-logger'
+JobManager       = require 'meshblu-core-job-manager'
 
 class CommandDispatch
   parseInt: (int) =>
@@ -40,7 +39,6 @@ class CommandDispatch
     @mongoDBUri          = process.env.MONGODB_URI
     @pepper              = process.env.TOKEN
     @aliasServerUri      = process.env.ALIAS_SERVER_URI
-    @logJobs             = process.env.LOG_JOBS == 'true'
     @namespace           = process.env.NAMESPACE || commander.namespace
     @internalNamespace   = process.env.INTERNAL_NAMESPACE || commander.internalNamespace
     @outsourceJobs       = @parseList(process.env.OUTSOURCE_JOBS || commander.outsourceJobs)
@@ -49,9 +47,6 @@ class CommandDispatch
     @jobLogRedisUri      = process.env.JOB_LOG_REDIS_URI
     @jobLogQueue         = process.env.JOB_LOG_QUEUE
     @jobLogSampleRate    = process.env.JOB_LOG_SAMPLE_RATE
-    @deviceLogQueue      = process.env.DEVICE_LOG_QUEUE
-    @deviceLogSampleRate = process.env.DEVICE_LOG_SAMPLE_RATE
-    @deviceLogUuid       = process.env.DEVICE_LOG_UUID
     @intervalBetweenJobs = parseInt(process.env.INTERVAL_BETWEEN_JOBS || 0)
 
     unless @redisUri?
@@ -73,7 +68,6 @@ class CommandDispatch
       throw new Error 'Missing mandatory parameter: TOKEN'
 
     @jobLogSampleRate = parseFloat @jobLogSampleRate
-    @deviceLogSampleRate = parseFloat @deviceLogSampleRate
 
     if process.env.PRIVATE_KEY_BASE64? && process.env.PRIVATE_KEY_BASE64 != ''
       @privateKey = new Buffer(process.env.PRIVATE_KEY_BASE64, 'base64').toString('utf8')
@@ -186,16 +180,41 @@ class CommandDispatch
     @datastoreFactory ?= new DatastoreFactory database: @database, cacheFactory: @cacheFactory
     @datastoreFactory
 
+  getQueueWorkerJobManager: =>
+    @queueWorkerJobManager ?= new JobManager {
+      timeoutSeconds: @timeout
+      client: @localQueueWorkerClient
+      @jobLogSampleRate
+    }
+
+    @queueWorkerJobManager
+
+  getTaskRunnerJobManager: =>
+    @taskRunnerJobManager ?= new JobManager {
+      timeoutSeconds: @timeout
+      client: @taskJobManagerClient
+      @jobLogSampleRate
+    }
+
+    @taskRunnerJobManager
+
+  getDispatcherJobManager: =>
+    @dispatcherJobManager ?= new JobManager {
+      timeoutSeconds: @timeout
+      client: @dispatchClient
+      @jobLogSampleRate
+    }
+
+    @dispatcherJobManager
+
   runDispatcher: (callback) =>
     dispatcher = new Dispatcher
-      client:              @dispatchClient
-      timeout:             @timeout
       jobHandlers:         @assembleJobHandlers()
-      logJobs:             @logJobs
       workerName:          @workerName
       dispatchLogger:      @getDispatchLogger()
-      memoryLogger:        @getMemoryLogger()
       jobLogger:           @getJobLogger()
+      jobLogSampleRate:    @jobLogSampleRate
+      jobManager:          @getDispatcherJobManager()
 
     dispatcher.dispatch callback
 
@@ -205,30 +224,48 @@ class CommandDispatch
       pepper:              @pepper
       privateKey:          @privateKey
       publicKey:           @publicKey
-      timeout:             @timeout
       jobs:                @localHandlers
-      client:              @localQueueWorkerClient
       jobRegistry:         @getJobRegistry()
       cacheFactory:        @cacheFactory
       datastoreFactory:    @getDatastoreFactory()
       meshbluConfig:       @meshbluConfig
       forwardEventDevices: @forwardEventDevices
-      externalClient:      @taskJobManagerClient
-      logJobs:             @logJobs
+      jobManager:          @getQueueWorkerJobManager()
+      externalJobManager:  @getTaskRunnerJobManager()
+      jobLogSampleRate:    @jobLogSampleRate
       workerName:          @workerName
       taskLogger:          @getTaskLogger()
 
     queueWorker.run callback
+
+  getLocalJobManager: =>
+    @localJobManager ?= new JobManager {
+      client: @localJobHandlerClient
+      timeoutSeconds: @timeout
+      @jobLogSampleRate
+    }
+
+    @localJobManager
+
+  getRemoteJobManager: =>
+    @remoteJobManager ?= new JobManager {
+      client: @remoteJobHandlerClient
+      timeoutSeconds: @timeout
+      @jobLogSampleRate
+    }
+
+    @remoteJobManager
 
   assembleJobHandlers: =>
     return @assembledJobHandlers if @assembledJobHandlers?
 
     jobAssembler = new JobAssembler
       timeout: @timeout
-      localClient: @localJobHandlerClient
-      remoteClient: @remoteJobHandlerClient
+      localJobManager: @getLocalJobManager()
+      remoteJobManager: @getRemoteJobManager()
       localHandlers: @localHandlers
       remoteHandlers: @remoteHandlers
+      jobLogSampleRate: @jobLogSampleRate
 
     @assembledJobHandlers = jobAssembler.assemble()
 
@@ -238,7 +275,6 @@ class CommandDispatch
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
     @dispatchLogger
 
   getMemoryLogger: =>
@@ -247,7 +283,6 @@ class CommandDispatch
       indexPrefix: 'metric:meshblu-core-dispatcher-memory'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
     @memoryLogger
 
   getJobLogger: =>
@@ -256,7 +291,6 @@ class CommandDispatch
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
     @jobLogger
 
   getJobRegistry: =>
@@ -264,25 +298,12 @@ class CommandDispatch
     @jobRegistry
 
   getTaskLogger: =>
-    return @taskLogger if @taskLogger?
-
-    jobLogger = new JobLogger
+    @taskLogger ?= new JobLogger
       client: @logClient
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
-
-    deviceLogger = new DeviceLogger
-      client: @logClient
-      indexPrefix: 'metric:meshblu-core-dispatcher-device'
-      type: 'meshblu-core-dispatcher:task'
-      jobLogQueue: @deviceLogQueue
-      sampleRate: @deviceLogSampleRate
-      filterUuid: @deviceLogUuid
-
-    @taskLogger = new ArrayLogger loggers: [jobLogger, deviceLogger]
-    return @taskLogger
+    @taskLogger
 
   panic: (error) =>
     console.error error.stack

@@ -24,6 +24,7 @@ describe 'SendMessage: broadcast', ->
     @jobManager = new JobManager
       client: client
       timeoutSeconds: 15
+      jobLogSampleRate: 0
 
   beforeEach (done) ->
     @auth =

@@ -19,6 +19,7 @@ describe 'GetGlobalPublicKey', ->
       @jobManager = new JobManager
         client: client
         timeoutSeconds: 15
+        jobLogSampleRate: 0
 
     describe "when the publicKey is requested", ->
       beforeEach (done) ->
@@ -49,6 +50,7 @@ describe 'GetGlobalPublicKey', ->
       @jobManager = new JobManager
         client: client
         timeoutSeconds: 15
+        jobLogSampleRate: 0
 
     describe "when the publicKey is requested", ->
       beforeEach (done) ->

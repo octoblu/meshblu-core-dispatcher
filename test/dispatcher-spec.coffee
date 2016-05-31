@@ -5,6 +5,7 @@ uuid = require 'uuid'
 moment = require 'moment'
 _ = require 'lodash'
 JobLogger = require 'job-logger'
+JobManager = require 'meshblu-core-job-manager'
 
 describe 'Dispatcher', ->
   beforeEach ->
@@ -12,21 +13,21 @@ describe 'Dispatcher', ->
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
     @dispatchLogger = new JobLogger
-      client: redis.createClient @redisKey, dropBufferSupport: true
+      client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: 'some-queue'
       sampleRate: 1.00
 
     @memoryLogger = new JobLogger
-      client: redis.createClient @redisKey, dropBufferSupport: true
+      client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher-memory'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: 'some-other-queue'
       sampleRate: 1.00
 
     @jobLogger = new JobLogger
-      client: redis.createClient @redisKey, dropBufferSupport: true
+      client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: 'some-queue'
@@ -45,19 +46,24 @@ describe 'Dispatcher', ->
         @doAuthenticateJob = sinon.stub().yields null, response
         @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
 
+        dispatcherClient = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+        jobManager = new JobManager
+          client: dispatcherClient
+          jobLogSampleRate: 0
+          timeoutSeconds: 1
+
         @sut = new Dispatcher
-          client: redis.createClient(@redisKey, dropBufferSupport: true)
-          logJobs: true
-          timeout: 1
           jobHandlers:
             Authenticate: @doAuthenticateJob
           dispatchLogger: @dispatchLogger
           memoryLogger: @memoryLogger
           jobLogger: @jobLogger
+          jobManager: jobManager
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
           metadata =
+            jobLogs: ['sampled']
             jobType: 'Authenticate'
             responseId: 'a-response-id'
             auth:
@@ -117,7 +123,7 @@ describe 'Dispatcher', ->
             job = JSON.parse @dispatcherJobStr
 
             expect(job).to.containSubset
-              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              index: "metric:meshblu-core-dispatcher:sampled-#{@todaySuffix}"
               type: 'meshblu-core-dispatcher:dispatch'
               body:
                 request:
@@ -133,7 +139,7 @@ describe 'Dispatcher', ->
             job = JSON.parse @jobStr
 
             expect(job).to.containSubset
-              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              index: "metric:meshblu-core-dispatcher:sampled-#{@todaySuffix}"
               type: 'meshblu-core-dispatcher:job'
 
             expect(job.body).to.containSubset
@@ -164,21 +170,29 @@ describe 'Dispatcher', ->
       beforeEach ->
         @doAuthenticateJob = sinon.stub().yields new Error('Could not rehabilitate server')
         @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+        jobManager = new JobManager
+          client: @client
+          jobLogSampleRate: 0
+          timeoutSeconds: 1
+
         @elasticsearch = create: sinon.stub().yields(null)
 
         @sut = new Dispatcher
-          client: @client
           timeout: 1
-          logJobs: true
           jobHandlers:
             Authenticate: @doAuthenticateJob
           dispatchLogger: @dispatchLogger
           memoryLogger: @memoryLogger
           jobLogger: @jobLogger
+          jobLogSampleRate: 0
+          jobManager: jobManager
 
       context 'when the queue contains a request', ->
         beforeEach (done) ->
           metadata =
+            jobLogs: ['sampled']
+            metrics:
+              enqueueRequestAt: Date.now()
             jobType: 'Authenticate'
             responseId: 'a-response-id'
             auth:
@@ -232,7 +246,7 @@ describe 'Dispatcher', ->
             job = JSON.parse @dispatcherJobStr
 
             expect(job).to.containSubset
-              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              index: "metric:meshblu-core-dispatcher:sampled-#{@todaySuffix}"
               type: 'meshblu-core-dispatcher:dispatch'
               body:
                 request:
@@ -248,7 +262,7 @@ describe 'Dispatcher', ->
             job = JSON.parse @jobStr
 
             expect(job).to.containSubset
-              index: "metric:meshblu-core-dispatcher-#{@todaySuffix}"
+              index: "metric:meshblu-core-dispatcher:sampled-#{@todaySuffix}"
               type: 'meshblu-core-dispatcher:job'
 
             expect(job.body).to.containSubset
