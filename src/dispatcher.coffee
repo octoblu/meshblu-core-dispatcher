@@ -27,7 +27,10 @@ class Dispatcher extends EventEmitter2
       requestBenchmark = new Benchmark label: 'Job'
       requestBenchmark.startTime = request.createdAt if request.createdAt?
 
-      response = metadata: code: 200
+      response = metadata:
+        code: 200
+        jobLogs: request.metadata?.jobLogs
+
       @dispatchLogger.log {request, response, elapsedTime: @dispatchBenchmark.elapsed()}, =>
         @doJob request, (error, response) =>
           return @sendError {requestBenchmark, request, error}, callback if error?
@@ -43,6 +46,8 @@ class Dispatcher extends EventEmitter2
     logResponse = _.clone response
     logResponse.metadata = _.cloneDeep metadata
     response.metadata.metrics = request.metadata.metrics
+    response.metadata.jobLogs = request.metadata.jobLogs
+    logResponse.metadata.jobLogs = request.metadata.jobLogs
 
     @jobManager.createResponse 'response', response, (error) =>
       @jobLogger.log {request, response: logResponse}, callback
@@ -55,6 +60,7 @@ class Dispatcher extends EventEmitter2
         status: error.message
 
     response.metadata.metrics = request.metadata.metrics
+    response.metadata.jobLogs = request.metadata.jobLogs
 
     @jobManager.createResponse 'response', response, (createResponseError) =>
       @jobLogger.log {request, response}, =>
