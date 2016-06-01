@@ -43,14 +43,11 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
-    logResponse = _.clone response
-    logResponse.metadata = _.cloneDeep metadata
     response.metadata.metrics = request.metadata.metrics
     response.metadata.jobLogs = request.metadata.jobLogs
-    logResponse.metadata.jobLogs = request.metadata.jobLogs
 
     @jobManager.createResponse 'response', response, (error) =>
-      @jobLogger.log {request, response: logResponse}, callback
+      @jobLogger.log {request, response, elapsedTime: requestBenchmark.elapsed()}, callback
 
   sendError: ({requestBenchmark, request, error}, callback) =>
     response =
@@ -63,7 +60,7 @@ class Dispatcher extends EventEmitter2
     response.metadata.jobLogs = request.metadata.jobLogs
 
     @jobManager.createResponse 'response', response, (createResponseError) =>
-      @jobLogger.log {request, response}, =>
+      @jobLogger.log {request, response, elapsedTime: requestBenchmark.elapsed()}, =>
         callback createResponseError
 
   doJob: (request, callback) =>

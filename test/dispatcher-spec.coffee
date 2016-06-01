@@ -278,4 +278,4 @@ describe 'Dispatcher', ->
                   responseId: 'a-response-id'
                   status: 'Could not rehabilitate server'
 
-            expect(job.body.elapsedTime).to.be.within 0, 100 #ms
+            expect(job.body.elapsedTime).to.be.within 0, 300 #ms
