@@ -5,7 +5,7 @@ Authenticate:
       task: 'meshblu-core-task-check-token-black-list'
       cacheNamespace: 'meshblu-token-black-list'
       on:
-        204: 'check-token-cache'
+        204: 'check-token-one-time-cache'
     'check-token-one-time-cache':
       task: 'meshblu-core-task-check-token-cache'
       cacheNamespace: 'meshblu-token-one-time'
