@@ -43,11 +43,10 @@ class Dispatcher extends EventEmitter2
       metadata: metadata
       rawData: rawData
 
-    response.metadata.metrics = request.metadata.metrics
-    response.metadata.jobLogs = request.metadata.jobLogs
-
-    @jobManager.createResponse 'response', response, (error) =>
-      @jobLogger.log {request, response, elapsedTime: requestBenchmark.elapsed()}, callback
+    @jobManager.createResponse 'response', response, (createResponseError, response) =>
+      @jobLogger.log {request, response, elapsedTime: requestBenchmark.elapsed()}, (error) =>
+        return callback createResponseError if createResponseError?
+        callback error
 
   sendError: ({requestBenchmark, request, error}, callback) =>
     response =
@@ -56,12 +55,10 @@ class Dispatcher extends EventEmitter2
         responseId: request.metadata.responseId
         status: error.message
 
-    response.metadata.metrics = request.metadata.metrics
-    response.metadata.jobLogs = request.metadata.jobLogs
-
-    @jobManager.createResponse 'response', response, (createResponseError) =>
-      @jobLogger.log {request, response, elapsedTime: requestBenchmark.elapsed()}, =>
-        callback createResponseError
+    @jobManager.createResponse 'response', response, (createResponseError, response) =>
+      @jobLogger.log {request, response, elapsedTime: requestBenchmark.elapsed()}, (error) =>
+        return callback createResponseError if createResponseError?
+        callback error
 
   doJob: (request, callback) =>
     {metadata} = request

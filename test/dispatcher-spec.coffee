@@ -16,21 +16,14 @@ describe 'Dispatcher', ->
       client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'some-queue'
-      sampleRate: 1.00
-
-    @memoryLogger = new JobLogger
-      client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
-      indexPrefix: 'metric:meshblu-core-dispatcher-memory'
-      type: 'meshblu-core-dispatcher:dispatch'
-      jobLogQueue: 'some-other-queue'
+      jobLogQueue: 'dispatch-queue'
       sampleRate: 1.00
 
     @jobLogger = new JobLogger
       client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
-      jobLogQueue: 'some-queue'
+      jobLogQueue: 'job-log-queue'
       sampleRate: 1.00
 
   describe '-> dispatch', ->
@@ -49,7 +42,7 @@ describe 'Dispatcher', ->
         dispatcherClient = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
         jobManager = new JobManager
           client: dispatcherClient
-          jobLogSampleRate: 0
+          jobLogSampleRate: 1
           timeoutSeconds: 1
 
         @sut = new Dispatcher
@@ -114,10 +107,10 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'some-queue', (error, @dispatcherJobStr) => done error
+            @client.rpop 'dispatch-queue', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
-            @client.rpop 'some-queue', (error, @jobStr) => done error
+            @client.rpop 'job-log-queue', (error, @jobStr) => done error
 
           it 'should log the dispatcher elapsed and error', ->
             job = JSON.parse @dispatcherJobStr
@@ -172,7 +165,7 @@ describe 'Dispatcher', ->
         @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
         jobManager = new JobManager
           client: @client
-          jobLogSampleRate: 0
+          jobLogSampleRate: 1
           timeoutSeconds: 1
 
         @elasticsearch = create: sinon.stub().yields(null)
@@ -184,7 +177,7 @@ describe 'Dispatcher', ->
           dispatchLogger: @dispatchLogger
           memoryLogger: @memoryLogger
           jobLogger: @jobLogger
-          jobLogSampleRate: 0
+          jobLogSampleRate: 1
           jobManager: jobManager
 
       context 'when the queue contains a request', ->
@@ -237,10 +230,10 @@ describe 'Dispatcher', ->
 
         describe 'when the queue worker inserts into the log queue', ->
           beforeEach (done) ->
-            @client.rpop 'some-queue', (error, @dispatcherJobStr) => done error
+            @client.rpop 'dispatch-queue', (error, @dispatcherJobStr) => done error
 
           beforeEach (done) ->
-            @client.rpop 'some-queue', (error, @jobStr) => done error
+            @client.rpop 'job-log-queue', (error, @jobStr) => done error
 
           it 'should log the dispatcher elapsed and error', ->
             job = JSON.parse @dispatcherJobStr

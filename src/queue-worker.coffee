@@ -59,8 +59,6 @@ class QueueWorker
       jobManager: @externalJobManager
     }).run (error, response) =>
       return callback error if error?
-      response.metadata.metrics = metrics
-      response.metadata.jobLogs = jobLogs
       @sendResponse jobType, responseId, response, callback
 
   sendResponse: (jobType, responseId, response, callback) =>
