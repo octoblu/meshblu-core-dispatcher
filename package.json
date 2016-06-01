@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "6.28.5",
+  "version": "6.28.6",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -123,7 +123,7 @@
     "meshblu-core-task-remove-token-cache": "^1.1.0",
     "meshblu-core-task-reset-token": "^1.1.0",
     "meshblu-core-task-revoke-session-token": "^1.0.0",
-    "meshblu-core-task-revoke-token-by-query": "^1.1.0",
+    "meshblu-core-task-revoke-token-by-query": "^1.1.1",
     "meshblu-core-task-search-device": "^2.2.0",
     "meshblu-core-task-send-message": "^2.1.2",
     "meshblu-core-task-send-message-2": "^1.1.0",
