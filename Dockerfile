@@ -7,6 +7,6 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY . /usr/src/app
-RUN npm install --production
+RUN npm -s install --production
 
 CMD [ "node", "--max_old_space_size=256", "command-dispatch.js" ]

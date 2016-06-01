@@ -6,16 +6,16 @@ Authenticate:
       cacheNamespace: 'meshblu-token-black-list'
       on:
         204: 'check-token-cache'
-    'check-token-cache':
-      task: 'meshblu-core-task-check-token-cache'
-      cacheNamespace: 'meshblu-token-cache'
-      on:
-        404: 'check-token-one-time-cache'
     'check-token-one-time-cache':
       task: 'meshblu-core-task-check-token-cache'
       cacheNamespace: 'meshblu-token-one-time'
       on:
         204: 'remove-token-cache'
+        404: 'check-token-cache'
+    'check-token-cache':
+      task: 'meshblu-core-task-check-token-cache'
+      cacheNamespace: 'meshblu-token-cache'
+      on:
         404: 'check-token-expensive-way'
     'remove-token-cache':
       task: 'meshblu-core-task-remove-token-cache'
