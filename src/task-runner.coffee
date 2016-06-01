@@ -73,6 +73,8 @@ class TaskRunner
     request.metadata = _.cloneDeep request.metadata
     request.metadata.workerName = @workerName
     request.metadata.taskName = taskName
-    @taskLogger.log {request, response, response, elapsedTime: benchmark.elapsed()}, callback
+    response.metadata.jobLogs = request.metadata.jobLogs if request.metadata.jobLogs?
+    response.metadata.metrics = request.metadata.metrics if request.metadata.metrics?
+    @taskLogger.log {request, response, elapsedTime: benchmark.elapsed()}, callback
 
 module.exports = TaskRunner

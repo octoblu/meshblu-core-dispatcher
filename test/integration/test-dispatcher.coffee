@@ -52,7 +52,7 @@ class TestDispatcher
       jobLogger: @getJobLogger()
       memoryLogger: @getMemoryLogger()
       dispatchLogger: @getDispatchLogger()
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
 
     dispatcher.dispatch callback
 
@@ -72,7 +72,7 @@ class TestDispatcher
       externalJobManager:  @getTaskRunnerJobManager()
       taskLogger:          @getTaskLogger()
       ignoreResponse:      false
-      jobLogSampleRate:    0
+      jobLogSampleRate:    1
 
     queueWorker.run callback
 
@@ -84,7 +84,7 @@ class TestDispatcher
       remoteJobManager: @getRemoteJobManager()
       localHandlers:  @jobNames
       remoteHandlers: []
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
 
     @assembledJobHandlers = jobAssembler.assemble()
 
@@ -157,7 +157,7 @@ class TestDispatcher
     jobManager = new JobManager
       client: _.bindAll new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
       timeoutSeconds: 1
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
 
     jobManager.do 'request', 'response', job, (error, response) =>
       return callback (error) if error?
@@ -178,7 +178,7 @@ class TestDispatcher
     jobManager = new JobManager
       client: _.bindAll new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
       timeoutSeconds: 1
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
 
     requests = []
     client.llen 'request:queue', (error, responseCount) =>
@@ -195,7 +195,7 @@ class TestDispatcher
     @queueWorkerJobManager ?= new JobManager {
       timeoutSeconds: 1
       client: @getLocalQueueWorkerClient()
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
     }
 
     @queueWorkerJobManager
@@ -204,7 +204,7 @@ class TestDispatcher
     @taskRunnerJobManager ?= new JobManager {
       timeoutSeconds: 1
       client: @getTaskJobManagerClient()
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
     }
 
     @taskRunnerJobManager
@@ -213,7 +213,7 @@ class TestDispatcher
     @localJobManager ?= new JobManager {
       client: @getLocalJobHandlerClient()
       timeoutSeconds: 1
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
     }
 
     @localJobManager
@@ -222,7 +222,7 @@ class TestDispatcher
     @remoteJobManager ?= new JobManager {
       client: @getRemoteJobHandlerClient()
       timeoutSeconds: 1
-      jobLogSampleRate: 0
+      jobLogSampleRate: 1
     }
 
     @remoteJobManager

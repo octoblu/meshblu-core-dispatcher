@@ -1,6 +1,6 @@
 Dispatcher = require '../src/dispatcher'
 async = require 'async'
-redis = require 'fakeredis'
+redis = require 'ioredis'
 uuid = require 'uuid'
 moment = require 'moment'
 _ = require 'lodash'
@@ -8,27 +8,32 @@ JobLogger = require 'job-logger'
 JobManager = require 'meshblu-core-job-manager'
 
 describe 'Dispatcher', ->
-  beforeEach ->
-    @redisKey = uuid.v1()
+  beforeEach (done) ->
+    @redisUri = 'redis://localhost:6379'
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
+    @client = _.bindAll redis.createClient @redisUri, dropBufferSupport: true
+    @client.on 'ready', done
 
     @dispatchLogger = new JobLogger
-      client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+      client: @client
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: 'dispatch-queue'
       sampleRate: 1.00
 
     @jobLogger = new JobLogger
-      client: _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+      client: @client
       indexPrefix: 'metric:meshblu-core-dispatcher'
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: 'job-log-queue'
       sampleRate: 1.00
 
+  afterEach (done) ->
+    @client.del 'dispatch-queue', 'job-log-queue', done
+
   describe '-> dispatch', ->
     describe 'when doAuthenticateJob yields a result', ->
-      beforeEach ->
+      beforeEach (done) ->
         response =
           metadata:
             jobType: 'Authenticate'
@@ -37,9 +42,10 @@ describe 'Dispatcher', ->
           rawData: '{ "authenticated": true }'
 
         @doAuthenticateJob = sinon.stub().yields null, response
-        @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
 
-        dispatcherClient = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
+        dispatcherClient = _.bindAll redis.createClient @redisUri, dropBufferSupport: true
+        dispatcherClient.on 'ready', done
+        
         jobManager = new JobManager
           client: dispatcherClient
           jobLogSampleRate: 1
@@ -162,7 +168,6 @@ describe 'Dispatcher', ->
     describe 'when doAuthenticateJob yields an error', ->
       beforeEach ->
         @doAuthenticateJob = sinon.stub().yields new Error('Could not rehabilitate server')
-        @client = _.bindAll redis.createClient @redisKey, dropBufferSupport: true
         jobManager = new JobManager
           client: @client
           jobLogSampleRate: 1

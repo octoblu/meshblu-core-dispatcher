@@ -300,7 +300,7 @@ class CommandDispatch
   getTaskLogger: =>
     @taskLogger ?= new JobLogger
       client: @logClient
-      indexPrefix: 'metric:meshblu-core-dispatcher'
+      indexPrefix: 'metric:meshblu-core-dispatcher-task'
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @jobLogQueue
     @taskLogger
