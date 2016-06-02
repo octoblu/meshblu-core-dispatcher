@@ -1,4 +1,4 @@
-FROM node:5
+FROM node:6
 MAINTAINER Octoblu <docker@octoblu.com>
 
 ENV NPM_CONFIG_LOGLEVEL error
@@ -9,4 +9,4 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 RUN npm -s install --production
 
-CMD [ "node", "--max_old_space_size=256", "command-dispatch.js" ]
+CMD [ "node", "--max_old_space_size=256", "command.js" ]

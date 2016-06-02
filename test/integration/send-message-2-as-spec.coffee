@@ -1,33 +1,28 @@
 _              = require 'lodash'
-mongojs        = require 'mongojs'
-redis          = require 'ioredis'
-async          = require 'async'
 bcrypt         = require 'bcrypt'
-RedisNS        = require '@octoblu/redis-ns'
-
-TestDispatcher = require './test-dispatcher'
-JobManager     = require 'meshblu-core-job-manager'
-HydrantManager = require 'meshblu-core-manager-hydrant'
+TestDispatcherWorker = require './test-dispatcher-worker'
 
 describe 'SendMessage: send-as', ->
   @timeout 5000
-  beforeEach (done) ->
-    @db            = mongojs 'meshblu-core-test'
-    @devices       = @db.collection 'devices'
-    @subscriptions = @db.collection 'subscriptions'
-    @uuidAliasResolver =
-      resolve: (uuid, callback) =>
-        callback null, uuid
+  beforeEach 'prepare TestDispatcherWorker', (done) ->
+    @testDispatcherWorker = new TestDispatcherWorker
+    @testDispatcherWorker.prepare done
 
-    @subscriptions.drop =>
-      @devices.drop =>
-        done()
+  beforeEach 'getJobManager', (done) ->
+    @testDispatcherWorker.getJobManager (error, @jobManager) =>
+      done error
 
-  beforeEach (done) ->
-    @redisUri = process.env.REDIS_URI
-    @dispatcher = new TestDispatcher
-    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
-    client.del 'request:queue', done
+  beforeEach 'clearAndGetCollection devices', (done) ->
+    @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
+      done error
+
+  beforeEach 'clearAndGetCollection subscriptions', (done) ->
+    @testDispatcherWorker.clearAndGetCollection 'subscriptions', (error, @subscriptions) =>
+      done error
+
+  beforeEach 'getHydrant', (done) ->
+    @testDispatcherWorker.getHydrant (error, @hydrant) =>
+      done error
 
   beforeEach 'create sender device', (done) ->
 
@@ -93,8 +88,6 @@ describe 'SendMessage: send-as', ->
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
-        @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'receiver-uuid', (error) =>
           return done(error) if error?
 
@@ -102,7 +95,7 @@ describe 'SendMessage: send-as', ->
             @hydrant.close()
             doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the received message to the receiver', ->
         expect(@message).to.exist
@@ -136,8 +129,6 @@ describe 'SendMessage: send-as', ->
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
-        @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'sender-uuid', (error) =>
           return done(error) if error?
 
@@ -145,7 +136,7 @@ describe 'SendMessage: send-as', ->
             @hydrant.close()
             doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent message to the sender', ->
         expect(@message).to.exist
@@ -172,15 +163,13 @@ describe 'SendMessage: send-as', ->
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
-        @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'receiver-uuid', (error) =>
           return done(error) if error?
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
 
       it 'should not deliver the received message to the receiver', ->
@@ -214,15 +203,13 @@ describe 'SendMessage: send-as', ->
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
-        client = new RedisNS 'messages', redis.createClient(@redisUri, dropBufferSupport: true)
-        @hydrant = new HydrantManager {client, @uuidAliasResolver}
         @hydrant.connect uuid: 'sender-uuid', (error) =>
           return done(error) if error?
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
 
       it 'should deliver the sent message to the sender', ->

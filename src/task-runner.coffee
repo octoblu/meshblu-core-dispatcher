@@ -1,7 +1,6 @@
 _                      = require 'lodash'
 debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
 moment                 = require 'moment'
-TaskJobManager         = require './task-job-manager'
 SimpleBenchmark        = require 'simple-benchmark'
 {Tasks}                = require './task-loader'
 
@@ -16,21 +15,13 @@ class TaskRunner
       @pepper
       @cacheFactory
       @uuidAliasResolver
-      @meshbluConfig
-      @forwardEventDevices
-      @jobManager
       @workerName
       @privateKey
       @publicKey
       @taskLogger
-      @ignoreResponse
+      @taskJobManager
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
-    @buildTaskJobManager()
-
-  buildTaskJobManager: =>
-    cache = @cacheFactory.build 'meshblu-token-one-time'
-    @taskJobManager = new TaskJobManager {@jobManager, cache, @pepper, @uuidAliasResolver, @ignoreResponse}
 
   run: (callback) =>
     @_doTask @config.start, callback
@@ -52,12 +43,11 @@ class TaskRunner
       datastore
       cache
       @pepper
-      @meshbluConfig
-      @forwardEventDevices
-      jobManager: @taskJobManager
       @privateKey
       @publicKey
+      jobManager: @taskJobManager
     }
+
     task.do @request, (error, response) =>
       return callback error if error?
       debug taskName, response.metadata.code

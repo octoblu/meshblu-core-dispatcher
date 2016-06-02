@@ -125,7 +125,7 @@ options = {
   namespace:           opts.namespace
   timeoutSeconds:      opts.timeout
   redisUri:            opts.redis_uri
-  mongoDBUri:          opts.mongo_db_uri
+  mongoDBUri:          opts.mongodb_uri
   pepper:              opts.pepper
   workerName:          opts.worker_name
   aliasServerUri:      opts.alias_server_uri
@@ -144,8 +144,13 @@ process.on 'SIGTERM', =>
   dispatcherWorker.stop =>
     console.error 'exiting...'
 
-dispatcherWorker.run (error) =>
+dispatcherWorker.prepare (error) =>
   if error
     console.error error.stack
     process.exit 1
-  process.exit 0
+
+  dispatcherWorker.run (error) =>
+    if error
+      console.error error.stack
+      process.exit 1
+    process.exit 0

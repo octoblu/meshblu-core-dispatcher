@@ -1,31 +1,28 @@
 _              = require 'lodash'
-mongojs        = require 'mongojs'
-redis          = require 'ioredis'
-async          = require 'async'
 bcrypt         = require 'bcrypt'
-RedisNS        = require '@octoblu/redis-ns'
-
-TestDispatcher = require './test-dispatcher'
+TestDispatcherWorker = require './test-dispatcher-worker'
 
 describe 'DeliverReceivedMessage', ->
   @timeout 5000
-  beforeEach (done) ->
-    @db            = mongojs 'meshblu-core-test'
-    @devices       = @db.collection 'devices'
-    @subscriptions = @db.collection 'subscriptions'
+  beforeEach 'prepare TestDispatcherWorker', (done) ->
+    @testDispatcherWorker = new TestDispatcherWorker
+    @testDispatcherWorker.prepare done
 
-    @uuidAliasResolver =
-      resolve: (uuid, callback) => callback null, uuid
+  beforeEach 'getJobManager', (done) ->
+    @testDispatcherWorker.getJobManager (error, @jobManager) =>
+      done error
 
-    @subscriptions.drop =>
-      @devices.drop =>
-        done()
+  beforeEach 'clearAndGetCollection devices', (done) ->
+    @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
+      done error
 
-  beforeEach (done) ->
-    @redisUri = process.env.REDIS_URI
-    @dispatcher = new TestDispatcher
-    client = new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
-    client.del 'request:queue', done
+  beforeEach 'clearAndGetCollection subscriptions', (done) ->
+    @testDispatcherWorker.clearAndGetCollection 'subscriptions', (error, @subscriptions) =>
+      done error
+
+  beforeEach 'getHydrant', (done) ->
+    @testDispatcherWorker.getHydrant (error, @hydrant) =>
+      done error
 
   beforeEach 'create sender device', (done) ->
     @auth =
@@ -87,7 +84,7 @@ describe 'DeliverReceivedMessage', ->
           data:
             devices: ['receiver-uuid'], payload: 'boo'
 
-        @dispatcher.generateJobs job, (error, @generatedJobs) => done()
+        @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => done()
 
       it 'should not deliver the received message to the spy', ->
         expect(@generatedJobs).to.not.containSubset [
