@@ -1,7 +1,6 @@
 async           = require 'async'
 _               = require 'lodash'
 {EventEmitter2} = require 'eventemitter2'
-JobManager      = require 'meshblu-core-job-manager'
 JobHandler      = require './job-handler'
 
 class JobAssembler extends EventEmitter2

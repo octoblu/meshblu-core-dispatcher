@@ -5,7 +5,7 @@ async          = require 'async'
 bcrypt         = require 'bcrypt'
 RedisNS        = require '@octoblu/redis-ns'
 
-TestDispatcher = require './test-dispatcher'
+TestDispatcherWorker = require './test-dispatcher-worker'
 JobManager     = require 'meshblu-core-job-manager'
 HydrantManager = require 'meshblu-core-manager-hydrant'
 
@@ -24,7 +24,7 @@ describe 'BroadcastSent(2): send', ->
 
   beforeEach (done) ->
     @redisUri = process.env.REDIS_URI
-    @dispatcher = new TestDispatcher
+    @dispatcherWorker = new TestDispatcherWorker
     client = new RedisNS 'meshblu-test', redis.createClient(@redisUri, dropBufferSupport: true)
     client.del 'request:queue', done
 
@@ -101,7 +101,7 @@ describe 'BroadcastSent(2): send', ->
             @hydrant.close()
             doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @dispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent broadcast to the sender', ->
         expect(@message).to.exist
@@ -144,7 +144,7 @@ describe 'BroadcastSent(2): send', ->
             @hydrant.close()
             doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @dispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent broadcast to the receiver', ->
         expect(@message).to.exist
@@ -184,7 +184,7 @@ describe 'BroadcastSent(2): send', ->
 
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @dispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
 
       it 'should not deliver the sent broadcast to the receiver', ->
@@ -235,7 +235,7 @@ describe 'BroadcastSent(2): send', ->
             @hydrant.close()
             doneTwice()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @dispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
 
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
@@ -282,7 +282,7 @@ describe 'BroadcastSent(2): send', ->
           return done(error) if error?
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @dispatcher.generateJobs job, (error, @generatedJobs) =>
+          @dispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
 
       it 'should not deliver the sent message to the receiver', ->

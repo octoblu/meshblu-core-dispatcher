@@ -109,11 +109,12 @@ class CommandDispatch
     _.delay @_doSingleRun, @intervalBetweenJobs, callback
 
   _doSingleRun: (callback) =>
-    async.parallel [
-      async.apply @runDispatcher
-      async.apply @runQueueWorker
-    ], (error) =>
-      callback error
+    @runWorker callback
+    # async.parallel [
+    #   async.apply @runDispatcher
+    #   async.apply @runQueueWorker
+    # ], (error) =>
+    #   callback error
 
   prepareConnections: (callback) =>
     async.series [
