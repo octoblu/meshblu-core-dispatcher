@@ -27,7 +27,6 @@ class DispatcherWorker
       @jobLogRedisUri
       @jobLogQueue
       @jobLogSampleRate
-      @intervalBetweenJobs
       @privateKey
       @publicKey
       @singleRun
@@ -40,7 +39,6 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@jobLogRedisUri"' unless @jobLogRedisUri?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogQueue"' unless @jobLogQueue?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogSampleRate"' unless @jobLogSampleRate?
-    throw new Error 'DispatcherWorker constructor is missing "@intervalBetweenJobs"' unless @intervalBetweenJobs?
     throw new Error 'DispatcherWorker constructor is missing "@privateKey"' unless @privateKey?
     throw new Error 'DispatcherWorker constructor is missing "@publicKey"' unless @publicKey?
     @jobRegistry = new JobRegistry().toJSON()
@@ -66,19 +64,21 @@ class DispatcherWorker
 
   run: (callback) =>
     @stopRunning = true if @singleRun
-    async.doUntil @_do, @_checkRunning, (error) =>
-      console.log 'doing a job'
-      process.nextTick =>
-        return callback error if error?
-        return callback @error if @error?
-        callback()
+    async.doUntil @_doWithNextTick, @_shouldStop, (error) =>
+      return callback error if error?
+      return callback @error if @error?
+      callback()
 
   stop: (callback) =>
     @stopRunning = true
     callback()
 
-  _checkRunning: =>
-    @stopRunning ? false
+  _doWithNextTick: (callback) =>
+    # give some time for garbage collection
+    process.nextTick =>
+      @_do (error) =>
+        process.nextTick =>
+          callback error
 
   _do: (callback) =>
     dispatchBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:dispatch'
@@ -113,7 +113,7 @@ class DispatcherWorker
       @taskJobManager
     }
     taskRunner.run (error, response) =>
-      response = @_processResponse error, request, response
+      response = @_processErrorResponse {error, request, response}
       @jobManager.createResponse 'response', response, callback
 
   _logDispatch: ({dispatchBenchmark, request}, callback) =>
@@ -160,9 +160,11 @@ class DispatcherWorker
     callback()
 
   _prepareJobManager: (callback) =>
-    client = new RedisNS @namespace, @client
-    @jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
-    callback()
+    @_prepareRedis @redisUri, (error, client) =>
+      return callback error if error?
+      client = new RedisNS @namespace, client
+      @jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
+      callback()
 
   _prepareTaskJobManager: (callback) =>
     @_prepareRedis @redisUri, (error, client) =>
@@ -206,17 +208,24 @@ class DispatcherWorker
     @uuidAliasResolver = new UuidAliasResolver {cache, @aliasServerUri}
     callback()
 
-  _processResponse: (error, request, response) =>
-    if error?
-      return {
-        metadata:
-          code: 504
-          responseId: request.metadata.responseId
-          status: http.STATUS_CODES[504]
-          error:
-            message: error.message
-      }
+  _processResponse: ({request, response}) =>
+    {metadata, data, rawData} = response
+    metadata.responseId = request.metadata.responseId
+    rawData = JSON.stringify(data) if data?
+    return {metadata, rawData}
 
-    {metadata,rawData} = response
+  _processErrorResponse: ({error, request, response}) =>
+    return @_processResponse {request, response} unless error?
+    return {
+      metadata:
+        code: 504
+        responseId: request.metadata.responseId
+        status: http.STATUS_CODES[504]
+        error:
+          message: error.message
+    }
+
+  _shouldStop: =>
+    @stopRunning ? false
 
 module.exports = DispatcherWorker

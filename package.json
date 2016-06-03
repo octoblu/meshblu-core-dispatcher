@@ -43,7 +43,6 @@
     "ioredis": "^2.0.1",
     "job-logger": "^4.1.0",
     "lodash": "^4.13.1",
-    "meshblu-config": "^4.0.0",
     "meshblu-core-cache": "^1.7.0",
     "meshblu-core-datastore": "^4.6.0",
     "meshblu-core-job-manager": "^5.4.1",

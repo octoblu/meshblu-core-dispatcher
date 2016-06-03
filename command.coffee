@@ -80,12 +80,6 @@ options = [
     env: 'JOB_LOG_SAMPLE_RATE'
   }
   {
-    name: 'interval-between-jobs'
-    type: 'positiveInteger'
-    env: 'INTERVAL_BETWEEN_JOBS'
-    default: 1
-  }
-  {
     name: 'private-key-base64'
     type: 'string'
     help: 'Base64-encoded private key'
@@ -132,7 +126,6 @@ options = {
   jobLogRedisUri:      opts.job_log_redis_uri
   jobLogQueue:         opts.job_log_queue
   jobLogSampleRate:    opts.job_log_sample_rate
-  intervalBetweenJobs: opts.interval_between_jobs
   privateKey:          privateKey
   publicKey:           publicKey
   singleRun:           opts.single_run
