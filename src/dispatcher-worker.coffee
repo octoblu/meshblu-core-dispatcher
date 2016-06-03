@@ -44,7 +44,11 @@ class DispatcherWorker
     @jobRegistry = new JobRegistry().toJSON()
 
   panic: (@error) =>
+    console.error "PANIC:", @error.stack
     @stopRunning = true
+    setTimeout =>
+      process.exit 1
+    , 1000
 
   prepare: (callback) =>
     # order is important
@@ -199,6 +203,7 @@ class DispatcherWorker
     callback = _.once callback
     client = new Redis redisUri, dropBufferSupport: true
     client.once 'ready', =>
+      client.on 'error', @panic
       callback null, client
 
     client.once 'error', callback
