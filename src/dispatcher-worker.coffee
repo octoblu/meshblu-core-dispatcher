@@ -24,6 +24,7 @@ class DispatcherWorker
       @pepper
       @workerName
       @aliasServerUri
+      @firehoseRedisUri
       @jobLogRedisUri
       @jobLogQueue
       @jobLogSampleRate
@@ -36,6 +37,7 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@redisUri"' unless @redisUri?
     throw new Error 'DispatcherWorker constructor is missing "@mongoDBUri"' unless @mongoDBUri?
     throw new Error 'DispatcherWorker constructor is missing "@pepper"' unless @pepper?
+    throw new Error 'DispatcherWorker constructor is missing "@firehoseRedisUri"' unless @firehoseRedisUri?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogRedisUri"' unless @jobLogRedisUri?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogQueue"' unless @jobLogQueue?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogSampleRate"' unless @jobLogSampleRate?
@@ -54,6 +56,7 @@ class DispatcherWorker
     # order is important
     async.series [
       @_prepareClient
+      @_prepareFirehoseClient
       @_prepareLogClient
       @_prepareMongoDB
       @_prepareCacheFactory
@@ -115,6 +118,7 @@ class DispatcherWorker
       @publicKey
       @taskLogger
       @taskJobManager
+      @firehoseClient
     }
     taskRunner.run (error, response) =>
       response = @_processErrorResponse {error, request, response}
@@ -133,6 +137,10 @@ class DispatcherWorker
 
   _prepareClient: (callback) =>
     @_prepareRedis @redisUri, (error, @client) =>
+      callback error
+
+  _prepareFirehoseClient: (callback) =>
+    @_prepareRedis @firehoseRedisUri, (error, @firehoseClient) =>
       callback error
 
   _prepareCacheFactory: (callback) =>

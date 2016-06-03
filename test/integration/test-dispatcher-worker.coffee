@@ -17,6 +17,7 @@ class TestDispatcherWorker
       mongoDBUri:          'meshblu-core-test'
       pepper:              'pepper'
       workerName:          'test-worker'
+      firehoseRedisUri:    'redis://localhost:6379'
       jobLogRedisUri:      'redis://localhost:6379'
       jobLogQueue:         'sample-rate:1.00'
       jobLogSampleRate:    1

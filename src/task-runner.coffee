@@ -20,6 +20,7 @@ class TaskRunner
       @publicKey
       @taskLogger
       @taskJobManager
+      @firehoseClient
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -45,6 +46,7 @@ class TaskRunner
       @pepper
       @privateKey
       @publicKey
+      @firehoseClient
       jobManager: @taskJobManager
     }
 

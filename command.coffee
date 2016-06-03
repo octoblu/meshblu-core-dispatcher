@@ -62,6 +62,12 @@ options = [
     env: 'WORKER_NAME'
   }
   {
+    name: 'firehose-redis-uri'
+    type: 'string'
+    help: 'URI for Firehose Redis'
+    env: 'FIREHOSE_REDIS_URI'
+  }
+  {
     name: 'job-log-redis-uri'
     type: 'string'
     help: 'URI for job log Redis'
@@ -123,6 +129,7 @@ options = {
   pepper:              opts.pepper
   workerName:          opts.worker_name
   aliasServerUri:      opts.alias_server_uri
+  firehoseRedisUri:    opts.firehose_redis_uri
   jobLogRedisUri:      opts.job_log_redis_uri
   jobLogQueue:         opts.job_log_queue
   jobLogSampleRate:    opts.job_log_sample_rate
