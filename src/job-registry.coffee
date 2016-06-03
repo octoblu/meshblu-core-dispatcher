@@ -1,11 +1,10 @@
-cson = require 'cson'
 path = require 'path'
 _    = require 'lodash'
 
 class JobRegistry
   constructor: ({@jobs, @filters}={}) ->
-    @jobs    ?= cson.parseFile path.join(__dirname, '../job-registry.cson')
-    @filters ?= cson.parseFile path.join(__dirname, '../filter-registry.cson')
+    @jobs    ?= require '../job-registry.cson'
+    @filters ?= require '../filter-registry.cson'
 
   toJSON: =>
     _.mapValues @jobs, @buildJob
