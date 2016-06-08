@@ -20,6 +20,7 @@ class DispatcherWorker
       @namespace
       @timeoutSeconds
       @redisUri
+      @firehoseRedisUri
       @mongoDBUri
       @pepper
       @workerName
@@ -34,6 +35,7 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@namespace"' unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"' unless @timeoutSeconds?
     throw new Error 'DispatcherWorker constructor is missing "@redisUri"' unless @redisUri?
+    throw new Error 'DispatcherWorker constructor is missing "@firehoseRedisUri"' unless @redisUri?
     throw new Error 'DispatcherWorker constructor is missing "@mongoDBUri"' unless @mongoDBUri?
     throw new Error 'DispatcherWorker constructor is missing "@pepper"' unless @pepper?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogRedisUri"' unless @jobLogRedisUri?
@@ -55,6 +57,7 @@ class DispatcherWorker
     async.series [
       @_prepareClient
       @_prepareLogClient
+      @_prepareFirehoseClient
       @_prepareMongoDB
       @_prepareCacheFactory
       @_prepareDatastoreFactory
@@ -115,6 +118,7 @@ class DispatcherWorker
       @publicKey
       @taskLogger
       @taskJobManager
+      @firehoseClient
     }
     taskRunner.run (error, response) =>
       response = @_processErrorResponse {error, request, response}
@@ -150,6 +154,10 @@ class DispatcherWorker
       type: 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
     callback()
+
+  _prepareFirehoseClient: (callback) =>
+    @_prepareRedis @firehoseRedisUri, (error, @firehoseClient) =>
+      callback error
 
   _prepareLogClient: (callback) =>
     @_prepareRedis @jobLogRedisUri, (error, @logClient) =>

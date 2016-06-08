@@ -3,6 +3,7 @@ debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
 moment                 = require 'moment'
 SimpleBenchmark        = require 'simple-benchmark'
 {Tasks}                = require './task-loader'
+RedisNS                = require '@octoblu/redis-ns'
 
 class TaskRunner
   @TASKS = Tasks
@@ -20,6 +21,7 @@ class TaskRunner
       @publicKey
       @taskLogger
       @taskJobManager
+      @firehoseClient
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
@@ -36,7 +38,9 @@ class TaskRunner
     return callback new Error "Task Definition '#{name}' missing task class" unless Task?
 
     datastore = @datastoreFactory.build taskConfig.datastoreCollection if taskConfig.datastoreCollection?
-    cache  = @cacheFactory.build taskConfig.cacheNamespace if taskConfig.cacheNamespace?
+    if taskConfig.cacheNamespace?
+      cache  = @cacheFactory.build taskConfig.cacheNamespace
+      firehoseClient = new RedisNS taskConfig.cacheNamespace, @firehoseClient
 
     task = new Task {
       @uuidAliasResolver
@@ -45,6 +49,7 @@ class TaskRunner
       @pepper
       @privateKey
       @publicKey
+      firehoseClient
       jobManager: @taskJobManager
     }
 
