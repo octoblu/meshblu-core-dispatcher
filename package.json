@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "8.0.3",
+  "version": "8.0.4",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -41,7 +41,7 @@
     "debug": "^2.2.0",
     "fs-cson": "^0.3.2",
     "ioredis": "^2.0.1",
-    "job-logger": "^4.1.0",
+    "job-logger": "^4.2.0",
     "lodash": "^4.13.1",
     "meshblu-core-cache": "^1.7.0",
     "meshblu-core-datastore": "^4.6.0",
