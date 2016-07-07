@@ -5,30 +5,21 @@ Authenticate:
       task: 'meshblu-core-task-check-token-black-list'
       cacheNamespace: 'meshblu-token-black-list'
       on:
-        204: 'check-token-one-time-cache'
-    'check-token-one-time-cache':
-      task: 'meshblu-core-task-check-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
-      on:
-        204: 'remove-token-cache'
-        404: 'check-token-cache'
-    'check-token-cache':
-      task: 'meshblu-core-task-check-token-cache'
-      cacheNamespace: 'meshblu-token-cache'
-      on:
-        404: 'check-token-expensive-way'
-    'remove-token-cache':
-      task: 'meshblu-core-task-remove-token-cache'
-      cacheNamespace: 'meshblu-token-one-time'
-    'check-token-expensive-way':
+        204: 'check-token'
+    'check-token':
       task: 'meshblu-core-task-check-token'
+      datastoreCollection: 'tokens'
+      on:
+        401: 'check-root-token'
+    'check-root-token':
+      task: 'meshblu-core-task-check-root-token'
       datastoreCollection: 'devices'
       on:
-        204: 'cache-token'
-        403: 'black-list-token'
-    'cache-token':
-      task: 'meshblu-core-task-cache-token'
-      cacheNamespace: 'meshblu-token-cache'
+        204: 'migrate-root-token'
+        401: 'black-list-token'
+    'migrate-root-token':
+      task: 'meshblu-core-task-migrate-root-token'
+      datastoreCollection: 'tokens'
     'black-list-token':
       task: 'meshblu-core-task-black-list-token'
       cacheNamespace: 'meshblu-token-black-list'
@@ -150,7 +141,6 @@ HandleDeliverMessage:
         204: 'publish-subscriptions'
     'publish-subscriptions':
       task: 'meshblu-core-task-publish-subscriptions'
-      cacheNamespace: 'meshblu-token-one-time'
       datastoreCollection: 'subscriptions'
       on:
         204: 'publish-deprecated-subscriptions'
@@ -161,11 +151,9 @@ HandleDeliverMessage:
         204: 'enqueue-webhooks'
     'enqueue-webhooks':
       task: 'meshblu-core-task-enqueue-webhooks'
-      cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
       on:
         204: 'enqueue-deprecated-webhooks'
     'enqueue-deprecated-webhooks':
       task: 'meshblu-core-task-enqueue-deprecated-webhooks'
-      cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'

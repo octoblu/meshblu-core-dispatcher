@@ -17,8 +17,7 @@ CreateSessionToken:
         204: 'create-session-token'
     'create-session-token':
       task: 'meshblu-core-task-create-session-token'
-      datastoreCollection: 'devices'
-      cacheNamespace: 'meshblu-token-cache'
+      datastoreCollection: 'tokens'
 
 CreateSubscription:
   start: 'authenticate'
@@ -355,8 +354,7 @@ DeliverWebhook:
         204: 'deliver-webhook'
     'deliver-webhook':
       task: 'meshblu-core-task-deliver-webhook'
-      cacheNamespace: 'meshblu-token-cache'
-      datastoreCollection: 'devices'
+      datastoreCollection: 'tokens'
 
 GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
@@ -492,10 +490,14 @@ ResetToken:
     'enforce-configure-whitelists':
       filter: 'EnforceConfigureWhitelists'
       on:
+        204: 'remove-root-session-token'
+    'remove-root-session-token':
+      task: 'meshblu-core-task-remove-root-session-token'
+      datastoreCollection: 'tokens'
+      on:
         204: 'reset-token'
     'reset-token':
       task: 'meshblu-core-task-reset-token'
-      cacheNamespace: 'meshblu-token-cache'
       datastoreCollection: 'devices'
 
 RevokeSessionToken:
@@ -511,8 +513,7 @@ RevokeSessionToken:
         204: 'revoke-session-token'
     'revoke-session-token':
       task: 'meshblu-core-task-revoke-session-token'
-      cacheNamespace: 'meshblu-token-cache'
-      datastoreCollection: 'devices'
+      datastoreCollection: 'tokens'
 
 RevokeTokenByQuery:
   start: 'authenticate'
@@ -527,8 +528,7 @@ RevokeTokenByQuery:
         204: 'revoke-token-by-query'
     'revoke-token-by-query':
       task: 'meshblu-core-task-revoke-token-by-query'
-      cacheNamespace: 'meshblu-token-cache'
-      datastoreCollection: 'devices'
+      datastoreCollection: 'tokens'
 
 UnregisterDevice:
   start: 'authenticate'

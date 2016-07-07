@@ -2,8 +2,8 @@ _            = require 'lodash'
 TokenManager = require 'meshblu-core-manager-token'
 
 class TaskJobManager
-  constructor: ({@jobManager, cache, pepper, @ignoreResponse, uuidAliasResolver}) ->
-    @tokenManager = new TokenManager {cache,pepper,uuidAliasResolver}
+  constructor: ({@jobManager, datastore, pepper, @ignoreResponse, uuidAliasResolver}) ->
+    @tokenManager = new TokenManager {datastore, pepper,uuidAliasResolver}
     @expireSeconds = @jobManager.timeoutSeconds
     @ignoreResponse ?= true
     #why use inheritance, when you can make something kinda like it yourself?
@@ -17,8 +17,10 @@ class TaskJobManager
     metadata               = _.cloneDeep request.metadata
     request.metadata       = metadata
     {auth}                 = metadata
+    {uuid}                 = auth
 
-    @tokenManager.generateAndStoreTokenInCache {uuid: auth.uuid, expireSeconds: @expireSeconds}, (error, token) =>
+    expiresOn = new Date(Date.now() + (@expireSeconds * 1000))
+    @tokenManager.generateAndStoreToken { uuid, expiresOn }, (error, token) =>
       return callback error if error?
       auth.token = token
       @jobManager.createRequest requestQueue, request, callback
