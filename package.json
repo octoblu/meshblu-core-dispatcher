@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -46,7 +46,7 @@
     "meshblu-core-cache": "^1.7.0",
     "meshblu-core-datastore": "^4.6.0",
     "meshblu-core-job-manager": "^6.1.2",
-    "meshblu-core-manager-token": "^7.2.0",
+    "meshblu-core-manager-token": "^7.4.1",
     "meshblu-core-task-black-list-token": "^1.0.0",
     "meshblu-core-task-check-broadcast-received-whitelist": "^1.0.1",
     "meshblu-core-task-check-broadcast-sent-whitelist": "^1.1.1",
@@ -103,7 +103,7 @@
     "meshblu-core-task-get-global-public-key": "^1.0.0",
     "meshblu-core-task-get-status": "^2.0.0",
     "meshblu-core-task-get-subscriptions": "^2.0.2",
-    "meshblu-core-task-migrate-root-token": "^1.1.0",
+    "meshblu-core-task-migrate-root-token": "^1.1.1",
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-protect-your-as": "^1.0.4",
     "meshblu-core-task-publish-broadcast-received": "^4.0.0",
