@@ -181,10 +181,11 @@ class DispatcherWorker
   _prepareTaskJobManager: (callback) =>
     @_prepareRedis @redisUri, (error, client) =>
       return callback error if error?
+      cache = new RedisNS 'meshblu-token-one-time', client
       client = new RedisNS @namespace, client
       jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
       datastore = @datastoreFactory.build 'tokens'
-      @taskJobManager = new TaskJobManager {jobManager, datastore, @pepper, @uuidAliasResolver}
+      @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver}
       callback()
 
   _prepareTaskLogger: (callback) =>

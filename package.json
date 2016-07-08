@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.0.4",
+  "version": "9.0.5",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -46,7 +46,7 @@
     "meshblu-core-cache": "^1.7.0",
     "meshblu-core-datastore": "^4.6.0",
     "meshblu-core-job-manager": "^6.1.2",
-    "meshblu-core-manager-token": "^7.4.1",
+    "meshblu-core-manager-token": "^6.0.0",
     "meshblu-core-task-black-list-token": "^1.0.0",
     "meshblu-core-task-check-broadcast-received-whitelist": "^1.0.1",
     "meshblu-core-task-check-broadcast-sent-whitelist": "^1.1.1",
@@ -63,6 +63,7 @@
     "meshblu-core-task-check-send-whitelist": "^2.0.0",
     "meshblu-core-task-check-token": "^3.0.2",
     "meshblu-core-task-check-token-black-list": "^2.0.1",
+    "meshblu-core-task-check-token-cache": "^1.1.1",
     "meshblu-core-task-check-update-device-is-valid": "^1.3.1",
     "meshblu-core-task-check-whitelist-broadcast-as": "^2.0.0",
     "meshblu-core-task-check-whitelist-broadcast-received": "^3.0.0",
@@ -117,6 +118,7 @@
     "meshblu-core-task-remove-device-cache": "^2.0.2",
     "meshblu-core-task-remove-root-session-token": "^1.0.0",
     "meshblu-core-task-remove-subscription": "^2.0.1",
+    "meshblu-core-task-remove-token-cache": "^1.1.1",
     "meshblu-core-task-reset-token": "^4.0.1",
     "meshblu-core-task-revoke-session-token": "^3.0.1",
     "meshblu-core-task-revoke-token-by-query": "^3.0.1",
