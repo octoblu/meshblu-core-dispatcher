@@ -16,7 +16,7 @@ Authenticate:
       datastoreCollection: 'devices'
       on:
         204: 'migrate-root-token'
-        401: 'black-list-token'
+        401: 'forbid'
     'migrate-root-token':
       task: 'meshblu-core-task-migrate-root-token'
       datastoreCollection: 'tokens'
