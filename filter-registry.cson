@@ -1,5 +1,5 @@
 Authenticate:
-  start: 'check-token-black-list'
+  start: 'check-token'
   tasks:
     'check-token-black-list':
       task: 'meshblu-core-task-check-token-black-list'
