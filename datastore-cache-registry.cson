@@ -10,9 +10,7 @@ devices:
     'uuid'
     'meshblu.hash'
   ]
-
 tokens:
-  useQueryCache: true
   cacheAttributes: [
     'uuid'
     'hashedToken'
