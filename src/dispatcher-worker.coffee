@@ -1,4 +1,5 @@
 _                 = require 'lodash'
+OctobluRaven      = require 'octoblu-raven'
 async             = require 'async'
 CacheFactory      = require './cache-factory'
 DatastoreFactory  = require './datastore-factory'
@@ -43,14 +44,23 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@jobLogSampleRate"' unless @jobLogSampleRate?
     throw new Error 'DispatcherWorker constructor is missing "@privateKey"' unless @privateKey?
     throw new Error 'DispatcherWorker constructor is missing "@publicKey"' unless @publicKey?
+    @octobluRaven = new OctobluRaven()
     @jobRegistry = new JobRegistry().toJSON()
+
+  catchErrors: =>
+    @octobluRaven.patchGlobal()
 
   panic: (@error) =>
     console.error "PANIC:", @error.stack
+    @octobluRaven.reportError @error
     @stopRunning = true
+    @_disconnect()
     setTimeout =>
       process.exit 1
     , 1000
+
+  _disconnect: =>
+    @database?.close _.noop
 
   prepare: (callback) =>
     # order is important
@@ -172,9 +182,9 @@ class DispatcherWorker
     callback()
 
   _prepareJobManager: (callback) =>
-    @_prepareRedis @redisUri, (error, client) =>
+    @_prepareRedis @redisUri, (error, @jobManagerClient) =>
       return callback error if error?
-      client = new RedisNS @namespace, client
+      client = new RedisNS @namespace, @jobManagerClient
       @jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
       callback()
 
