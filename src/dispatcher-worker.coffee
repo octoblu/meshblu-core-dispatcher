@@ -32,6 +32,7 @@ class DispatcherWorker
       @privateKey
       @publicKey
       @singleRun
+      @ignoreResponse
     } = options
     throw new Error 'DispatcherWorker constructor is missing "@namespace"' unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"' unless @timeoutSeconds?
@@ -195,7 +196,7 @@ class DispatcherWorker
       client = new RedisNS @namespace, client
       jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
       datastore = @datastoreFactory.build 'tokens'
-      @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver}
+      @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver, @ignoreResponse}
       callback()
 
   _prepareTaskLogger: (callback) =>

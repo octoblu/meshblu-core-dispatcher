@@ -24,6 +24,7 @@ class TestDispatcherWorker
       privateKey:          'private'
       publicKey:           'public'
       singleRun:           true
+      ignoreResponse:      false
 
   clearAndGetCollection: (name, callback) =>
     db = mongojs @dispatcherWorker.mongoDBUri
