@@ -549,6 +549,11 @@ UnregisterDevice:
     'remove-device-cache':
       task: 'meshblu-core-task-remove-device-cache'
       cacheNamespace: 'cache:device'
+      on:
+        204: 'revoke-all-tokens'
+    'revoke-all-tokens':
+      task: 'meshblu-core-task-revoke-all-tokens'
+      datastoreCollection: 'tokens'
 
 UpdateDevice:
   start: 'authenticate'
