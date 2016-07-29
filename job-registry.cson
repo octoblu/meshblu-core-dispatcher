@@ -433,7 +433,12 @@ SendMessage:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'enforce-message-rate-limit'
+    'enforce-message-rate-limit':
+      task: 'meshblu-core-task-enforce-message-rate-limit'
+      on:
         204: 'update-message-rate'
+      cacheNamespace: 'meshblu-count'
     'update-message-rate':
       task: 'meshblu-core-task-update-message-rate'
       on:
