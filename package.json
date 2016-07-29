@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.0.11",
+  "version": "9.1.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "meshblu-core-manager-hydrant": "^1.6.2",
     "mocha": "^2.5.3",
     "mocha-istanbul": "^0.3.0",
-    "sinon": "^1.17.2",
+    "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
     "uuid": "^2.0.1"
   },
@@ -43,7 +43,7 @@
     "ioredis": "^2.2.0",
     "job-logger": "^4.2.0",
     "lodash": "^4.14.0",
-    "meshblu-core-cache": "^1.7.0",
+    "meshblu-core-cache": "^1.8.2",
     "meshblu-core-datastore": "^4.6.1",
     "meshblu-core-job-manager": "^6.1.4",
     "meshblu-core-manager-token": "^6.0.0",
@@ -120,7 +120,7 @@
     "meshblu-core-task-remove-subscription": "^2.0.1",
     "meshblu-core-task-remove-token-cache": "^1.1.1",
     "meshblu-core-task-reset-token": "^4.0.1",
-    "meshblu-core-task-revoke-all-tokens": "^2.0.2",
+    "meshblu-core-task-revoke-all-tokens": "^2.0.3",
     "meshblu-core-task-revoke-session-token": "^3.0.1",
     "meshblu-core-task-revoke-token-by-query": "^3.0.1",
     "meshblu-core-task-search-device": "^3.0.3",
@@ -128,6 +128,7 @@
     "meshblu-core-task-send-message-2": "^1.1.0",
     "meshblu-core-task-unregister-device": "^2.0.3",
     "meshblu-core-task-update-device": "^4.0.0",
+    "meshblu-core-task-update-message-rate": "^1.0.2",
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.14.1",
     "mongojs": "^2.4.0",
