@@ -12,12 +12,12 @@ class TaskJobManager
   createRequest: (requestQueue, request, callback) =>
     # This is important. Figure out why!
     # Hint: message could be big, and we don't want to mutate auth.
-    request                = _.clone request
-    request.ignoreResponse = @ignoreResponse
-    metadata               = _.cloneDeep request.metadata
-    request.metadata       = metadata
-    {auth}                 = metadata
-    {uuid}                 = auth
+    request                 = _.clone request
+    metadata                = _.cloneDeep request.metadata
+    metadata.ignoreResponse = @ignoreResponse
+    request.metadata        = metadata
+    {auth}                  = metadata
+    {uuid}                  = auth
 
     @tokenManager.generateAndStoreTokenInCache { uuid, @expireSeconds }, (error, token) =>
       return callback error if error?
