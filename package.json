@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.1.2",
+  "version": "9.1.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -129,7 +129,7 @@
     "meshblu-core-task-send-message-2": "^1.1.0",
     "meshblu-core-task-unregister-device": "^2.0.3",
     "meshblu-core-task-update-device": "^4.0.0",
-    "meshblu-core-task-update-message-rate": "^1.0.3",
+    "meshblu-core-task-update-message-rate": "^1.0.4",
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.14.1",
     "mongojs": "^2.4.0",

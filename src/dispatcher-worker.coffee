@@ -14,6 +14,7 @@ SimpleBenchmark   = require 'simple-benchmark'
 TaskJobManager    = require './task-job-manager'
 TaskRunner        = require './task-runner'
 UuidAliasResolver = require 'meshblu-uuid-alias-resolver'
+debug             = require('debug')('meshblu-core-dispatcher:dispatcher-worker')
 
 class DispatcherWorker
   constructor: (options) ->
@@ -133,6 +134,7 @@ class DispatcherWorker
     }
     taskRunner.run (error, response) =>
       response = @_processErrorResponse {error, request, response}
+      debug '_handleRequest, got response:', {request, response}
       @jobManager.createResponse 'response', response, callback
 
   _logDispatch: ({dispatchBenchmark, request}, callback) =>
