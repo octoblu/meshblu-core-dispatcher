@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.2.2",
+  "version": "9.2.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "coffee-script": "^1.10.0",
     "istanbul": "^0.4.4",
     "meshblu-core-manager-hydrant": "^1.6.2",
-    "mocha": "^3.0.2",
+    "mocha": "^2.5.3",
     "mocha-istanbul": "^0.3.0",
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
