@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.2.3",
+  "version": "9.3.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -84,6 +84,7 @@
     "meshblu-core-task-enforce-message-rate-limit": "^1.1.0",
     "meshblu-core-task-enqueue-deprecated-webhooks": "^3.0.3",
     "meshblu-core-task-enqueue-jobs-for-forward-broadcast-received": "^1.1.0",
+    "meshblu-core-task-enqueue-jobs-for-forward-configure-received": "^1.0.0",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received": "^4.1.1",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent": "^3.1.1",
     "meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received": "^2.1.0",

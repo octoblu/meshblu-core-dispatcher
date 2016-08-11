@@ -270,6 +270,11 @@ DeliverSubscriptionConfigureReceived:
       task: 'meshblu-core-task-enqueue-jobs-for-webhooks-configure-received'
       datastoreCollection: 'devices'
       on:
+        204: 'enqueue-jobs-for-forward-configure-received'
+    'enqueue-jobs-for-forward-configure-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-forward-configure-received'
+      datastoreCollection: 'devices'
+      on:
         204: 'enqueue-jobs-for-subscriptions-configure-received'
     'enqueue-jobs-for-subscriptions-configure-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received'
