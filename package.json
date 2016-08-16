@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.3.0",
+  "version": "9.3.1",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -65,7 +65,7 @@
     "meshblu-core-task-check-token-black-list": "^2.0.1",
     "meshblu-core-task-check-token-cache": "^1.1.2",
     "meshblu-core-task-check-update-device-is-valid": "^1.3.1",
-    "meshblu-core-task-check-whitelist-broadcast-as": "^2.0.0",
+    "meshblu-core-task-check-whitelist-broadcast-as": "^2.0.1",
     "meshblu-core-task-check-whitelist-broadcast-received": "^3.0.0",
     "meshblu-core-task-check-whitelist-broadcast-sent": "^4.0.0",
     "meshblu-core-task-check-whitelist-configure-as": "^3.0.0",
