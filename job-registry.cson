@@ -432,6 +432,21 @@ SearchDevices:
       datastoreCollection: 'devices'
       cacheNamespace: 'cache:device'
 
+SearchTokens:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-configure-as-whitelist'
+    'enforce-configure-as-whitelist':
+      filter: 'EnforceConfigureAsWhitelist'
+      on:
+        204: 'search-tokens'
+    'search-tokens':
+      task: 'meshblu-core-task-search-token'
+      datastoreCollection: 'tokens'
+
 SendMessage:
   start: 'authenticate'
   tasks:

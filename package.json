@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "9.3.1",
+  "version": "9.4.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -126,6 +126,7 @@
     "meshblu-core-task-revoke-session-token": "^3.0.1",
     "meshblu-core-task-revoke-token-by-query": "^3.0.1",
     "meshblu-core-task-search-device": "^3.0.3",
+    "meshblu-core-task-search-token": "^1.0.0",
     "meshblu-core-task-send-message": "^2.1.2",
     "meshblu-core-task-send-message-2": "^1.1.0",
     "meshblu-core-task-unregister-device": "^2.0.3",
