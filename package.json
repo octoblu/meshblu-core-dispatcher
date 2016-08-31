@@ -44,7 +44,7 @@
     "job-logger": "^4.2.0",
     "lodash": "^4.14.2",
     "meshblu-core-cache": "^1.8.2",
-    "meshblu-core-datastore": "^4.6.1",
+    "meshblu-core-datastore": "^4.6.2",
     "meshblu-core-job-manager": "^7.1.0",
     "meshblu-core-manager-token": "^6.0.0",
     "meshblu-core-task-black-list-token": "^1.0.0",
