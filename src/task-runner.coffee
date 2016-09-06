@@ -55,12 +55,13 @@ class TaskRunner
 
     task.do @request, (error, response) =>
       return callback error if error?
-      debug taskName, response.metadata.code
+      debug taskName, response.metadata?.code?.toString()
       {metadata} = response
 
       codeStr = metadata?.code?.toString()
       nextTask = taskConfig.on?[codeStr]
       @logTask {benchmark, @request, response, taskName}, =>
+        debug nextTask
         return callback null, response unless nextTask?
         @_doTask nextTask, callback
 

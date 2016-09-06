@@ -243,11 +243,12 @@ class DispatcherWorker
 
   _processErrorResponse: ({error, request, response}) =>
     return @_processResponse {request, response} unless error?
+    code = error.code ? 500
     return {
       metadata:
-        code: 504
+        code: code
         responseId: request.metadata.responseId
-        status: http.STATUS_CODES[504]
+        status: http.STATUS_CODES[code]
         error:
           message: error.message
     }

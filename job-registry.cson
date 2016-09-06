@@ -350,6 +350,31 @@ DeliverSubscriptionMessageSent:
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-message-received'
       datastoreCollection: 'subscriptions'
 
+DeliverUnregisterSent:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'protect-your-as'
+    'protect-your-as':
+      task: 'meshblu-core-task-protect-your-as'
+      on:
+        204: 'check-whitelist-configure-as'
+    'check-whitelist-configure-as':
+      task: 'meshblu-core-task-check-whitelist-configure-as'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-webhooks-unregister-sent'
+    'enqueue-jobs-for-webhooks-unregister-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-webhooks-unregister-sent'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-unregister-sent'
+    'enqueue-jobs-for-subscriptions-unregister-sent':
+      task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-unregister-sent'
+      datastoreCollection: 'subscriptions'
+
 DeliverWebhook:
   start: 'authenticate'
   tasks:
