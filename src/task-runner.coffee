@@ -31,11 +31,17 @@ class TaskRunner
   _doTask: (name, callback) =>
     benchmark = new SimpleBenchmark label: 'task-runner'
     taskConfig = @config.tasks[name]
-    return callback new Error "Task Definition '#{name}' not found" unless taskConfig?
+    unless taskConfig?
+      error = new Error "Task Definition '#{name}' not found"
+      error.code = 501
+      return callback error
 
     taskName = taskConfig.task
     Task = TaskRunner.TASKS[taskName]
-    return callback new Error "Task Definition '#{name}' missing task class" unless Task?
+    unless Task?
+      error = new Error "Task Definition '#{name}' missing task class"
+      error.code = 501
+      return callback error
 
     datastore = @datastoreFactory.build taskConfig.datastoreCollection if taskConfig.datastoreCollection?
     if taskConfig.cacheNamespace?
@@ -55,13 +61,12 @@ class TaskRunner
 
     task.do @request, (error, response) =>
       return callback error if error?
-      debug taskName, response.metadata?.code?.toString()
       {metadata} = response
+      debug taskName, metadata?.code
 
       codeStr = metadata?.code?.toString()
       nextTask = taskConfig.on?[codeStr]
       @logTask {benchmark, @request, response, taskName}, =>
-        debug nextTask
         return callback null, response unless nextTask?
         @_doTask nextTask, callback
 
