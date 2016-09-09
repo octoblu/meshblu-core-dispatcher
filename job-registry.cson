@@ -360,7 +360,13 @@ DeliverSubscriptionUnregisterSent:
     'check-configure-as-reject-your-as':
       task: 'meshblu-core-task-reject-your-as'
       on:
-        204: 'check-recycled-whitelist-configure-sent'
+        204: 'check-whitelist-configure-sent'
+    'check-whitelist-configure-sent':
+      task: 'meshblu-core-task-check-whitelist-configure-sent'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-subscriptions-unregister-received'
+        403: 'check-recycled-whitelist-configure-sent'
     'check-recycled-whitelist-configure-sent':
       task: 'meshblu-core-task-check-whitelist-configure-sent'
       datastoreCollection: 'deleted-devices'
@@ -380,7 +386,13 @@ DeliverUnregisterSent:
     'protect-your-as':
       task: 'meshblu-core-task-protect-your-as'
       on:
-        204: 'check-recycled-whitelist-configure-as'
+        204: 'check-whitelist-configure-as'
+    'check-whitelist-configure-as':
+      task: 'meshblu-core-task-check-whitelist-configure-as'
+      datastoreCollection: 'devices'
+      on:
+        204: 'enqueue-jobs-for-webhooks-unregister-sent'
+        403: 'check-recycled-whitelist-configure-as'
     'check-recycled-whitelist-configure-as':
       task: 'meshblu-core-task-check-whitelist-configure-as'
       datastoreCollection: 'deleted-devices'
@@ -405,20 +417,34 @@ DeliverSubscriptionUnregisterReceived:
     'check-configure-as-reject-your-as':
       task: 'meshblu-core-task-reject-your-as'
       on:
-        204: 'check-recycled-whitelist-configure-received'
+        204: 'check-whitelist-configure-received'
+    'check-whitelist-configure-received':
+      task: 'meshblu-core-task-check-whitelist-configure-received'
+      datastoreCollection: 'devices'
+      on:
+        204: 'publish-unregister-received'
+        403: 'check-recycled-whitelist-configure-received'
     'check-recycled-whitelist-configure-received':
       task: 'meshblu-core-task-check-whitelist-configure-received'
       datastoreCollection: 'deleted-devices'
       on:
+        204: 'recycled-enqueue-jobs-for-webhooks-unregister-received'
+    'recycled-enqueue-jobs-for-webhooks-unregister-received':
+      task: 'meshblu-core-task-enqueue-jobs-for-webhooks-unregister-received'
+      datastoreCollection: 'deleted-devices'
+    'publish-unregister-received':
+      task: 'meshblu-core-task-publish-unregister-received'
+      cacheNamespace: 'messages'
+      on:
         204: 'enqueue-jobs-for-webhooks-unregister-received'
     'enqueue-jobs-for-webhooks-unregister-received':
       task: 'meshblu-core-task-enqueue-jobs-for-webhooks-unregister-received'
-      datastoreCollection: 'deleted-devices'
+      datastoreCollection: 'devices'
       on:
         204: 'enqueue-jobs-for-forward-unregister-received'
     'enqueue-jobs-for-forward-unregister-received':
       task: 'meshblu-core-task-enqueue-jobs-for-forward-unregister-received'
-      datastoreCollection: 'deleted-devices'
+      datastoreCollection: 'devices'
       on:
         204: 'enqueue-jobs-for-subscriptions-unregister-received'
     'enqueue-jobs-for-subscriptions-unregister-received':
