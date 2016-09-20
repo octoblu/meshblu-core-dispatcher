@@ -31,3 +31,4 @@ npmrc-dev
 
 # dev files
 .*-dev
+.nyc_output
