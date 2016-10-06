@@ -1,29 +1,31 @@
 language: node_js
 node_js:
-- '5'
+  - '5'
 services:
-- mongodb
-- redis
+  - mongodb
+  - redis
 addons:
   code_climate:
     repo_token: 51f47af5eaac6f8189e00e4afd7615ab52cb5623660ee41bdc364f7476d60b2a
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - g++-4.8
+      - g++-4.8
 env:
   - CXX=g++-4.8
 before_script:
-- npm install
-- npm install -g codeclimate-test-reporter
+  - npm install
+  - npm install -g codeclimate-test-reporter
 after_script:
-- codeclimate-test-reporter < coverage/lcov.info
+  - codeclimate-test-reporter < coverage/lcov.info
 branches:
   only:
-  - "/^v[0-9]/"
+    - '/^v[0-9]/'
 after_success:
-- npm run coverage
-- npm run mocha:json
-- bash <(curl -s https://codecov.io/bash)
-- bash <(curl -s https://codecov.octoblu.com/bash)
+  - npm run coverage
+  - 'npm run mocha:json'
+  - 'bash <(curl -s https://codecov.io/bash)'
+  - 'bash <(curl -s https://codecov.octoblu.com/bash)'
+notifications:
+  webhooks: 'https://deploy-state.octoblu.com/deployments/travis-ci/org'
