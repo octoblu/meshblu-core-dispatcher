@@ -28,4 +28,5 @@ after_success:
   - 'bash <(curl -s https://codecov.io/bash)'
   - 'bash <(curl -s https://codecov.octoblu.com/bash)'
 notifications:
-  webhooks: 'https://deploy-state.octoblu.com/deployments/travis-ci/org'
+  webhooks:
+    - 'https://beekeeper.octoblu.com/webhooks/travis:ci'
