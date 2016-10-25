@@ -514,6 +514,11 @@ GetDevice:
     'authenticate':
       filter: 'Authenticate'
       on:
+        204: 'enforce-message-rate-limit'
+    'enforce-message-rate-limit':
+      task: 'meshblu-core-task-enforce-message-rate-limit'
+      cacheNamespace: 'meshblu-count'
+      on:
         204: 'enforce-discover-whitelists'
     'enforce-discover-whitelists':
       filter: 'EnforceDiscoverWhitelists'
@@ -582,14 +587,14 @@ SendMessage:
         204: 'enforce-message-rate-limit'
     'enforce-message-rate-limit':
       task: 'meshblu-core-task-enforce-message-rate-limit'
+      cacheNamespace: 'meshblu-count'
       on:
         204: 'update-message-rate'
-      cacheNamespace: 'meshblu-count'
     'update-message-rate':
       task: 'meshblu-core-task-update-message-rate'
+      cacheNamespace: 'meshblu-count'
       on:
         204: 'send-message-2'
-      cacheNamespace: 'meshblu-count'
     'send-message-2':
       task: 'meshblu-core-task-send-message-2'
       on:
