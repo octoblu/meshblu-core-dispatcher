@@ -477,15 +477,15 @@ FindAndUpdateDevice:
     'check-update-device-is-valid':
       task: 'meshblu-core-task-check-update-device-is-valid'
       on:
+        204: 'remove-device-cache'
+    'remove-device-cache':
+      task: 'meshblu-core-task-remove-device-cache'
+      cacheNamespace: 'cache:device'
+      on:
         204: 'find-and-update-device'
     'find-and-update-device':
       task: 'meshblu-core-task-find-and-update-device'
       datastoreCollection: 'devices'
-      on:
-        200: 'remove-device-cache'
-    'remove-device-cache':
-      task: 'meshblu-core-task-remove-device-cache'
-      cacheNamespace: 'cache:device'
 
 GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
