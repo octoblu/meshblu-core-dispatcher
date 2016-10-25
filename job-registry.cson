@@ -519,6 +519,11 @@ GetDevice:
       task: 'meshblu-core-task-enforce-message-rate-limit'
       cacheNamespace: 'meshblu-count'
       on:
+        204: 'update-message-rate'
+    'update-message-rate':
+      task: 'meshblu-core-task-update-message-rate'
+      cacheNamespace: 'meshblu-count'
+      on:
         204: 'enforce-discover-whitelists'
     'enforce-discover-whitelists':
       filter: 'EnforceDiscoverWhitelists'
