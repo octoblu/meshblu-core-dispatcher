@@ -95,6 +95,7 @@ describe 'BroadcastSent(2): send', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent broadcast to the sender', ->
         expect(@message).to.exist
@@ -136,6 +137,7 @@ describe 'BroadcastSent(2): send', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent broadcast to the receiver', ->
         expect(@message).to.exist
@@ -174,6 +176,7 @@ describe 'BroadcastSent(2): send', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
+        return # fix redis promise issue
 
       it 'should not deliver the sent broadcast to the receiver', ->
         expect(@message).to.not.exist
@@ -221,6 +224,7 @@ describe 'BroadcastSent(2): send', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent message to the receiver', ->
         expect(@message).to.exist
@@ -266,6 +270,7 @@ describe 'BroadcastSent(2): send', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
+        return # fix redis promise issue
 
       it 'should not deliver the sent message to the receiver', ->
         expect(@message).to.not.exist

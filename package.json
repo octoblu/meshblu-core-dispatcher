@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "10.3.0",
+  "version": "10.4.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "chai-subset": "^1.3.0",
     "coffee-script": "^1.10.0",
     "meshblu-core-manager-hydrant": "^1.6.2",
-    "mocha": "^2.5.3",
+    "mocha": "^3.1.2",
     "mocha-multi": "^0.9.1",
     "mocha-osx-reporter": "^0.1.2",
     "nyc": "^8.3.0",
@@ -46,7 +46,7 @@
     "ioredis": "^2.2.0",
     "job-logger": "^4.3.0",
     "lodash": "^4.14.2",
-    "meshblu-core-cache": "^1.8.2",
+    "meshblu-core-cache": "^1.9.1",
     "meshblu-core-datastore": "^4.9.0",
     "meshblu-core-job-manager": "^7.1.0",
     "meshblu-core-manager-token": "^6.0.0",
@@ -83,7 +83,7 @@
     "meshblu-core-task-check-whitelist-message-sent": "^3.0.0",
     "meshblu-core-task-create-session-token": "^3.0.2",
     "meshblu-core-task-create-subscription": "^2.0.3",
-    "meshblu-core-task-deliver-webhook": "^5.0.0",
+    "meshblu-core-task-deliver-webhook": "^6.0.0",
     "meshblu-core-task-enforce-message-rate-limit": "^1.1.0",
     "meshblu-core-task-enqueue-deprecated-webhooks": "^3.0.3",
     "meshblu-core-task-enqueue-jobs-for-forward-broadcast-received": "^1.1.0",
@@ -146,7 +146,7 @@
     "moment": "^2.14.1",
     "mongojs": "^2.4.0",
     "octoblu-raven": "^3.2.0",
-    "request": "^2.74.0",
+    "request": "^2.76.0",
     "simple-benchmark": "^1.0.11"
   },
   "optionalDependencies": {

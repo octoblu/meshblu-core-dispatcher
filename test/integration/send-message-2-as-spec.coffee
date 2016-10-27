@@ -96,6 +96,7 @@ describe 'SendMessage: send-as', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the received message to the receiver', ->
         expect(@message).to.exist
@@ -137,6 +138,7 @@ describe 'SendMessage: send-as', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent message to the sender', ->
         expect(@message).to.exist
@@ -171,6 +173,7 @@ describe 'SendMessage: send-as', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
+        return # fix redis promise issue
 
       it 'should not deliver the received message to the receiver', ->
         expect(@message).not.to.exist
@@ -211,6 +214,7 @@ describe 'SendMessage: send-as', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
-
+        return # fix redis promise issue
+        
       it 'should deliver the sent message to the sender', ->
         expect(@message).not.to.exist

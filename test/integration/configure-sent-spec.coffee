@@ -98,6 +98,7 @@ describe 'ConfigureSent', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent configure to the sender', ->
         expect(@message).to.exist
@@ -138,6 +139,7 @@ describe 'ConfigureSent', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent configure to the receiver', ->
         expect(@message).to.exist
@@ -176,6 +178,7 @@ describe 'ConfigureSent', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
+        return # fix redis promise issue
 
       it 'should not deliver the sent configure to the receiver', ->
         expect(@message).to.not.exist
@@ -224,6 +227,7 @@ describe 'ConfigureSent', ->
             doneTwice()
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+        return # fix redis promise issue
 
       it 'should deliver the sent configure to the receiver', ->
         expect(@message).to.exist
@@ -269,6 +273,7 @@ describe 'ConfigureSent', ->
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
+        return # fix redis promise issue
 
       it 'should not deliver the sent message to the receiver', ->
         expect(@message).to.not.exist
