@@ -1,4 +1,5 @@
 subscriptions:
+  useQueryCache: true
   cacheAttributes: [
     'emitterUuid'
     'subscriberUuid'
