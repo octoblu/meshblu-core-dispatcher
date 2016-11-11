@@ -15,6 +15,7 @@ TaskJobManager    = require './task-job-manager'
 TaskRunner        = require './task-runner'
 UuidAliasResolver = require 'meshblu-uuid-alias-resolver'
 debug             = require('debug')('meshblu-core-dispatcher:dispatcher-worker')
+{ version }       = require '../package.json'
 
 class DispatcherWorker
   constructor: (options) ->
@@ -46,15 +47,18 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@jobLogSampleRate"' unless @jobLogSampleRate?
     throw new Error 'DispatcherWorker constructor is missing "@privateKey"' unless @privateKey?
     throw new Error 'DispatcherWorker constructor is missing "@publicKey"' unless @publicKey?
-    @octobluRaven = new OctobluRaven()
-    @jobRegistry = new JobRegistry().toJSON()
+    @octobluRaven = new OctobluRaven({ release: version })
+    @jobRegistry  = new JobRegistry().toJSON()
 
   catchErrors: =>
     @octobluRaven.patchGlobal()
 
+  reportError: =>
+    @octobluRaven.reportError arguments...
+
   panic: (@error) =>
     console.error "PANIC:", @error.stack
-    @octobluRaven.reportError @error
+    @reportError error
     @stopRunning = true
     @_disconnect()
     setTimeout =>
@@ -162,9 +166,9 @@ class DispatcherWorker
 
   _prepareDispatchLogger: (callback) =>
     @dispatchLogger = new JobLogger
-      client: @logClient
+      client     : @logClient
       indexPrefix: 'metric:meshblu-core-dispatcher'
-      type: 'meshblu-core-dispatcher:dispatch'
+      type       : 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
     callback()
 
@@ -243,6 +247,7 @@ class DispatcherWorker
 
   _processErrorResponse: ({error, request, response}) =>
     return @_processResponse {request, response} unless error?
+    @reportError error, { request, response }
     code = error.code ? 500
     return {
       metadata:
@@ -254,6 +259,6 @@ class DispatcherWorker
     }
 
   _shouldStop: =>
-    @stopRunning ? false
+    return @stopRunning ? false
 
 module.exports = DispatcherWorker

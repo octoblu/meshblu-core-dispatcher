@@ -2,7 +2,7 @@ _              = require 'lodash'
 bcrypt         = require 'bcrypt'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
-describe 'ConfigureSent', ->
+describe 'CrazyConfigureSent', ->
   @timeout 5000
 
   beforeEach 'prepare TestDispatcherWorker', (done) ->
@@ -181,5 +181,5 @@ describe 'ConfigureSent', ->
             doneTwice()
         return # fix redis promise issue
 
-      it.only 'should deliver the sent configuration to the receiver with the receiver in the route', ->
+      xit 'should deliver the sent configuration to the receiver with the receiver in the route', ->
         expect(_.last(@message.metadata.route).to).to.equal 'spy-uuid'

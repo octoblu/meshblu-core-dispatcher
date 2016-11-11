@@ -1,6 +1,7 @@
 dashdash         = require 'dashdash'
 DispatcherWorker = require './src/dispatcher-worker'
 packageJSON      = require './package.json'
+SigtermHandler   = require 'sigterm-handler'
 
 options = [
   {
@@ -140,17 +141,20 @@ options = {
 
 dispatcherWorker = new DispatcherWorker options
 
-process.on 'SIGTERM', =>
-  dispatcherWorker.stop =>
-    console.error 'exiting...'
+sigtermHandler = new SigtermHandler({ events: ['SIGTERM', 'SIGINT'] })
+sigtermHandler.register dispatcherWorker.stop
+
+dispatcherWorker.catchErrors()
 
 dispatcherWorker.prepare (error) =>
   if error
+    dispatcherWorker.reportError error
     console.error error.stack
     process.exit 1
 
   dispatcherWorker.run (error) =>
     if error
+      dispatcherWorker.reportError error
       console.error error.stack
       process.exit 1
     process.exit 0
