@@ -112,7 +112,7 @@ if opts.version
   process.exit 0
 
 if opts.help
-  help = parser.help(includeEnv: true).trimRight()
+  help = parser.help({includeEnv: true, includeDefaults: true}).trimRight()
   console.log 'usage: node command.js [OPTIONS]\n' + 'options:\n' + help
   process.exit 0
 

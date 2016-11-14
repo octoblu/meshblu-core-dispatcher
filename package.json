@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "10.6.1",
+  "version": "10.7.0",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -153,6 +153,11 @@
   "optionalDependencies": {
     "hiredis": "^0.4.1"
   },
+  "engines": {
+    "node": "^5.5.0",
+    "npm": "^3.10.0"
+  },
+  "engineStrict": true,
   "nyc": {
     "cache": true,
     "reporter": [
