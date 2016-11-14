@@ -2,8 +2,8 @@ _              = require 'lodash'
 bcrypt         = require 'bcrypt'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
-describe 'CrazyConfigureSent', ->
-  @timeout 5000
+xdescribe 'CrazyConfigureSent', ->
+  @timeout 10000
 
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
@@ -114,16 +114,28 @@ describe 'CrazyConfigureSent', ->
             $set:
               foo: 'bar'
 
+        finishTimeout = null
+        @messages = []
+        @messageCount = 0
+
         @hydrant.connect uuid: 'spy-uuid', (error) =>
           return done(error) if error?
 
-          @hydrant.once 'message', (@message) =>
-            @hydrant.close()
-            doneTwice()
+          @hydrant.on 'message', (message) =>
+            # console.log JSON.stringify({message},null,2)
+            @messages[@messageCount] = message
+            @messageCount++
+            finishTimeout = setTimeout(() =>
+                @hydrant.close()
+                doneTwice()
+              , 1000) unless finishTimeout
 
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             doneTwice()
         return # fix redis promise issue
 
-      xit 'should deliver the sent configuration to the receiver with the receiver in the route', ->
-        expect(_.last(@message.metadata.route).to).to.equal 'spy-uuid'
+      it 'should deliver one message', ->
+        expect(@messageCount).to.equal 1
+
+      it 'should deliver the sent configuration to the receiver with the receiver in the route', ->
+        expect(_.last(@messages?[0]?.metadata?.route)?.to).to.equal 'spy-uuid'
