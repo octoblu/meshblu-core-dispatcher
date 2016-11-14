@@ -25,28 +25,6 @@ describe 'CrazyConfigureSent', ->
     @testDispatcherWorker.getHydrant (error, @hydrant) =>
       done error
 
-  beforeEach 'define whitelists', () ->
-    @meshbluWhitelists =
-      version: "2.0.0"
-      whitelists:
-        broadcast:
-          as: [uuid:"*"]
-          received: [uuid:"*"]
-          sent: [uuid:"*"]
-        discover:
-          as: [uuid:"*"]
-          view: [uuid:"*"]
-        configure:
-          as: [uuid:"*"]
-          received: [uuid:"*"]
-          sent: [uuid:"*"]
-          update: [uuid:"*"]
-        message:
-          as: [uuid:"*"]
-          from: [uuid:"*"]
-          received: [uuid:"*"]
-          sent: [uuid:"*"]
-
   beforeEach 'create update device', (done) ->
     @authUpdate =
       uuid: 'update-uuid'
@@ -56,17 +34,12 @@ describe 'CrazyConfigureSent', ->
       uuid: 'update-uuid'
       type: 'device:updater'
       token: bcrypt.hashSync @authUpdate.token, 8
-      meshblu: @meshbluWhitelists
 
-        # version: '2.0.0'
-        # whitelists:
-        #   configure:
-        #     received: [{uuid: 'emitter-uuid'}]
-
-      # configureWhitelist: ['*']
-      # discoverWhitelist: ['*']
-      # receiveWhitelist: ['*']
-      # sendWhitelist: ['*']
+      meshblu:
+        version: '2.0.0'
+        whitelists:
+          configure:
+            sent: [{uuid: 'emitter-uuid'}]
 
     @devices.insert @updateDevice, done
 
@@ -79,21 +52,12 @@ describe 'CrazyConfigureSent', ->
       uuid: 'emitter-uuid'
       type: 'device:sender'
       token: bcrypt.hashSync @authEmitter.token, 8
-      meshblu: @meshbluWhitelists
 
-      #   version: '2.0.0'
-      #   whitelists:
-      #     configure:
-      #       update: [{uuid: 'update-uuid'}]
-      #       as: [{uuid: 'update-uuid'}]
-      #       received: [{uuid: 'update-uuid'}]
-      #       sent: [{uuid: 'update-uuid'}]
-
-      # configureWhitelist: ['*']
-      # discoverWhitelist: ['*']
-      # receiveWhitelist: ['*']
-      # sendWhitelist: ['*']
-
+      meshblu:
+        version: '2.0.0'
+        whitelists:
+          configure:
+            received: [{uuid: 'spy-uuid'}]
 
     @devices.insert @senderDevice, done
 
@@ -101,18 +65,6 @@ describe 'CrazyConfigureSent', ->
     @spyDevice =
       uuid: 'spy-uuid'
       type: 'device:spy'
-      meshblu: @meshbluWhitelists
-
-        # version: '2.0.0'
-        # whitelists:
-        #   configure:
-        #     received: [{uuid: 'emitter-uuid'}]
-
-      # configureWhitelist: ['*']
-      # discoverWhitelist: ['*']
-      # receiveWhitelist: ['*']
-      # sendWhitelist: ['*']
-
 
     @devices.insert @spyDevice, done
 
@@ -134,14 +86,6 @@ describe 'CrazyConfigureSent', ->
           subscriberUuid: 'emitter-uuid'
 
         @subscriptions.insert subscription, done
-      #
-      # beforeEach 'create configure received subscription', (done) ->
-      #   subscription =
-      #     type: 'configure.sent'
-      #     emitterUuid: 'emitter-uuid'
-      #     subscriberUuid: 'spy-uuid'
-      #
-      #   @subscriptions.insert subscription, done
 
       beforeEach 'create configure received subscription', (done) ->
         subscription =
