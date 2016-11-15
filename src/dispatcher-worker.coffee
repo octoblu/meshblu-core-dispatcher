@@ -58,7 +58,7 @@ class DispatcherWorker
 
   panic: (@error) =>
     console.error "PANIC:", @error.stack
-    @reportError error
+    @reportError @error
     @stopRunning = true
     @_disconnect()
     setTimeout =>
