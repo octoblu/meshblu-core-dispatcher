@@ -155,7 +155,7 @@ class DispatcherWorker
     @jobLogger.log {request, response, elapsedTime: jobBenchmark.elapsed()}, callback
 
   _prepareClient: (callback) =>
-    @_prepareRedis @cacheRedisUri, (error, @client) =>
+    @_prepareRedis @redisUri, (error, @client) =>
       callback error
 
   _prepareCacheFactory: (callback) =>
