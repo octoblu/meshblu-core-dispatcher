@@ -8,10 +8,6 @@ describe 'SendMessage: send-as', ->
     @testDispatcherWorker = new TestDispatcherWorker
     @testDispatcherWorker.prepare done
 
-  beforeEach 'getJobManager', (done) ->
-    @testDispatcherWorker.getJobManager (error, @jobManager) =>
-      done error
-
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
       done error
@@ -215,6 +211,6 @@ describe 'SendMessage: send-as', ->
           @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
             setTimeout done, 2000
         return # fix redis promise issue
-        
+
       it 'should deliver the sent message to the sender', ->
         expect(@message).not.to.exist

@@ -8,10 +8,6 @@ describe 'SendMessage: send', ->
     @testDispatcherWorker = new TestDispatcherWorker
     @testDispatcherWorker.prepare done
 
-  beforeEach 'getJobManager', (done) ->
-    @testDispatcherWorker.getJobManager (error, @jobManager) =>
-      done error
-
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
       done error

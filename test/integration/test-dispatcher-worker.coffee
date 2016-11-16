@@ -65,15 +65,6 @@ class TestDispatcherWorker
 
     @doSingleRun (error) => throw error if error?
 
-  getJobManager: (callback) =>
-    @_prepareRedis @dispatcherWorker.redisUri, (error, client) =>
-      return callback error if error?
-      jobManager = new JobManager
-        client: client
-        timeoutSeconds: 1
-        jobLogSampleRate: 0
-      callback null, jobManager
-
   prepare: (callback) =>
     async.series [
       @dispatcherWorker.prepare
