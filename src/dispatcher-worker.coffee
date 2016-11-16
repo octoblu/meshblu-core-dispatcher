@@ -23,6 +23,7 @@ class DispatcherWorker
       @namespace
       @timeoutSeconds
       @redisUri
+      @cacheRedisUri
       @firehoseRedisUri
       @mongoDBUri
       @pepper
@@ -39,7 +40,8 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@namespace"' unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"' unless @timeoutSeconds?
     throw new Error 'DispatcherWorker constructor is missing "@redisUri"' unless @redisUri?
-    throw new Error 'DispatcherWorker constructor is missing "@firehoseRedisUri"' unless @redisUri?
+    throw new Error 'DispatcherWorker constructor is missing "@cacheRedisUri"' unless @cacheRedisUri?
+    throw new Error 'DispatcherWorker constructor is missing "@firehoseRedisUri"' unless @firehoseRedisUri?
     throw new Error 'DispatcherWorker constructor is missing "@mongoDBUri"' unless @mongoDBUri?
     throw new Error 'DispatcherWorker constructor is missing "@pepper"' unless @pepper?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogRedisUri"' unless @jobLogRedisUri?
@@ -153,7 +155,7 @@ class DispatcherWorker
     @jobLogger.log {request, response, elapsedTime: jobBenchmark.elapsed()}, callback
 
   _prepareClient: (callback) =>
-    @_prepareRedis @redisUri, (error, @client) =>
+    @_prepareRedis @cacheRedisUri, (error, @client) =>
       callback error
 
   _prepareCacheFactory: (callback) =>

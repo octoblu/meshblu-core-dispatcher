@@ -39,6 +39,12 @@ options = [
     env: 'REDIS_URI'
   }
   {
+    name: 'cache-redis-uri'
+    type: 'string'
+    help: 'URI for Datastore/Cache Factory'
+    env:  'CACHE_REDIS_URI'
+  }
+  {
     name: 'firehose-redis-uri'
     type: 'string'
     help: 'URI for Firehose redis'
@@ -126,6 +132,7 @@ options = {
   namespace:           opts.namespace
   timeoutSeconds:      opts.timeout
   redisUri:            opts.redis_uri
+  cacheRedisUri:       opts.cache_redis_uri
   firehoseRedisUri:    opts.firehose_redis_uri
   mongoDBUri:          opts.mongodb_uri
   pepper:              opts.pepper
