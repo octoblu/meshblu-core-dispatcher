@@ -14,6 +14,8 @@ class TestDispatcherWorker
       namespace:           'meshblu-test'
       timeoutSeconds:      1
       redisUri:            'redis://localhost:6379'
+      cacheRedisUri:       'redis://localhost:6379'
+      firehoseRedisUri:    'redis://localhost:6379'
       mongoDBUri:          'meshblu-core-test'
       pepper:              'pepper'
       workerName:          'test-worker'
