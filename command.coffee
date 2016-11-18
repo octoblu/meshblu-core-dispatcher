@@ -104,6 +104,12 @@ options = [
     help: 'Base64-encoded public key'
     env: 'PUBLIC_KEY_BASE64'
   }
+  {
+    name: 'request-queue-name'
+    type: 'string'
+    help: 'request queue name'
+    env: 'REQUEST_QUEUE_NAME'
+  }
 ]
 
 parser = dashdash.createParser(options: options)
@@ -144,6 +150,7 @@ options = {
   privateKey:          privateKey
   publicKey:           publicKey
   singleRun:           opts.single_run
+  requestQueueName:    opts.request_queue_name
 }
 
 dispatcherWorker = new DispatcherWorker options

@@ -1,21 +1,21 @@
-_                 = require 'lodash'
-OctobluRaven      = require 'octoblu-raven'
-async             = require 'async'
-CacheFactory      = require './cache-factory'
-DatastoreFactory  = require './datastore-factory'
-http              = require 'http'
-JobManager        = require 'meshblu-core-job-manager'
-JobRegistry       = require './job-registry'
-JobLogger         = require 'job-logger'
-mongojs           = require 'mongojs'
-Redis             = require 'ioredis'
-RedisNS           = require '@octoblu/redis-ns'
-SimpleBenchmark   = require 'simple-benchmark'
-TaskJobManager    = require './task-job-manager'
-TaskRunner        = require './task-runner'
-UuidAliasResolver = require 'meshblu-uuid-alias-resolver'
-debug             = require('debug')('meshblu-core-dispatcher:dispatcher-worker')
-{ version }       = require '../package.json'
+_                       = require 'lodash'
+OctobluRaven            = require 'octoblu-raven'
+async                   = require 'async'
+CacheFactory            = require './cache-factory'
+DatastoreFactory        = require './datastore-factory'
+http                    = require 'http'
+JobRegistry             = require './job-registry'
+JobLogger               = require 'job-logger'
+mongojs                 = require 'mongojs'
+Redis                   = require 'ioredis'
+RedisNS                 = require '@octoblu/redis-ns'
+SimpleBenchmark         = require 'simple-benchmark'
+TaskJobManager          = require './task-job-manager'
+TaskRunner              = require './task-runner'
+UuidAliasResolver       = require 'meshblu-uuid-alias-resolver'
+debug                   = require('debug')('meshblu-core-dispatcher:dispatcher-worker')
+{ version }             = require '../package.json'
+{ JobManagerResponder, JobManagerRequester } = require 'meshblu-core-job-manager'
 
 class DispatcherWorker
   constructor: (options) ->
@@ -36,6 +36,7 @@ class DispatcherWorker
       @publicKey
       @singleRun
       @ignoreResponse
+      @requestQueueName
     } = options
     throw new Error 'DispatcherWorker constructor is missing "@namespace"' unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"' unless @timeoutSeconds?
@@ -49,6 +50,7 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@jobLogSampleRate"' unless @jobLogSampleRate?
     throw new Error 'DispatcherWorker constructor is missing "@privateKey"' unless @privateKey?
     throw new Error 'DispatcherWorker constructor is missing "@publicKey"' unless @publicKey?
+    throw new Error 'DispatcherWorker constructor is missing "@requestQueueName"' unless @requestQueueName?
     @octobluRaven = new OctobluRaven({ release: version })
     @jobRegistry  = new JobRegistry().toJSON()
 
@@ -107,18 +109,17 @@ class DispatcherWorker
 
   _do: (callback) =>
     dispatchBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:dispatch'
-    @jobManager.getRequest ['request'], (error, request) =>
-      return callback error if error?
-      return callback() unless request?
-
+    @jobManager.do (request, next) =>
+      return unless request?
       jobBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:job'
-      @_logDispatch {dispatchBenchmark, request}, (error) =>
-        console.error error.stack if error?
+      @_logDispatch {dispatchBenchmark, request}, (logError) =>
+        console.error logError.stack if logError?
         @_handleRequest request, (error, response) =>
           console.error error.stack if error?
-          @_logJob {jobBenchmark, request, response}, (error) =>
-            console.error error.stack if error?
-            callback()
+          @_logJob {jobBenchmark, request, response}, (logError) =>
+            console.error logError.stack if logError?
+            next error, response
+    , callback
 
   _handleRequest: (request, callback) =>
     config = @jobRegistry[request.metadata.jobType]
@@ -141,7 +142,7 @@ class DispatcherWorker
     taskRunner.run (error, response) =>
       response = @_processErrorResponse {error, request, response}
       debug '_handleRequest, got response:', {request, response}
-      @jobManager.createResponse 'response', response, callback
+      callback null, response
 
   _logDispatch: ({dispatchBenchmark, request}, callback) =>
     response =
@@ -193,19 +194,36 @@ class DispatcherWorker
   _prepareJobManager: (callback) =>
     @_prepareRedis @redisUri, (error, @jobManagerClient) =>
       return callback error if error?
-      client = new RedisNS @namespace, @jobManagerClient
-      @jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
-      callback()
+      @_prepareRedis @redisUri, (error, @jobManagerQueueClient) =>
+        return callback error if error?
+        client = new RedisNS @namespace, @jobManagerClient
+        queueClient = new RedisNS @namespace, @jobManagerQueueClient
+        @jobManager = new JobManagerResponder {
+          client
+          queueClient
+          jobTimeoutSeconds: @timeoutSeconds
+          queueTimeoutSeconds: @timeoutSeconds
+          @jobLogSampleRate
+          @requestQueueName
+        }
+        callback()
 
   _prepareTaskJobManager: (callback) =>
-    @_prepareRedis @redisUri, (error, client) =>
-      return callback error if error?
-      cache = new RedisNS 'meshblu-token-one-time', @client # must be the same as the cache client
-      client = new RedisNS @namespace, client
-      jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
-      datastore = @datastoreFactory.build 'tokens'
-      @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver, @ignoreResponse}
-      callback()
+    cache = new RedisNS 'meshblu-token-one-time', @client # must be the same as the cache client
+    client = new RedisNS @namespace, @jobManagerClient
+    queueClient = new RedisNS @namespace, @jobManagerQueueClient
+    jobManager = new JobManagerRequester {
+      client
+      queueClient
+      jobTimeoutSeconds: @timeoutSeconds
+      queueTimeoutSeconds: @timeoutSeconds
+      @jobLogSampleRate
+      @requestQueueName
+      responseQueueName: 'v2:meshblu:task:response:queue'
+    }
+    datastore = @datastoreFactory.build 'tokens'
+    @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver, @ignoreResponse}
+    callback()
 
   _prepareTaskLogger: (callback) =>
     @taskLogger = new JobLogger
