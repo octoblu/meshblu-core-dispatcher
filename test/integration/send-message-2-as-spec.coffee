@@ -6,7 +6,10 @@ describe 'SendMessage: send-as', ->
   @timeout 5000
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
-    @testDispatcherWorker.prepare done
+    @testDispatcherWorker.start done
+
+  afterEach (done) ->
+    @testDispatcherWorker.stop done
 
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
@@ -72,7 +75,6 @@ describe 'SendMessage: send-as', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth:
@@ -89,9 +91,10 @@ describe 'SendMessage: send-as', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the received message to the receiver', ->
@@ -114,7 +117,6 @@ describe 'SendMessage: send-as', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth:
@@ -131,9 +133,10 @@ describe 'SendMessage: send-as', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent message to the sender', ->
@@ -167,12 +170,14 @@ describe 'SendMessage: send-as', ->
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 
       it 'should not deliver the received message to the receiver', ->
         expect(@message).not.to.exist
+
     context "sender-uuid receiving it's sent messages", ->
       beforeEach 'create message received subscription', (done) ->
         subscription =
@@ -208,7 +213,8 @@ describe 'SendMessage: send-as', ->
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 

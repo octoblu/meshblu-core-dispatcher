@@ -6,7 +6,10 @@ describe 'BroadcastSent(2): send', ->
   @timeout 5000
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
-    @testDispatcherWorker.prepare done
+    @testDispatcherWorker.start done
+
+  afterEach (done) ->
+    @testDispatcherWorker.stop done
 
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
@@ -75,7 +78,6 @@ describe 'BroadcastSent(2): send', ->
         @subscriptions.insert subscription, done
 
       beforeEach 'create SendMessage job', (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -88,9 +90,10 @@ describe 'BroadcastSent(2): send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent broadcast to the sender', ->
@@ -114,7 +117,6 @@ describe 'BroadcastSent(2): send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -129,10 +131,11 @@ describe 'BroadcastSent(2): send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
-            doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
+
         return # fix redis promise issue
 
       it 'should deliver the sent broadcast to the receiver', ->
@@ -170,7 +173,7 @@ describe 'BroadcastSent(2): send', ->
 
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
             setTimeout done, 2000
         return # fix redis promise issue
 
@@ -203,7 +206,6 @@ describe 'BroadcastSent(2): send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -217,9 +219,10 @@ describe 'BroadcastSent(2): send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent message to the receiver', ->
@@ -264,7 +267,7 @@ describe 'BroadcastSent(2): send', ->
           return done(error) if error?
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
             setTimeout done, 2000
         return # fix redis promise issue
 

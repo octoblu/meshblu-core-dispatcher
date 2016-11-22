@@ -6,7 +6,10 @@ describe 'ConfigureSent', ->
   @timeout 5000
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
-    @testDispatcherWorker.prepare done
+    @testDispatcherWorker.start done
+
+  afterEach (done) ->
+    @testDispatcherWorker.stop done
 
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
@@ -75,7 +78,6 @@ describe 'ConfigureSent', ->
         @subscriptions.insert subscription, done
 
       beforeEach 'create UpdateDevice job', (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -91,9 +93,10 @@ describe 'ConfigureSent', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent configure to the sender', ->
@@ -117,7 +120,6 @@ describe 'ConfigureSent', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -132,9 +134,10 @@ describe 'ConfigureSent', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent configure to the receiver', ->
@@ -172,7 +175,8 @@ describe 'ConfigureSent', ->
 
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 
@@ -205,7 +209,6 @@ describe 'ConfigureSent', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -220,9 +223,10 @@ describe 'ConfigureSent', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent configure to the receiver', ->
@@ -267,7 +271,8 @@ describe 'ConfigureSent', ->
           return done(error) if error?
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 

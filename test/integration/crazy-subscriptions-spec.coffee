@@ -7,7 +7,10 @@ xdescribe 'CrazyConfigureSent', ->
 
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
-    @testDispatcherWorker.prepare done
+    @testDispatcherWorker.start done
+
+  afterEach (done) ->
+    @testDispatcherWorker.stop done
 
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
@@ -100,7 +103,6 @@ xdescribe 'CrazyConfigureSent', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @authUpdate
@@ -123,11 +125,11 @@ xdescribe 'CrazyConfigureSent', ->
             @messageCount++
             finishTimeout = setTimeout(() =>
                 @hydrant.close()
-                doneTwice()
+                done()
               , 1000) unless finishTimeout
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
-            doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver one message', ->

@@ -6,7 +6,10 @@ describe 'SendMessage: send', ->
   @timeout 5000
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
-    @testDispatcherWorker.prepare done
+    @testDispatcherWorker.start done
+
+  afterEach (done) ->
+    @testDispatcherWorker.stop done
 
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
@@ -83,7 +86,6 @@ describe 'SendMessage: send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -97,9 +99,10 @@ describe 'SendMessage: send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent message to the sender', ->
@@ -115,7 +118,6 @@ describe 'SendMessage: send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -129,10 +131,10 @@ describe 'SendMessage: send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
-            doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent message to the receiver', ->
@@ -156,7 +158,6 @@ describe 'SendMessage: send', ->
         @subscriptions.insert subscription, done
 
       beforeEach (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -170,9 +171,10 @@ describe 'SendMessage: send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent message to the receiver', ->
@@ -209,7 +211,8 @@ describe 'SendMessage: send', ->
 
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 
@@ -234,7 +237,6 @@ describe 'SendMessage: send', ->
         @subscriptions.insert subscription, done
 
       beforeEach 'wait-for-the-hydrant', (done) ->
-        doneTwice = _.after 2, done
         job =
           metadata:
             auth: @auth
@@ -248,9 +250,10 @@ describe 'SendMessage: send', ->
 
           @hydrant.once 'message', (@message) =>
             @hydrant.close()
-            doneTwice()
+            done()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => doneTwice()
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
         return # fix redis promise issue
 
       it 'should deliver the sent message to the receiver', ->
@@ -286,7 +289,8 @@ describe 'SendMessage: send', ->
           return done(error) if error?
           @hydrant.once 'message', (@message) => @hydrant.close()
 
-          @testDispatcherWorker.generateJobs job, (error, @generatedJobs) =>
+          @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 

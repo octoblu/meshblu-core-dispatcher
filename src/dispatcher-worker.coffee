@@ -37,7 +37,9 @@ class DispatcherWorker
       @singleRun
       @ignoreResponse
       @requestQueueName
+      @responseQueueName
     } = options
+    @responseQueueName ?=
     throw new Error 'DispatcherWorker constructor is missing "@namespace"' unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"' unless @timeoutSeconds?
     throw new Error 'DispatcherWorker constructor is missing "@redisUri"' unless @redisUri?
@@ -90,6 +92,7 @@ class DispatcherWorker
     ], callback
 
   run: (callback) =>
+    @stopRunning = false
     @stopRunning = true if @singleRun
     async.doUntil @_doWithNextTick, @_shouldStop, (error) =>
       return callback error if error?
@@ -98,7 +101,8 @@ class DispatcherWorker
 
   stop: (callback) =>
     @stopRunning = true
-    callback()
+    @taskJobManager.stop()
+    @jobManager.stop callback
 
   _doWithNextTick: (callback) =>
     # give some time for garbage collection
@@ -196,34 +200,38 @@ class DispatcherWorker
       return callback error if error?
       @_prepareRedis @redisUri, (error, @jobManagerQueueClient) =>
         return callback error if error?
-        client = new RedisNS @namespace, @jobManagerClient
-        queueClient = new RedisNS @namespace, @jobManagerQueueClient
         @jobManager = new JobManagerResponder {
-          client
-          queueClient
+          @redisUri
+          @namespace
+          maxConnections: 2
           jobTimeoutSeconds: @timeoutSeconds
           queueTimeoutSeconds: @timeoutSeconds
           @jobLogSampleRate
           @requestQueueName
         }
-        callback()
+
+        @jobManager.start callback
 
   _prepareTaskJobManager: (callback) =>
     cache = new RedisNS 'meshblu-token-one-time', @client # must be the same as the cache client
     client = new RedisNS @namespace, @jobManagerClient
     queueClient = new RedisNS @namespace, @jobManagerQueueClient
     jobManager = new JobManagerRequester {
-      client
-      queueClient
+      @redisUri
+      @namespace
+      maxConnections: 2
       jobTimeoutSeconds: @timeoutSeconds
       queueTimeoutSeconds: @timeoutSeconds
       @jobLogSampleRate
       @requestQueueName
-      responseQueueName: 'v2:meshblu:task:response:queue'
+      responseQueueName: "v2:meshblu:task:response:queue"
     }
+
     datastore = @datastoreFactory.build 'tokens'
     @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver, @ignoreResponse}
-    callback()
+    @taskJobManager.start (error) =>
+      @taskJobManager._stopProcessing()
+      callback error
 
   _prepareTaskLogger: (callback) =>
     @taskLogger = new JobLogger

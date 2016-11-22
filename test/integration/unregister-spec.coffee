@@ -2,11 +2,14 @@ _              = require 'lodash'
 bcrypt         = require 'bcrypt'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
-describe 'Unregister', ->
+xdescribe 'Unregister', ->
   @timeout 5000
   beforeEach 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
-    @testDispatcherWorker.prepare done
+    @testDispatcherWorker.start done
+
+  afterEach (done) ->
+    @testDispatcherWorker.stop done
 
   beforeEach 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
@@ -42,7 +45,7 @@ describe 'Unregister', ->
       data:
         devices: [@auth.uuid], payload: 'boo'
 
-    @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => done()
+    @testDispatcherWorker.jobManagerRequester.do job, done
 
   it 'should have sent us a message', ->
     expect(@generatedJobs).to.containSubset [ metadata: jobType: 'DeliverReceivedMessage']
@@ -55,8 +58,7 @@ describe 'Unregister', ->
           toUuid: @auth.uuid
           jobType: 'UnregisterDevice'
 
-      @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => done()
-
+      @testDispatcherWorker.jobManagerRequester.do job, done
 
     beforeEach 'send itself a message', (done) ->
       job =
@@ -67,7 +69,7 @@ describe 'Unregister', ->
         data:
           devices: [@auth.uuid], payload: 'boo'
 
-      @testDispatcherWorker.generateJobs job, (error, @generatedJobs) => done()
+      @testDispatcherWorker.jobManagerRequester.do job, done
 
     it 'should not have sent us a message', ->
       expect(@generatedJobs).not.to.containSubset [ metadata: jobType: 'DeliverReceivedMessage']

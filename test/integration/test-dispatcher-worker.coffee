@@ -14,22 +14,23 @@ class TestDispatcherWorker
     queueId = UUID.v4()
     @requestQueueName = "test:meshblu:request:#{queueId}"
     @responseQueueName = "test:meshblu:response:#{queueId}"
+    @namespace = 'ns'
+    @redisUri = 'redis://localhost'
     @dispatcherWorker = new DispatcherWorker
-      namespace:           'meshblu-test'
+      namespace:           @namespace
       timeoutSeconds:      1
-      redisUri:            'redis://localhost:6379'
-      cacheRedisUri:       'redis://localhost:6379'
-      firehoseRedisUri:    'redis://localhost:6379'
+      redisUri:            @redisUri
+      cacheRedisUri:       @redisUri
+      firehoseRedisUri:    @redisUri
       mongoDBUri:          'meshblu-core-test'
       pepper:              'pepper'
       workerName:          'test-worker'
-      jobLogRedisUri:      'redis://localhost:6379'
+      jobLogRedisUri:      @redisUri
       jobLogQueue:         'sample-rate:1.00'
-      jobLogSampleRate:    1
+      jobLogSampleRate:    0
       intervalBetweenJobs: 1
       privateKey:          'private'
       publicKey:           'public'
-      singleRun:           true
       ignoreResponse:      false
       requestQueueName:    @requestQueueName
 
@@ -39,12 +40,6 @@ class TestDispatcherWorker
     collection.drop =>
       callback null, collection
 
-  doSingleRun: (callback) =>
-    async.series [
-      @_clearDatastoreCache
-      @dispatcherWorker.run
-    ], callback
-
   getHydrant: (callback) =>
     @_prepareRedis @dispatcherWorker.firehoseRedisUri, (error, client) =>
       return callback error if error?
@@ -53,32 +48,23 @@ class TestDispatcherWorker
       @hydrant = new HydrantManager {client, uuidAliasResolver}
       callback null, @hydrant
 
-  generateJobs: (job, callback) =>
-    debug 'generateJobs for', job?.metadata?.jobType, job?.metadata?.responseId
-
-    @jobManagerRequester.startProcessing()
-    @jobManagerRequester.do job, (error, response) =>
-      return callback error if error?
-
-      @_getGeneratedJobs (error, newJobs) =>
-        return callback error if error?
-        return callback null, [] if _.isEmpty newJobs
-        async.mapSeries newJobs, @generateJobs, (error, newerJobs) =>
-          return callback(error) if error?
-          newerJobs = _.flatten newerJobs
-          allJobs = newJobs.concat newerJobs
-          @jobManagerRequester.stopProcessing()
-          callback null, allJobs
-
-    @doSingleRun (error) => throw error if error?
-
-  prepare: (callback) =>
+  start: (callback) =>
     async.series [
       @dispatcherWorker.prepare
+      @_prepareClient
       @_prepareGeneratorJobManagerRequester
       @_prepareGeneratorJobManagerResponder
-      @_clearRequestQueue
-    ], callback
+      @_clearDatastoreCache
+    ], (error) =>
+      return callback error if error?
+      @dispatcherWorker.run =>
+      callback()
+
+  stop: (callback) =>
+    @dispatcherWorker.stop =>
+      @client.quit =>
+        @jobManagerResponder.stop =>
+          @jobManagerRequester.stop callback
 
   _clearDatastoreCache: (callback) =>
     @_prepareRedis @dispatcherWorker.cacheRedisUri, (error, client) =>
@@ -88,56 +74,34 @@ class TestDispatcherWorker
         return callback() if _.isEmpty keys
         client.del keys..., callback
 
-  _clearRequestQueue: (callback) =>
-    @jobManagerRequesterClient.del @requestQueueName, callback
-
-  _getGeneratedJobs: (callback) =>
-    requests = []
-    @jobManagerRequesterClient.llen @requestQueueName, (error, responseCount) =>
-      return callback error if error?
-
-      getJob = (number, callback) =>
-        @jobManagerResponder.getRequest (error, request) =>
-          return callback error if error?
-          requests.push request
-          callback()
-
-      async.timesSeries responseCount, getJob, (error) =>
-        return callback error if error?
-        callback null, requests
+  _prepareClient: (callback) =>
+    @_prepareRedis @dispatcherWorker.redisUri, (error, @client) =>
+      callback error
 
   _prepareGeneratorJobManagerRequester: (callback) =>
-    @_prepareRedis @dispatcherWorker.redisUri, (error, client) =>
-      return callback error if error?
-      @_prepareRedis @dispatcherWorker.redisUri, (error, queueClient) =>
-        return callback error if error?
-        @jobManagerRequesterClient = new RedisNS @dispatcherWorker.namespace, client
-        @jobManagerRequesterQueueClient = new RedisNS @dispatcherWorker.namespace, queueClient
-        @jobManagerRequester = new JobManagerRequester
-          client: @jobManagerRequesterClient
-          queueClient: @jobManagerRequesterQueueClient
-          jobTimeoutSeconds: 1
-          queueTimeoutSeconds: 1
-          jobLogSampleRate: 1
-          requestQueueName: @requestQueueName
-          responseQueueName: @responseQueueName
-        callback()
+    @jobManagerRequester = new JobManagerRequester {
+      @namespace
+      @redisUri
+      maxConnections: 1
+      jobTimeoutSeconds: 1
+      queueTimeoutSeconds: 1
+      jobLogSampleRate: 0
+      requestQueueName: @requestQueueName
+      responseQueueName: @responseQueueName
+    }
+    @jobManagerRequester.start callback
 
   _prepareGeneratorJobManagerResponder: (callback) =>
-    @_prepareRedis @dispatcherWorker.redisUri, (error, client) =>
-      return callback error if error?
-      @_prepareRedis @dispatcherWorker.redisUri, (error, queueClient) =>
-        return callback error if error?
-        @jobManagerResponderClient = new RedisNS @dispatcherWorker.namespace, client
-        @jobManagerResponderQueueClient = new RedisNS @dispatcherWorker.namespace, queueClient
-        @jobManagerResponder = new JobManagerResponder
-          client: @jobManagerResponderClient
-          queueClient: @jobManagerResponderQueueClient
-          jobTimeoutSeconds: 1
-          queueTimeoutSeconds: 1
-          jobLogSampleRate: 1
-          requestQueueName: @requestQueueName
-        callback()
+    @jobManagerResponder = new JobManagerResponder {
+      @namespace
+      @redisUri
+      maxConnections: 1
+      jobTimeoutSeconds: 1
+      queueTimeoutSeconds: 1
+      jobLogSampleRate: 0
+      requestQueueName: @requestQueueName
+    }
+    @jobManagerResponder.start callback
 
   _prepareRedis: (redisUri, callback) =>
     callback = _.once callback
