@@ -273,7 +273,7 @@ describe 'ConfigureSent', ->
 
           @testDispatcherWorker.jobManagerRequester.do job, (error) =>
             done error if error?
-            setTimeout done, 2000
+            setTimeout done, 1000
         return # fix redis promise issue
 
       it 'should not deliver the sent message to the receiver', ->
