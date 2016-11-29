@@ -60,6 +60,9 @@ class TaskRunner
     }
 
     task.do @request, (error, response) =>
+      if error?
+        code = parseInt(error.code)
+        delete error.code unless _.inRange code, 99, 600
       return callback error if error?
       {metadata} = response
       debug taskName, metadata?.code
