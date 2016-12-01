@@ -2,29 +2,29 @@ _              = require 'lodash'
 bcrypt         = require 'bcrypt'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
-xdescribe 'CrazyConfigureSent', ->
+describe 'CrazyConfigureSent', ->
   @timeout 10000
 
-  beforeEach 'prepare TestDispatcherWorker', (done) ->
+  before 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker
     @testDispatcherWorker.start done
 
-  afterEach (done) ->
+  after (done) ->
     @testDispatcherWorker.stop done
 
-  beforeEach 'clearAndGetCollection devices', (done) ->
+  before 'clearAndGetCollection devices', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'devices', (error, @devices) =>
       done error
 
-  beforeEach 'clearAndGetCollection subscriptions', (done) ->
+  before 'clearAndGetCollection subscriptions', (done) ->
     @testDispatcherWorker.clearAndGetCollection 'subscriptions', (error, @subscriptions) =>
       done error
 
-  beforeEach 'getHydrant', (done) ->
+  before 'getHydrant', (done) ->
     @testDispatcherWorker.getHydrant (error, @hydrant) =>
       done error
 
-  beforeEach 'create update device', (done) ->
+  before 'create update device', (done) ->
     @authUpdate =
       uuid: 'update-uuid'
       token: 'leak'
@@ -42,7 +42,7 @@ xdescribe 'CrazyConfigureSent', ->
 
     @devices.insert @updateDevice, done
 
-  beforeEach 'create sender device', (done) ->
+  before 'create sender device', (done) ->
     @authEmitter =
       uuid: 'emitter-uuid'
       token: 'leak'
@@ -60,7 +60,7 @@ xdescribe 'CrazyConfigureSent', ->
 
     @devices.insert @senderDevice, done
 
-  beforeEach 'create spy device', (done) ->
+  before 'create spy device', (done) ->
     @spyDevice =
       uuid: 'spy-uuid'
       type: 'device:spy'
@@ -70,7 +70,7 @@ xdescribe 'CrazyConfigureSent', ->
   context 'When sending a configuring a device', ->
 
     context 'subscribed to someone elses received configures', ->
-      beforeEach 'create configure sent subscription', (done) ->
+      before 'create configure sent subscription', (done) ->
         subscription =
           type: 'configure.sent'
           emitterUuid: 'update-uuid'
@@ -78,7 +78,7 @@ xdescribe 'CrazyConfigureSent', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create configure received subscription', (done) ->
+      before 'create configure received subscription', (done) ->
         subscription =
           type: 'configure.received'
           emitterUuid: 'emitter-uuid'
@@ -86,7 +86,7 @@ xdescribe 'CrazyConfigureSent', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create configure received subscription', (done) ->
+      before 'create configure received subscription', (done) ->
         subscription =
           type: 'configure.received'
           emitterUuid: 'emitter-uuid'
@@ -94,7 +94,7 @@ xdescribe 'CrazyConfigureSent', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach 'create configure received subscription', (done) ->
+      before 'create configure received subscription', (done) ->
         subscription =
           type: 'configure.received'
           emitterUuid: 'spy-uuid'
@@ -102,7 +102,7 @@ xdescribe 'CrazyConfigureSent', ->
 
         @subscriptions.insert subscription, done
 
-      beforeEach (done) ->
+      before (done) ->
         job =
           metadata:
             auth: @authUpdate
