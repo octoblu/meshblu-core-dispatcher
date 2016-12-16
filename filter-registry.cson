@@ -37,6 +37,22 @@ Authenticate:
     'forbid':
       task: 'meshblu-core-task-forbidden'
 
+AuthenticateWithRateLimit:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'Authenticate'
+      on:
+        204: 'enforce-message-rate-limit'
+    'enforce-message-rate-limit':
+      task: 'meshblu-core-task-enforce-message-rate-limit'
+      cacheNamespace: 'meshblu-count'
+      on:
+        204: 'update-message-rate'
+    'update-message-rate':
+      task: 'meshblu-core-task-update-message-rate'
+      cacheNamespace: 'meshblu-count'
+
 EnforceConfigureWhitelists:
   start: 'enforce-configure-as-whitelist'
   tasks:

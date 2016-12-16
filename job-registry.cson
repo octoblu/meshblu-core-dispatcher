@@ -2,13 +2,13 @@ Authenticate:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
 
 CreateSessionToken:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -23,7 +23,7 @@ CreateSubscription:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -467,7 +467,7 @@ FindAndUpdateDevice:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -491,7 +491,7 @@ GetAuthorizedSubscriptionTypes:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -512,17 +512,7 @@ GetDevice:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'enforce-message-rate-limit'
-    'enforce-message-rate-limit':
-      task: 'meshblu-core-task-enforce-message-rate-limit'
-      cacheNamespace: 'meshblu-count'
-      on:
-        204: 'update-message-rate'
-    'update-message-rate':
-      task: 'meshblu-core-task-update-message-rate'
-      cacheNamespace: 'meshblu-count'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-discover-whitelists'
     'enforce-discover-whitelists':
@@ -556,7 +546,7 @@ SearchDevices:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-discover-as-whitelist'
     'enforce-discover-as-whitelist':
@@ -572,7 +562,7 @@ SearchTokens:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-as-whitelist'
     'enforce-configure-as-whitelist':
@@ -587,17 +577,7 @@ SendMessage:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
-      on:
-        204: 'enforce-message-rate-limit'
-    'enforce-message-rate-limit':
-      task: 'meshblu-core-task-enforce-message-rate-limit'
-      cacheNamespace: 'meshblu-count'
-      on:
-        204: 'update-message-rate'
-    'update-message-rate':
-      task: 'meshblu-core-task-update-message-rate'
-      cacheNamespace: 'meshblu-count'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'send-message-2'
     'send-message-2':
@@ -611,7 +591,7 @@ SubscriptionList:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'check-configure-whitelist'
     'check-configure-whitelist':
@@ -635,7 +615,7 @@ RemoveSubscription:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -650,7 +630,7 @@ ResetToken:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -670,7 +650,7 @@ RevokeSessionToken:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -685,7 +665,7 @@ RevokeTokenByQuery:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -700,7 +680,7 @@ UnregisterDevice:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
@@ -725,7 +705,7 @@ UpdateDevice:
   start: 'authenticate'
   tasks:
     'authenticate':
-      filter: 'Authenticate'
+      filter: 'AuthenticateWithRateLimit'
       on:
         204: 'enforce-configure-whitelists'
     'enforce-configure-whitelists':
