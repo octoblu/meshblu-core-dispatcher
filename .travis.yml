@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - '5'
+  - '6'
 services:
   - mongodb
   - redis
@@ -14,17 +14,21 @@ addons:
       - g++-4.8
 env:
   - CXX=g++-4.8
-before_script:
-  - npm install
-  - npm install -g codeclimate-test-reporter
-after_script:
-  - codeclimate-test-reporter < coverage/lcov.info
 branches:
   only:
     - '/^v[0-9]/'
+cache:
+  yarn: true
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH=$HOME/.yarn/bin:$PATH
+before_script:
+  - yarn install
+script:
+  - yarn test
 after_success:
-  - npm run coverage
-  - 'npm run mocha:json'
+  - yarn run coverage
+  - 'yarn run mocha:json'
   - 'bash <(curl -s https://codecov.io/bash)'
   - 'bash <(curl -s https://codecov.octoblu.com/bash)'
 notifications:

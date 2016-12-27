@@ -106,10 +106,11 @@ class TestDispatcherWorker
   _prepareRedis: (redisUri, callback) =>
     callback = _.once callback
     client = new Redis redisUri, dropBufferSupport: true
-    client.on 'ready', (error) =>
+    client = _.bindAll client, _.functionsIn(client)
+    client.ping (error) =>
       return callback error if error?
+      client.once 'error', @stop
       callback null, client
-
-    client.on 'error', callback
+    return # redis fix
 
 module.exports = TestDispatcherWorker

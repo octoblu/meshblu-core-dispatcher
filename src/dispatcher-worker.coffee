@@ -101,8 +101,10 @@ class DispatcherWorker
 
   stop: (callback) =>
     @stopRunning = true
+    return callback() unless @taskJobManager?
+    return callback() unless @jobManager?
     @taskJobManager.stop()
-    @jobManager.stop callback
+    @jobManager.stop(callback)
 
   _doWithNextTick: (callback) =>
     # give some time for garbage collection
@@ -256,11 +258,11 @@ class DispatcherWorker
   _prepareRedis: (redisUri, callback) =>
     callback = _.once callback
     client = new Redis redisUri, dropBufferSupport: true
-    client.once 'ready', =>
-      client.on 'error', @panic
+    client = _.bindAll client, _.functionsIn(client)
+    client.ping (error) =>
+      return callback error if error?
+      client.once 'error', @panic
       callback null, client
-
-    client.once 'error', callback
 
   _prepareUuidAliasResolver: (callback) =>
     cache = new RedisNS 'uuid-alias', @client
