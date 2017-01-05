@@ -1,7 +1,9 @@
 dashdash         = require 'dashdash'
+_                = require 'lodash'
+SigtermHandler   = require 'sigterm-handler'
+
 DispatcherWorker = require './src/dispatcher-worker'
 packageJSON      = require './package.json'
-SigtermHandler   = require 'sigterm-handler'
 
 options = [
   {
@@ -93,6 +95,12 @@ options = [
     env: 'JOB_LOG_SAMPLE_RATE'
   }
   {
+    name: 'job-log-sample-rate-override-uuids'
+    type: 'string'
+    help: 'UUIDs that bypass the sample-rate, comma seperated (no spaces please)'
+    env:  'JOB_LOG_SAMPLE_RATE_OVERRIDE_UUIDS'
+  }
+  {
     name: 'private-key-base64'
     type: 'string'
     help: 'Base64-encoded private key'
@@ -147,6 +155,7 @@ options = {
   jobLogRedisUri:      opts.job_log_redis_uri
   jobLogQueue:         opts.job_log_queue
   jobLogSampleRate:    opts.job_log_sample_rate
+  jobLogSampleRateOverrideUuids: _.split(opts.job_log_sample_rate_override_uuids, ',')
   privateKey:          privateKey
   publicKey:           publicKey
   singleRun:           opts.single_run

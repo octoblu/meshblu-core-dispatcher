@@ -32,6 +32,7 @@ class DispatcherWorker
       @jobLogRedisUri
       @jobLogQueue
       @jobLogSampleRate
+      @jobLogSampleRateOverrideUuids
       @privateKey
       @publicKey
       @singleRun
@@ -40,18 +41,18 @@ class DispatcherWorker
       @responseQueueName
     } = options
     @responseQueueName ?=
-    throw new Error 'DispatcherWorker constructor is missing "@namespace"' unless @namespace?
-    throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"' unless @timeoutSeconds?
-    throw new Error 'DispatcherWorker constructor is missing "@redisUri"' unless @redisUri?
-    throw new Error 'DispatcherWorker constructor is missing "@cacheRedisUri"' unless @cacheRedisUri?
+    throw new Error 'DispatcherWorker constructor is missing "@namespace"'        unless @namespace?
+    throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"'   unless @timeoutSeconds?
+    throw new Error 'DispatcherWorker constructor is missing "@redisUri"'         unless @redisUri?
+    throw new Error 'DispatcherWorker constructor is missing "@cacheRedisUri"'    unless @cacheRedisUri?
     throw new Error 'DispatcherWorker constructor is missing "@firehoseRedisUri"' unless @firehoseRedisUri?
-    throw new Error 'DispatcherWorker constructor is missing "@mongoDBUri"' unless @mongoDBUri?
-    throw new Error 'DispatcherWorker constructor is missing "@pepper"' unless @pepper?
-    throw new Error 'DispatcherWorker constructor is missing "@jobLogRedisUri"' unless @jobLogRedisUri?
-    throw new Error 'DispatcherWorker constructor is missing "@jobLogQueue"' unless @jobLogQueue?
+    throw new Error 'DispatcherWorker constructor is missing "@mongoDBUri"'       unless @mongoDBUri?
+    throw new Error 'DispatcherWorker constructor is missing "@pepper"'           unless @pepper?
+    throw new Error 'DispatcherWorker constructor is missing "@jobLogRedisUri"'   unless @jobLogRedisUri?
+    throw new Error 'DispatcherWorker constructor is missing "@jobLogQueue"'      unless @jobLogQueue?
     throw new Error 'DispatcherWorker constructor is missing "@jobLogSampleRate"' unless @jobLogSampleRate?
-    throw new Error 'DispatcherWorker constructor is missing "@privateKey"' unless @privateKey?
-    throw new Error 'DispatcherWorker constructor is missing "@publicKey"' unless @publicKey?
+    throw new Error 'DispatcherWorker constructor is missing "@privateKey"'       unless @privateKey?
+    throw new Error 'DispatcherWorker constructor is missing "@publicKey"'        unless @publicKey?
     throw new Error 'DispatcherWorker constructor is missing "@requestQueueName"' unless @requestQueueName?
     @octobluRaven = new OctobluRaven({ release: version })
     @jobRegistry  = new JobRegistry().toJSON()
@@ -129,7 +130,7 @@ class DispatcherWorker
 
   _handleRequest: (request, callback) =>
     config = @jobRegistry[request.metadata.jobType]
-    return callback new Error "jobType '#{jobType}' not found" unless config?
+    return callback new Error "jobType '#{request.metadata.jobType}' not found" unless config?
 
     taskRunner = new TaskRunner {
       config
@@ -216,8 +217,6 @@ class DispatcherWorker
 
   _prepareTaskJobManager: (callback) =>
     cache = new RedisNS 'meshblu-token-one-time', @client # must be the same as the cache client
-    client = new RedisNS @namespace, @jobManagerClient
-    queueClient = new RedisNS @namespace, @jobManagerQueueClient
     jobManager = new JobManagerRequester {
       @redisUri
       @namespace
@@ -225,6 +224,7 @@ class DispatcherWorker
       jobTimeoutSeconds: @timeoutSeconds
       queueTimeoutSeconds: @timeoutSeconds
       @jobLogSampleRate
+      @jobLogSampleRateOverrideUuids
       @requestQueueName
       responseQueueName: "v2:meshblu:task:response:queue"
     }

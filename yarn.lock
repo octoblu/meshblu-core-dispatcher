@@ -1274,9 +1274,9 @@ meshblu-core-job-manager@^6.1.2:
     lodash "^4.11.1"
     uuid "^2.0.1"
 
-meshblu-core-job-manager@^9.2.2:
-  version "9.2.2"
-  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-9.2.2.tgz#abca797c06f9c76754454f3635fde1b441439bc7"
+meshblu-core-job-manager@^9.2.4:
+  version "9.2.4"
+  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-9.2.4.tgz#ce12b7fda07de9567aa95ca7413aac2811ca9a32"
   dependencies:
     async "^2.1.2"
     coffee-script "^1.11.1"
