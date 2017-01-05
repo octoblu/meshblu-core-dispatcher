@@ -33,3 +33,4 @@ npmrc-dev
 .*-dev
 .nyc_output
 run.sh
+environment

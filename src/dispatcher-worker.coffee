@@ -31,6 +31,7 @@ class DispatcherWorker
       @aliasServerUri
       @jobLogRedisUri
       @jobLogQueue
+      @jobLogNamespace
       @jobLogSampleRate
       @jobLogSampleRateOverrideUuids
       @privateKey
@@ -40,7 +41,6 @@ class DispatcherWorker
       @requestQueueName
       @responseQueueName
     } = options
-    @responseQueueName ?=
     throw new Error 'DispatcherWorker constructor is missing "@namespace"'        unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"'   unless @timeoutSeconds?
     throw new Error 'DispatcherWorker constructor is missing "@redisUri"'         unless @redisUri?
@@ -56,6 +56,12 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@requestQueueName"' unless @requestQueueName?
     @octobluRaven = new OctobluRaven({ release: version })
     @jobRegistry  = new JobRegistry().toJSON()
+
+    @indexJobPrefix = "metric:meshblu-core-dispatcher"
+    @indexJobPrefix = "#{@indexJobPrefix}:#{@jobLogNamespace}" unless _.isEmpty @jobLogNamespace
+
+    @indexTaskPrefix = "metric:meshblu-core-dispatcher-task"
+    @indexTaskPrefix = "#{@indexTaskPrefix}:#{@jobLogNamespace}" unless _.isEmpty @jobLogNamespace
 
   catchErrors: =>
     @octobluRaven.patchGlobal()
@@ -177,7 +183,7 @@ class DispatcherWorker
   _prepareDispatchLogger: (callback) =>
     @dispatchLogger = new JobLogger
       client     : @logClient
-      indexPrefix: 'metric:meshblu-core-dispatcher'
+      indexPrefix: @indexJobPrefix
       type       : 'meshblu-core-dispatcher:dispatch'
       jobLogQueue: @jobLogQueue
     callback()
@@ -193,7 +199,7 @@ class DispatcherWorker
   _prepareJobLogger: (callback) =>
     @jobLogger = new JobLogger
       client: @logClient
-      indexPrefix: 'metric:meshblu-core-dispatcher'
+      indexPrefix: @indexJobPrefix
       type: 'meshblu-core-dispatcher:job'
       jobLogQueue: @jobLogQueue
     callback()
@@ -238,7 +244,7 @@ class DispatcherWorker
   _prepareTaskLogger: (callback) =>
     @taskLogger = new JobLogger
       client: @logClient
-      indexPrefix: 'metric:meshblu-core-dispatcher-task'
+      indexPrefix: @indexTaskPrefix
       type: 'meshblu-core-dispatcher:task'
       jobLogQueue: @jobLogQueue
     callback()

@@ -89,6 +89,12 @@ options = [
     env: 'JOB_LOG_QUEUE'
   }
   {
+    name: 'job-log-namespace'
+    type: 'string'
+    help: 'Job log index name metric:meshblu-core-dispatcher[-task]:namespace'
+    env: 'JOB_LOG_NAMESPACE'
+  }
+  {
     name: 'job-log-sample-rate'
     type: 'number'
     help: 'Job log sample rate (0.00 to 1.00)'
@@ -152,6 +158,7 @@ options = {
   pepper:              opts.pepper
   workerName:          opts.worker_name
   aliasServerUri:      opts.alias_server_uri
+  jobLogNamespace:     opts.job_log_namespace
   jobLogRedisUri:      opts.job_log_redis_uri
   jobLogQueue:         opts.job_log_queue
   jobLogSampleRate:    opts.job_log_sample_rate
