@@ -295,7 +295,12 @@ DeliverSubscriptionConfigureSent:
       task: 'meshblu-core-task-check-whitelist-configure-sent'
       datastoreCollection: 'devices'
       on:
-        204: 'enqueue-jobs-for-subscriptions-configure-received'
+        204: 'check-subscription-device-exists'
+    'check-subscription-device-exists':
+      task: 'meshblu-core-task-get-device'
+      datastoreCollection: 'devices'
+      on:
+        200: 'enqueue-jobs-for-subscriptions-configure-received'
     'enqueue-jobs-for-subscriptions-configure-received':
       task: 'meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received'
       datastoreCollection: 'subscriptions'
