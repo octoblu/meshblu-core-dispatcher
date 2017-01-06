@@ -1334,17 +1334,21 @@ meshblu-core-manager-root-token@^1.0.0, meshblu-core-manager-root-token@^1.0.2:
     coffee-script "^1.10.0"
     meshblu-core-datastore "^4.5.0"
 
-meshblu-core-manager-subscription@^3.0.0, meshblu-core-manager-subscription@^3.1.1, meshblu-core-manager-subscription@^3.2.0, meshblu-core-manager-subscription@^3.2.1, meshblu-core-manager-subscription@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.4.0.tgz#40ee87bd18bb6edd5416009be3189b680dca41db"
-
-meshblu-core-manager-subscription@^3.5.0:
+meshblu-core-manager-subscription@^3.0.0, meshblu-core-manager-subscription@^3.2.1, meshblu-core-manager-subscription@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.5.0.tgz#4528918a1eb76710d209e9a8ae063b52ac955daa"
+
+meshblu-core-manager-subscription@^3.1.1, meshblu-core-manager-subscription@^3.2.0, meshblu-core-manager-subscription@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.4.0.tgz#40ee87bd18bb6edd5416009be3189b680dca41db"
 
 meshblu-core-manager-subscription@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-4.0.0.tgz#491ab838fd651b8113414dcfd2de69a56c291f32"
+
+meshblu-core-manager-subscription@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-5.0.0.tgz#15667d6c2fbe49739570174056fffde757d01d62"
 
 meshblu-core-manager-token@^4.4.1:
   version "4.4.1"
@@ -1708,58 +1712,58 @@ meshblu-core-task-enqueue-jobs-for-forward-unregister-received@^1.0.0:
     http "0.0.0"
     lodash "^4.14.2"
 
-meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received/-/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received-4.2.0.tgz#3cc012cb2ff55ba14f031634c54178113d038ba8"
+meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received/-/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-received-5.0.1.tgz#ea95634b798ccf233cbc51d0cbedd12680543bae"
   dependencies:
     async "^2.0.0-rc.2"
     coffee-script "^1.10.0"
     lodash "^4.8.2"
-    meshblu-core-manager-subscription "^3.2.0"
+    meshblu-core-manager-subscription "^5.0.0"
 
-meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent/-/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent-3.1.1.tgz#5e957998f596f48f98e05d8ab0e75e76119d5aae"
+meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent/-/meshblu-core-task-enqueue-jobs-for-subscriptions-broadcast-sent-4.0.1.tgz#17d67498358f7e846aac27b05a3c254f557e7713"
   dependencies:
     async "^2.0.0-rc.2"
     coffee-script "^1.10.0"
     lodash "^4.8.2"
-    meshblu-core-manager-subscription "^3.2.0"
+    meshblu-core-manager-subscription "^5.0.0"
 
-meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received/-/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received-2.2.0.tgz#5f1b58c94df5bddcc3090e91357e62064108736c"
+meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received/-/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-received-3.0.1.tgz#bada667ace930b396d0055d073821a49306e947a"
   dependencies:
     async "^2.0.0-rc.3"
     coffee-script "^1.10.0"
     lodash "^4.6.1"
-    meshblu-core-manager-subscription "^3.2.0"
+    meshblu-core-manager-subscription "^5.0.0"
 
-meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent/-/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent-1.2.1.tgz#8efed6e62afcff03ac69c8132ff6cfdb6a2b012f"
+meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent/-/meshblu-core-task-enqueue-jobs-for-subscriptions-configure-sent-2.0.1.tgz#2f3a836dc980d4f1a519f7ac8373220c86fc3a0a"
   dependencies:
     async "^2.0.0-rc.2"
     coffee-script "^1.10.0"
     lodash "^4.6.1"
-    meshblu-core-manager-subscription "^3.1.1"
+    meshblu-core-manager-subscription "^5.0.0"
 
-meshblu-core-task-enqueue-jobs-for-subscriptions-message-received@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-message-received/-/meshblu-core-task-enqueue-jobs-for-subscriptions-message-received-5.2.0.tgz#1e7206f680e5935f87d8f30040faefb5fe6efa68"
+meshblu-core-task-enqueue-jobs-for-subscriptions-message-received@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-message-received/-/meshblu-core-task-enqueue-jobs-for-subscriptions-message-received-6.0.1.tgz#d5db800740c22a77d2f2b149d24a4ca042899390"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
-    meshblu-core-manager-subscription "^3.1.1"
+    meshblu-core-manager-subscription "^5.0.0"
 
-meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent/-/meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent-3.1.1.tgz#339f353beb0cae143ca865e92d01d7af422c77f8"
+meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent/-/meshblu-core-task-enqueue-jobs-for-subscriptions-message-sent-4.0.0.tgz#9801cb2f76caa29a92abbc0018ecc366ad462f62"
   dependencies:
     async "^2.0.0-rc.2"
     coffee-script "^1.10.0"
     lodash "^4.6.1"
-    meshblu-core-manager-subscription "^3.1.1"
+    meshblu-core-manager-subscription "^5.0.0"
 
 meshblu-core-task-enqueue-jobs-for-subscriptions-unregister-received@^1.0.0:
   version "1.0.0"
