@@ -157,10 +157,14 @@ class DispatcherWorker
       debug '_handleRequest, got response:', {request, response}
       callback null, response
 
-  _logDispatch: ({dispatchBenchmark, request}, callback) =>
+  _logDispatch: ({dispatchBenchmark}, callback) =>
+    request =
+      metadata:
+        jobType: 'Idle'
+        workerName: @workerName
     response =
       metadata:
-        code: 200
+        code: 0
         jobLogs: request.metadata?.jobLogs
 
     @dispatchLogger.log {request, response, elapsedTime: dispatchBenchmark.elapsed()}, callback
