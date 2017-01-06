@@ -1334,11 +1334,7 @@ meshblu-core-manager-root-token@^1.0.0, meshblu-core-manager-root-token@^1.0.2:
     coffee-script "^1.10.0"
     meshblu-core-datastore "^4.5.0"
 
-meshblu-core-manager-subscription@^3.0.0, meshblu-core-manager-subscription@^3.2.1, meshblu-core-manager-subscription@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.5.0.tgz#4528918a1eb76710d209e9a8ae063b52ac955daa"
-
-meshblu-core-manager-subscription@^3.1.1, meshblu-core-manager-subscription@^3.2.0, meshblu-core-manager-subscription@^3.4.0:
+meshblu-core-manager-subscription@^3.0.0, meshblu-core-manager-subscription@^3.1.1, meshblu-core-manager-subscription@^3.2.0, meshblu-core-manager-subscription@^3.2.1, meshblu-core-manager-subscription@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.4.0.tgz#40ee87bd18bb6edd5416009be3189b680dca41db"
 
@@ -1349,6 +1345,10 @@ meshblu-core-manager-subscription@^4.0.0:
 meshblu-core-manager-subscription@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-5.0.0.tgz#15667d6c2fbe49739570174056fffde757d01d62"
+
+meshblu-core-manager-subscription@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-5.1.0.tgz#e6f114c069766472a7da6fefb868bd8526e8cb95"
 
 meshblu-core-manager-token@^4.4.1:
   version "4.4.1"
@@ -1924,13 +1924,13 @@ meshblu-core-task-get-subscriptions@^3.0.0:
     debug "^2.2.0"
     meshblu-core-manager-subscription "^4.0.0"
 
-meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted/-/meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted-1.0.2.tgz#d0a07bcf15dbb7422c4dc29b490b48a734d4e302"
+meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted/-/meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted-2.0.0.tgz#7568d15a2697955b7168b36dccec50e9f9583a07"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
-    meshblu-core-manager-subscription "^3.5.0"
+    meshblu-core-manager-subscription "^5.1.0"
 
 meshblu-core-task-migrate-root-token@^1.1.1:
   version "1.1.1"
