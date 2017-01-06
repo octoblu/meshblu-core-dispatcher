@@ -1338,6 +1338,14 @@ meshblu-core-manager-subscription@^3.0.0, meshblu-core-manager-subscription@^3.1
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.4.0.tgz#40ee87bd18bb6edd5416009be3189b680dca41db"
 
+meshblu-core-manager-subscription@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-3.5.0.tgz#4528918a1eb76710d209e9a8ae063b52ac955daa"
+
+meshblu-core-manager-subscription@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-4.0.0.tgz#491ab838fd651b8113414dcfd2de69a56c291f32"
+
 meshblu-core-manager-token@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-token/-/meshblu-core-manager-token-4.4.1.tgz#c9a72ff2ffdbbe974ad7fbf42f64c065730f1501"
@@ -1904,14 +1912,21 @@ meshblu-core-task-get-status@^2.0.0:
   dependencies:
     coffee-script "^1.10.0"
 
-meshblu-core-task-get-subscriptions@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-get-subscriptions/-/meshblu-core-task-get-subscriptions-2.0.2.tgz#3ce81fb104fc4d4059b86f170c7436a057cfa151"
+meshblu-core-task-get-subscriptions@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-get-subscriptions/-/meshblu-core-task-get-subscriptions-3.0.0.tgz#032619a137131637e16046f405e7209e5daeb9e9"
   dependencies:
     coffee-script "^1.10.0"
     debug "^2.2.0"
-    lodash "^3.10.1"
-    meshblu-core-manager-subscription "^3.2.1"
+    meshblu-core-manager-subscription "^4.0.0"
+
+meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted/-/meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted-1.0.2.tgz#d0a07bcf15dbb7422c4dc29b490b48a734d4e302"
+  dependencies:
+    coffee-script "^1.10.0"
+    lodash "^4.6.1"
+    meshblu-core-manager-subscription "^3.5.0"
 
 meshblu-core-task-migrate-root-token@^1.1.1:
   version "1.1.1"

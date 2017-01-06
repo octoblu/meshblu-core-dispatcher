@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "12.5.3",
+  "version": "12.5.4",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -114,7 +114,8 @@
     "meshblu-core-task-get-device-public-key": "^2.0.3",
     "meshblu-core-task-get-global-public-key": "^1.0.0",
     "meshblu-core-task-get-status": "^2.0.0",
-    "meshblu-core-task-get-subscriptions": "^2.0.2",
+    "meshblu-core-task-get-subscriptions": "^3.0.0",
+    "meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted": "^1.0.2",
     "meshblu-core-task-migrate-root-token": "^1.1.1",
     "meshblu-core-task-no-content": "^1.0.1",
     "meshblu-core-task-protect-your-as": "^1.0.4",
