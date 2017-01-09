@@ -63,12 +63,12 @@ class DispatcherWorker
     @indexTaskPrefix = "metric:meshblu-core-dispatcher-task"
     @indexTaskPrefix = "#{@indexTaskPrefix}:#{@jobLogNamespace}" unless _.isEmpty @jobLogNamespace
 
+
   catchErrors: =>
-    @octobluRaven.patchGlobal()
 
   reportError: =>
     @octobluRaven.reportError arguments...
-
+    
   panic: (@error) =>
     console.error "PANIC:", @error.stack
     @reportError @error

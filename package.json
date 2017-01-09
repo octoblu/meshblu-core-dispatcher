@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "13.0.0",
+  "version": "13.0.1",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -29,10 +29,10 @@
     "chai-subset": "^1.4.0",
     "meshblu-core-manager-hydrant": "^2.0.0",
     "mocha": "^3.1.2",
-    "mocha-multi": "^0.9.1",
+    "mocha-multi": "^0.10.0",
     "mocha-osx-reporter": "^0.1.2",
     "nyc": "^10.0.0",
-    "sinon": "^1.17.5",
+    "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0",
     "uuid": "^3.0.1"
   },
@@ -41,11 +41,11 @@
     "async": "^2.0.1",
     "coffee-script": "^1.12.2",
     "dashdash": "^1.14.0",
-    "debug": "^2.5.2",
+    "debug": "^2.6.0",
     "fs-cson": "^0.3.2",
-    "ioredis": "^2.4.3",
+    "ioredis": "^2.5.0",
     "job-logger": "^4.3.0",
-    "lodash": "^4.17.3",
+    "lodash": "^4.17.4",
     "meshblu-core-cache": "^1.9.1",
     "meshblu-core-datastore": "^4.9.0",
     "meshblu-core-job-manager": "^9.2.5",
@@ -146,7 +146,7 @@
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.16.0",
     "mongojs": "^2.4.0",
-    "octoblu-raven": "^4.0.3",
+    "octoblu-raven": "^4.1.0",
     "request": "^2.78.0",
     "sigterm-handler": "^2.0.0",
     "simple-benchmark": "^1.0.11"
@@ -155,8 +155,7 @@
     "hiredis": "^0.5.0"
   },
   "engines": {
-    "node": "^5.5.0",
-    "npm": "^3.10.0"
+    "node": ">=5.5.0"
   },
   "engineStrict": true,
   "nyc": {
