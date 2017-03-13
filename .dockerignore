@@ -2,5 +2,5 @@
 .kubernetes
 node_modules
 coverage
-test
 run.sh
+
