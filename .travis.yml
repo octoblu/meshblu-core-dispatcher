@@ -1,12 +1,10 @@
 language: node_js
 node_js:
-  - '6'
+  - '7'
 services:
   - mongodb
   - redis
 addons:
-  code_climate:
-    repo_token: 51f47af5eaac6f8189e00e4afd7615ab52cb5623660ee41bdc364f7476d60b2a
   apt:
     sources:
       - ubuntu-toolchain-r-test
@@ -17,18 +15,7 @@ env:
 branches:
   only:
     - '/^v[0-9]/'
-cache:
-  yarn: true
-before_install:
-  - 'curl -o- -L https://yarnpkg.com/install.sh | bash'
-  - 'export PATH=$HOME/.yarn/bin:$PATH'
-before_script:
-  - yarn install
-script:
-  - yarn test
 after_success:
-  - yarn run coverage
-  - 'yarn run mocha:json'
   - npm run coverage
   - 'npm run mocha:json'
   - 'bash <(curl -s https://codecov.io/bash)'
