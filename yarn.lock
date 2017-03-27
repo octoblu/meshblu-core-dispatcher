@@ -106,13 +106,7 @@ async@2.0.0-rc.6:
   dependencies:
     lodash "^4.8.0"
 
-async@^2.0.0-rc.2, async@^2.0.0-rc.3, async@^2.0.0-rc.5, async@^2.0.1, async@^2.1.2:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.1.4.tgz#2d2160c7788032e4dd6cbe2502f1f9a2c8f6cde4"
-  dependencies:
-    lodash "^4.14.0"
-
-async@^2.2.0:
+async@^2.0.0-rc.2, async@^2.0.0-rc.3, async@^2.0.0-rc.5, async@^2.0.1, async@^2.1.2, async@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.2.0.tgz#c324eba010a237e4fbd55a12dee86367d5c0ef32"
   dependencies:
@@ -440,13 +434,7 @@ debug@2.2.0:
   dependencies:
     ms "0.7.1"
 
-debug@^2.2.0, debug@^2.3.3:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.5.2.tgz#50c295a53dbf1657146e0c1b21307275e90d49cb"
-  dependencies:
-    ms "0.7.2"
-
-debug@^2.6.3:
+debug@^2.2.0, debug@^2.3.3, debug@^2.6.3:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
   dependencies:
@@ -2146,9 +2134,9 @@ meshblu-core-task-search-token@^1.0.0:
     lodash "^4.15.0"
     meshblu-core-manager-token "^7.5.0"
 
-meshblu-core-task-send-message-2@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message-2/-/meshblu-core-task-send-message-2-1.1.0.tgz#77448fdda8e4aa9ff313379d7507a4759931428b"
+meshblu-core-task-send-message-2@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message-2/-/meshblu-core-task-send-message-2-1.1.1.tgz#b85582cda84b5460b3669e89a9d391e1e1ab66e5"
   dependencies:
     async "^2.0.0-rc.2"
     coffee-script "^1.10.0"
@@ -2156,9 +2144,9 @@ meshblu-core-task-send-message-2@^1.1.0:
     meshblu-core-job-manager "^3.2.0"
     uuid "^2.0.1"
 
-meshblu-core-task-send-message@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message/-/meshblu-core-task-send-message-2.2.0.tgz#1b913150779e5947fdee00b4acba46943ef9a141"
+meshblu-core-task-send-message@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message/-/meshblu-core-task-send-message-2.2.1.tgz#0a6d83ac5e373288c39d9499e813d104f1be11bb"
   dependencies:
     async "^1.5.2"
     coffee-script "^1.10.0"
@@ -2333,11 +2321,7 @@ mocha@^3.1.2:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
-moment@^2.10.6, moment@^2.11.1, moment@^2.13.0, moment@^2.17.1:
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
-
-moment@^2.18.1:
+moment@^2.10.6, moment@^2.11.1, moment@^2.13.0, moment@^2.17.1, moment@^2.18.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
@@ -2813,11 +2797,7 @@ simple-benchmark@^1.0.11:
     coffee-script "^1.10.0"
     colors "^1.1.2"
 
-sinon-chai@^2.8.0:
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/sinon-chai/-/sinon-chai-2.8.0.tgz#432a9bbfd51a6fc00798f4d2526a829c060687ac"
-
-sinon-chai@^2.9.0:
+sinon-chai@^2.8.0, sinon-chai@^2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/sinon-chai/-/sinon-chai-2.9.0.tgz#34d820042bc9661a14527130d401eb462c49bb84"
 
