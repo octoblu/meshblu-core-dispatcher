@@ -14,6 +14,7 @@ TaskJobManager          = require './task-job-manager'
 TaskRunner              = require './task-runner'
 UuidAliasResolver       = require 'meshblu-uuid-alias-resolver'
 debug                   = require('debug')('meshblu-core-dispatcher:dispatcher-worker')
+debugBenchmark          = require('debug')('meshblu-core-dispatcher:dispatcher-worker:benchmark')
 { version }             = require '../package.json'
 { JobManagerResponder, JobManagerRequester } = require 'meshblu-core-job-manager'
 
@@ -68,7 +69,7 @@ class DispatcherWorker
 
   reportError: =>
     @octobluRaven.reportError arguments...
-    
+
   panic: (@error) =>
     console.error "PANIC:", @error.stack
     @reportError @error
@@ -131,6 +132,9 @@ class DispatcherWorker
           console.error error.stack if error?
           @_logJob {jobBenchmark, request, response}, (logError) =>
             console.error logError.stack if logError?
+            jobType = _.get(request, 'metadata.jobType')
+            responseCode = _.get(response, 'metadata.code')
+            debugBenchmark("#{jobType}[#{responseCode}] #{jobBenchmark.elapsed()}ms (dispatch #{dispatchBenchmark.elapsed()}ms)")
             next error, response
     , callback
 

@@ -1,5 +1,6 @@
 _                      = require 'lodash'
 debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
+debugBenchmark         = require('debug')('meshblu-core-dispatcher:task-runner:benchmark')
 moment                 = require 'moment'
 SimpleBenchmark        = require 'simple-benchmark'
 {Tasks}                = require './task-loader'
@@ -71,6 +72,7 @@ class TaskRunner
       nextTask = taskConfig.on?[codeStr]
       @logTask {benchmark, @request, response, taskName}, =>
         return callback null, response unless nextTask?
+        debugBenchmark("#{taskName}[#{codeStr}] #{benchmark.elapsed()}ms")
         @_doTask nextTask, callback
 
   logTask: ({benchmark, request, response, taskName}, callback) =>
