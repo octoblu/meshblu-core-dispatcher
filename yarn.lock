@@ -1686,9 +1686,9 @@ meshblu-core-task-enforce-message-rate-limit@^1.1.0:
     lodash "^4.14.1"
     meshblu-core-rate-limit-checker "^1.0.0"
 
-meshblu-core-task-enqueue-deprecated-webhooks@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-deprecated-webhooks/-/meshblu-core-task-enqueue-deprecated-webhooks-3.0.5.tgz#8d69d1dd1944af2db3798cd068a0184c7c1c6b53"
+meshblu-core-task-enqueue-deprecated-webhooks@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-deprecated-webhooks/-/meshblu-core-task-enqueue-deprecated-webhooks-4.0.0.tgz#98bfd1d239ca432a6e32996f0e1cc2774f93d501"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^3.10.1"
@@ -1861,9 +1861,9 @@ meshblu-core-task-enqueue-jobs-for-webhooks-unregister-sent@^1.2.0:
     lodash "^4.6.1"
     meshblu-core-manager-webhook "^2.0.0"
 
-meshblu-core-task-enqueue-webhooks@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-webhooks/-/meshblu-core-task-enqueue-webhooks-3.0.4.tgz#b6de17b26f9aef698d0de1c6a1b9cf3adf4c70c1"
+meshblu-core-task-enqueue-webhooks@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-webhooks/-/meshblu-core-task-enqueue-webhooks-4.0.0.tgz#46a38150de3991b096d0e8ac4fb9bc48110d9596"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.17.4"
