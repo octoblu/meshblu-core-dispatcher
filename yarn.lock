@@ -1686,35 +1686,35 @@ meshblu-core-task-enforce-message-rate-limit@^1.1.0:
     lodash "^4.14.1"
     meshblu-core-rate-limit-checker "^1.0.0"
 
-meshblu-core-task-enqueue-deprecated-webhooks@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-deprecated-webhooks/-/meshblu-core-task-enqueue-deprecated-webhooks-3.0.4.tgz#417ef40b114e5327b5999d1497cdc667c3a5f907"
+meshblu-core-task-enqueue-deprecated-webhooks@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-deprecated-webhooks/-/meshblu-core-task-enqueue-deprecated-webhooks-3.0.5.tgz#8d69d1dd1944af2db3798cd068a0184c7c1c6b53"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^3.10.1"
     meshblu-core-manager-device "^3.0.1"
     uuid "^2.0.1"
 
-meshblu-core-task-enqueue-jobs-for-forward-broadcast-received@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-forward-broadcast-received/-/meshblu-core-task-enqueue-jobs-for-forward-broadcast-received-1.1.2.tgz#1dc4dc1db9b7b2ab73d4180da92bcc703f71511a"
+meshblu-core-task-enqueue-jobs-for-forward-broadcast-received@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-forward-broadcast-received/-/meshblu-core-task-enqueue-jobs-for-forward-broadcast-received-1.1.3.tgz#1ee61d21b7d204d139aa18a7693e4ae07c4409f6"
   dependencies:
     async "^2.0.0-rc.3"
     coffee-script "^1.10.0"
     lodash "^4.6.1"
 
-meshblu-core-task-enqueue-jobs-for-forward-configure-received@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-forward-configure-received/-/meshblu-core-task-enqueue-jobs-for-forward-configure-received-1.0.1.tgz#67fa05f8982167891671e6a51bf026c9cb020057"
+meshblu-core-task-enqueue-jobs-for-forward-configure-received@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-forward-configure-received/-/meshblu-core-task-enqueue-jobs-for-forward-configure-received-1.0.2.tgz#b33d2ca5cbd42aae163c4b89c05655530a763097"
   dependencies:
     async "^2.0.1"
     coffee-script "^1.10.0"
     http "0.0.0"
     lodash "^4.14.2"
 
-meshblu-core-task-enqueue-jobs-for-forward-unregister-received@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-forward-unregister-received/-/meshblu-core-task-enqueue-jobs-for-forward-unregister-received-1.0.1.tgz#f148acdd90f72273e1b3e2c5092d538ca646ab08"
+meshblu-core-task-enqueue-jobs-for-forward-unregister-received@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-jobs-for-forward-unregister-received/-/meshblu-core-task-enqueue-jobs-for-forward-unregister-received-1.0.2.tgz#9a16a094f293460ee4ca955c45b83bcf61f7ef27"
   dependencies:
     async "^2.0.1"
     coffee-script "^1.10.0"
@@ -1861,9 +1861,9 @@ meshblu-core-task-enqueue-jobs-for-webhooks-unregister-sent@^1.2.0:
     lodash "^4.6.1"
     meshblu-core-manager-webhook "^2.0.0"
 
-meshblu-core-task-enqueue-webhooks@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-webhooks/-/meshblu-core-task-enqueue-webhooks-3.0.3.tgz#89d16b889b3110f52c4cea760c9971f7350d8b99"
+meshblu-core-task-enqueue-webhooks@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-enqueue-webhooks/-/meshblu-core-task-enqueue-webhooks-3.0.4.tgz#b6de17b26f9aef698d0de1c6a1b9cf3adf4c70c1"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.17.4"
@@ -1941,9 +1941,9 @@ meshblu-core-task-mark-all-subscribed-subscriptions-as-deleted@^2.0.0:
     lodash "^4.6.1"
     meshblu-core-manager-subscription "^5.1.0"
 
-meshblu-core-task-migrate-root-token@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-migrate-root-token/-/meshblu-core-task-migrate-root-token-1.1.1.tgz#0db87c390c1fca66ab352e346e5bc7aaf5b5df42"
+meshblu-core-task-migrate-root-token@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-migrate-root-token/-/meshblu-core-task-migrate-root-token-1.1.2.tgz#e9ea831a69388500d4dc03ea74d81348256ae2b4"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
@@ -1973,9 +1973,9 @@ meshblu-core-task-publish-configure-received@^4.0.0:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
 
-meshblu-core-task-publish-deprecated-subscriptions@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-publish-deprecated-subscriptions/-/meshblu-core-task-publish-deprecated-subscriptions-3.0.4.tgz#625331751e3ba2f221554d382a142b0708b92eef"
+meshblu-core-task-publish-deprecated-subscriptions@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-publish-deprecated-subscriptions/-/meshblu-core-task-publish-deprecated-subscriptions-3.0.5.tgz#d4bb5304e84d21881b68a3a6c1ef609ad6fb5b98"
   dependencies:
     async "^2.2.0"
     coffee-script "^1.10.0"
@@ -1994,9 +1994,9 @@ meshblu-core-task-publish-message@^2.0.0:
     coffee-script "^1.10.0"
     lodash "^3.10.1"
 
-meshblu-core-task-publish-subscriptions@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-publish-subscriptions/-/meshblu-core-task-publish-subscriptions-4.0.1.tgz#5fcbfd4b005f341ce6a7de892ba2795d428b1cfd"
+meshblu-core-task-publish-subscriptions@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-publish-subscriptions/-/meshblu-core-task-publish-subscriptions-4.0.2.tgz#cd3f7417374f800b3e86c79925a59a6989bcf63a"
   dependencies:
     async "^2.2.0"
     coffee-script "^1.10.0"
@@ -2107,9 +2107,9 @@ meshblu-core-task-search-token@^1.0.0:
     lodash "^4.15.0"
     meshblu-core-manager-token "^7.5.0"
 
-meshblu-core-task-send-message-2@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message-2/-/meshblu-core-task-send-message-2-1.1.1.tgz#b85582cda84b5460b3669e89a9d391e1e1ab66e5"
+meshblu-core-task-send-message-2@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message-2/-/meshblu-core-task-send-message-2-1.1.2.tgz#92274b895271c6e6ea7c3db88c313b783e471036"
   dependencies:
     async "^2.0.0-rc.2"
     coffee-script "^1.10.0"
@@ -2117,9 +2117,9 @@ meshblu-core-task-send-message-2@^1.1.1:
     meshblu-core-job-manager "^3.2.0"
     uuid "^2.0.1"
 
-meshblu-core-task-send-message@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message/-/meshblu-core-task-send-message-2.2.1.tgz#0a6d83ac5e373288c39d9499e813d104f1be11bb"
+meshblu-core-task-send-message@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-send-message/-/meshblu-core-task-send-message-2.2.2.tgz#7a3cca476bd1435d91480ac2067eb0d31fb38e41"
   dependencies:
     async "^1.5.2"
     coffee-script "^1.10.0"
