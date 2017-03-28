@@ -1,5 +1,5 @@
-_              = require 'lodash'
-bcrypt         = require 'bcrypt'
+{xdescribe,context,beforeEach,afterEach,expect,it} = global
+bcrypt         = require 'bcryptjs'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
 xdescribe 'Unregister', ->

@@ -1,5 +1,5 @@
-_              = require 'lodash'
-bcrypt         = require 'bcrypt'
+{describe,context,beforeEach,afterEach,expect,it} = global
+bcrypt         = require 'bcryptjs'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
 describe 'SendMessage: send', ->

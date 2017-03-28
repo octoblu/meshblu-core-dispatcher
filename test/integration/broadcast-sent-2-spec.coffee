@@ -1,5 +1,5 @@
-_              = require 'lodash'
-bcrypt         = require 'bcrypt'
+{describe,context,beforeEach,afterEach,expect,it} = global
+bcrypt         = require 'bcryptjs'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
 describe 'BroadcastSent(2): send', ->
@@ -174,6 +174,7 @@ describe 'BroadcastSent(2): send', ->
           @hydrant.once 'message', (@message) => @hydrant.close()
 
           @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            return done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 
@@ -268,6 +269,7 @@ describe 'BroadcastSent(2): send', ->
           @hydrant.once 'message', (@message) => @hydrant.close()
 
           @testDispatcherWorker.jobManagerRequester.do job, (error) =>
+            return done error if error?
             setTimeout done, 2000
         return # fix redis promise issue
 

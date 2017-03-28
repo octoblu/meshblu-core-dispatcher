@@ -1,5 +1,6 @@
+{xdescribe,before,after,context,expect,it} = global
 _              = require 'lodash'
-bcrypt         = require 'bcrypt'
+bcrypt         = require 'bcryptjs'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
 xdescribe 'CrazyMessageSent', ->

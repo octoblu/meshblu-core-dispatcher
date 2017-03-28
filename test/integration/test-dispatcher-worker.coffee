@@ -6,7 +6,6 @@ HydrantManager          = require 'meshblu-core-manager-hydrant'
 mongojs                 = require 'mongojs'
 Redis                   = require 'ioredis'
 RedisNS                 = require '@octoblu/redis-ns'
-debug                   = require('debug')('meshblu-core-dispatcher:test-dispatcher-worker')
 { JobManagerResponder, JobManagerRequester } = require 'meshblu-core-job-manager'
 
 class TestDispatcherWorker

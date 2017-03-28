@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/octoblu/meshblu-core-dispatcher#readme",
   "devDependencies": {
-    "bcrypt": "^0.8.7",
+    "bcryptjs": "^2.4.3",
     "chai": "^3.4.0",
     "chai-subset": "^1.5.0",
     "meshblu-core-manager-hydrant": "^2.0.0",
