@@ -1267,18 +1267,9 @@ meshblu-core-cache@^1.9.1:
     coffee-script "^1.10.0"
     lodash "^3.10.1"
 
-meshblu-core-datastore@^4.12.0:
+meshblu-core-datastore@^4.12.0, meshblu-core-datastore@^4.5.0, meshblu-core-datastore@^4.6.0, meshblu-core-datastore@^4.6.1:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-datastore/-/meshblu-core-datastore-4.12.0.tgz#8677311e0c42907bf24cca61c451356ea4e81755"
-  dependencies:
-    async "^2.0.0-rc.3"
-    coffee-script "^1.10.0"
-    json-stable-stringify "^1.0.1"
-    lodash "^4.11.1"
-
-meshblu-core-datastore@^4.5.0, meshblu-core-datastore@^4.6.0, meshblu-core-datastore@^4.6.1:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-datastore/-/meshblu-core-datastore-4.9.0.tgz#871469e5ffac74a049d7d398514e13b2ce964769"
   dependencies:
     async "^2.0.0-rc.3"
     coffee-script "^1.10.0"
@@ -1331,7 +1322,7 @@ meshblu-core-manager-device@^2.5.0:
     moment "^2.13.0"
     uuid "^2.0.1"
 
-meshblu-core-manager-device@^3.0.1, meshblu-core-manager-device@^3.1.0, meshblu-core-manager-device@^3.3.0, meshblu-core-manager-device@^3.4.1:
+meshblu-core-manager-device@^3.0.1, meshblu-core-manager-device@^3.1.0, meshblu-core-manager-device@^3.4.1:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-device/-/meshblu-core-manager-device-3.5.3.tgz#148dee0b8f7ace021c04a2ae8bd4c752ffff1552"
   dependencies:
@@ -1346,6 +1337,18 @@ meshblu-core-manager-device@^3.0.1, meshblu-core-manager-device@^3.1.0, meshblu-
 meshblu-core-manager-device@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-device/-/meshblu-core-manager-device-4.0.0.tgz#e40cd6e67de86a692025821cffd33d526fd28264"
+  dependencies:
+    async "^1.5.2"
+    bcrypt "^0.8.5"
+    coffee-script "^1.10.0"
+    lodash "^4.13.1"
+    meshblu-core-manager-root-token "^1.0.0"
+    moment "^2.13.0"
+    uuid "^2.0.1"
+
+meshblu-core-manager-device@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-device/-/meshblu-core-manager-device-4.2.1.tgz#5520fb17c9d6b484c7e99ab4cad34d01e3a10326"
   dependencies:
     async "^1.5.2"
     bcrypt "^0.8.5"
@@ -2143,14 +2146,14 @@ meshblu-core-task-unregister-device@^2.2.0:
     lodash "^4.6.1"
     meshblu-core-manager-device "^3.1.0"
 
-meshblu-core-task-update-device@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-update-device/-/meshblu-core-task-update-device-4.2.1.tgz#1e933bf67c6bb5364cbc5088eb0d99a6f1205fcb"
+meshblu-core-task-update-device@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-update-device/-/meshblu-core-task-update-device-5.0.1.tgz#9e58ebc526affef9a5f842d64521109bfb4c38c4"
   dependencies:
     async "^1.5.0"
     lodash "^3.10.1"
     meshblu-core-job-manager "^6.1.2"
-    meshblu-core-manager-device "^3.3.0"
+    meshblu-core-manager-device "^4.2.1"
     moment "^2.10.6"
     uuid "^2.0.1"
 

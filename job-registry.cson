@@ -726,6 +726,9 @@ UpdateDevice:
       datastoreCollection: 'devices'
       on:
         204: 'remove-device-cache'
+        304: 'return-204'
     'remove-device-cache':
       task: 'meshblu-core-task-remove-device-cache'
       cacheNamespace: 'cache:device'
+    'return-204':
+      task: 'meshblu-core-task-no-content'
