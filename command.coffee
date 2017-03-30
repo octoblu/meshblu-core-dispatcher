@@ -71,6 +71,12 @@ options = [
     env: 'ALIAS_SERVER_URI'
   }
   {
+    name: 'datastore-cache-ttl'
+    type: 'number'
+    help: 'TTL of cache optimized datastore actions'
+    env: 'DATASTORE_CACHE_TTL'
+  }
+  {
     name: 'worker-name'
     type: 'string'
     help: 'name of this worker'
@@ -167,6 +173,7 @@ options = {
   publicKey:           publicKey
   singleRun:           opts.single_run
   requestQueueName:    opts.request_queue_name
+  datastoreCacheTTL:   opts.datastore_cache_ttl
 }
 
 dispatcherWorker = new DispatcherWorker options

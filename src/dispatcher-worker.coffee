@@ -43,6 +43,7 @@ class DispatcherWorker
       @ignoreResponse
       @requestQueueName
       @responseQueueName
+      @datastoreCacheTTL
     } = options
     throw new Error 'DispatcherWorker constructor is missing "@namespace"'        unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"'   unless @timeoutSeconds?
@@ -197,7 +198,7 @@ class DispatcherWorker
     callback()
 
   _prepareDatastoreFactory: (callback) =>
-    @datastoreFactory = new DatastoreFactory {@database, @cacheFactory}
+    @datastoreFactory = new DatastoreFactory {@database, @cacheFactory, @datastoreCacheTTL}
     callback()
 
   _prepareDispatchLogger: (callback) =>
