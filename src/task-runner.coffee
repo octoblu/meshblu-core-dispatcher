@@ -16,6 +16,7 @@ class TaskRunner
       @datastoreFactory
       @pepper
       @cacheFactory
+      @redisFactory
       @uuidAliasResolver
       @workerName
       @privateKey
@@ -49,8 +50,8 @@ class TaskRunner
       cache  = @cacheFactory.build taskConfig.cacheNamespace
       firehoseClient = new RedisNS taskConfig.cacheNamespace, @firehoseClient
 
-    if taskConfig.redisNamspace?
-      redisClient = @cacheFactory.build taskConfig.redisNamspace
+    if taskConfig.redisNamespace?
+      redisClient = @cacheFactory.build taskConfig.redisNamespace
 
     task = new Task {
       @uuidAliasResolver
