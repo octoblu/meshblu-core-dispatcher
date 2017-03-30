@@ -460,7 +460,7 @@ DeliverWebhook:
         204: 'deliver-webhook'
     'deliver-webhook':
       task: 'meshblu-core-task-deliver-webhook'
-      cacheNamespace: 'meshblu-webhooks'
+      redisNamespace: 'meshblu-webhooks'
       datastoreCollection: 'tokens'
 
 FindAndUpdateDevice:

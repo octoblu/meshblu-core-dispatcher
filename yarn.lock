@@ -1668,9 +1668,9 @@ meshblu-core-task-create-subscription@^2.0.3:
     lodash "^4.6.1"
     meshblu-core-manager-subscription "^3.4.0"
 
-meshblu-core-task-deliver-webhook@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-deliver-webhook/-/meshblu-core-task-deliver-webhook-6.0.0.tgz#feeee009eac4b773ace984081044c73c2080045c"
+meshblu-core-task-deliver-webhook@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-deliver-webhook/-/meshblu-core-task-deliver-webhook-7.0.1.tgz#e7f85397c7b8b91fc5cdd9c4ecf531335753d879"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.13.1"

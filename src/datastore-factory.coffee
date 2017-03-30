@@ -1,4 +1,3 @@
-path      = require 'path'
 Datastore = require 'meshblu-core-datastore'
 CACHE_REGISTRY = require '../datastore-cache-registry.cson'
 
@@ -10,6 +9,12 @@ class DatastoreFactory
   build: (collection) =>
     cache = @cacheFactory.build "datastore:#{collection}"
     {cacheAttributes, useQueryCache} = CACHE_REGISTRY[collection] || {}
-    new Datastore {@database, collection, cache, cacheAttributes, useQueryCache}
+    new Datastore {
+      @database,
+      collection,
+      cache,
+      cacheAttributes,
+      useQueryCache,
+    }
 
 module.exports = DatastoreFactory

@@ -4,7 +4,7 @@ bcrypt         = require 'bcryptjs'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
 describe 'CrazyConfigureSent', ->
-  @timeout 10000
+  @timeout 15000
 
   before 'prepare TestDispatcherWorker', (done) ->
     @testDispatcherWorker = new TestDispatcherWorker

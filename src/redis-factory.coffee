@@ -1,12 +1,12 @@
 Cache   = require 'meshblu-core-cache'
 RedisNS = require '@octoblu/redis-ns'
 
-class CacheFactory
+class RedisFactory
   constructor: ({@client}) ->
-    throw new Error 'CacheFactory: requires client' unless @client?
+    throw new Error 'RedisFactory: requires client' unless @client?
 
   build: (namespace) =>
     redisNSClientWithRedisClient = new RedisNS namespace, @client
     new Cache client: redisNSClientWithRedisClient
 
-module.exports = CacheFactory
+module.exports = RedisFactory

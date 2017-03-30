@@ -1,21 +1,23 @@
 _                       = require 'lodash'
 OctobluRaven            = require 'octoblu-raven'
 async                   = require 'async'
-CacheFactory            = require './cache-factory'
-DatastoreFactory        = require './datastore-factory'
 http                    = require 'http'
-JobRegistry             = require './job-registry'
 JobLogger               = require 'job-logger'
 mongojs                 = require 'mongojs'
 Redis                   = require 'ioredis'
 RedisNS                 = require '@octoblu/redis-ns'
 SimpleBenchmark         = require 'simple-benchmark'
-TaskJobManager          = require './task-job-manager'
-TaskRunner              = require './task-runner'
 UuidAliasResolver       = require 'meshblu-uuid-alias-resolver'
 debug                   = require('debug')('meshblu-core-dispatcher:dispatcher-worker')
 debugBenchmark          = require('debug')('meshblu-core-dispatcher:dispatcher-worker:benchmark')
-{ version }             = require '../package.json'
+
+CacheFactory            = require './cache-factory'
+RedisFactory            = require './cache-factory'
+DatastoreFactory        = require './datastore-factory'
+JobRegistry             = require './job-registry'
+TaskJobManager          = require './task-job-manager'
+TaskRunner              = require './task-runner'
+
 { JobManagerResponder, JobManagerRequester } = require 'meshblu-core-job-manager'
 
 class DispatcherWorker
@@ -55,7 +57,7 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@privateKey"'       unless @privateKey?
     throw new Error 'DispatcherWorker constructor is missing "@publicKey"'        unless @publicKey?
     throw new Error 'DispatcherWorker constructor is missing "@requestQueueName"' unless @requestQueueName?
-    @octobluRaven = new OctobluRaven({ release: version })
+    @octobluRaven = new OctobluRaven
     @jobRegistry  = new JobRegistry().toJSON()
 
     @indexJobPrefix = "metric:meshblu-core-dispatcher"
@@ -90,6 +92,7 @@ class DispatcherWorker
       @_prepareFirehoseClient
       @_prepareMongoDB
       @_prepareCacheFactory
+      @_prepareRedisFactory
       @_prepareDatastoreFactory
       @_prepareUuidAliasResolver
       @_prepareJobManager
@@ -148,6 +151,7 @@ class DispatcherWorker
       @datastoreFactory
       @pepper
       @cacheFactory
+      @redisFactory
       @uuidAliasResolver
       @workerName
       @privateKey
@@ -178,11 +182,18 @@ class DispatcherWorker
     @jobLogger.log {request, response, elapsedTime: jobBenchmark.elapsed()}, callback
 
   _prepareClient: (callback) =>
-    @_prepareRedis @cacheRedisUri, (error, @client) =>
-      callback error
+    @_prepareRedis @cacheRedisUri, (error, @cacheClient) =>
+      return callback error if error?
+      @_prepareRedis @redisUri, (error, @redisClient) =>
+        return callback error if error?
+        callback null
 
   _prepareCacheFactory: (callback) =>
-    @cacheFactory = new CacheFactory {@client}
+    @cacheFactory = new CacheFactory {client: @cacheClient}
+    callback()
+
+  _prepareRedisFactory: (callback) =>
+    @redisFactory = new RedisFactory {client: @redisClient}
     callback()
 
   _prepareDatastoreFactory: (callback) =>
@@ -231,7 +242,7 @@ class DispatcherWorker
         @jobManager.start callback
 
   _prepareTaskJobManager: (callback) =>
-    cache = new RedisNS 'meshblu-token-one-time', @client # must be the same as the cache client
+    cache = new RedisNS 'meshblu-token-one-time', @cacheClient # must be the same as the cache client
     jobManager = new JobManagerRequester {
       @redisUri
       @namespace
@@ -280,7 +291,7 @@ class DispatcherWorker
       callback null, client
 
   _prepareUuidAliasResolver: (callback) =>
-    cache = new RedisNS 'uuid-alias', @client
+    cache = new RedisNS 'uuid-alias', @cacheClient
     @uuidAliasResolver = new UuidAliasResolver {cache, @aliasServerUri}
     callback()
 

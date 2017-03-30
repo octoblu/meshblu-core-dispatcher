@@ -1,5 +1,5 @@
 {describe,context,beforeEach,afterEach,expect,it} = global
-bcrypt         = require 'bcryptjs'
+bcrypt               = require 'bcryptjs'
 TestDispatcherWorker = require './test-dispatcher-worker'
 
 describe 'BroadcastSent(2): send', ->

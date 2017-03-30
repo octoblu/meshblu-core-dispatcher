@@ -61,9 +61,8 @@ class TestDispatcherWorker
 
   stop: (callback) =>
     @dispatcherWorker.stop =>
-      @client.quit =>
-        @jobManagerResponder.stop =>
-          @jobManagerRequester.stop callback
+      @jobManagerResponder.stop =>
+        @jobManagerRequester.stop callback
 
   _clearDatastoreCache: (callback) =>
     @_prepareRedis @dispatcherWorker.cacheRedisUri, (error, client) =>

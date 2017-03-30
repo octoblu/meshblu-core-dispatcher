@@ -49,10 +49,14 @@ class TaskRunner
       cache  = @cacheFactory.build taskConfig.cacheNamespace
       firehoseClient = new RedisNS taskConfig.cacheNamespace, @firehoseClient
 
+    if taskConfig.redisNamspace?
+      redisClient = @cacheFactory.build taskConfig.redisNamspace
+
     task = new Task {
       @uuidAliasResolver
       datastore
       cache
+      redisClient
       @pepper
       @privateKey
       @publicKey
