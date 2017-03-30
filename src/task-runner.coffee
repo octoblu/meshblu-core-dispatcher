@@ -51,7 +51,7 @@ class TaskRunner
       firehoseClient = new RedisNS taskConfig.cacheNamespace, @firehoseClient
 
     if taskConfig.redisNamespace?
-      redisClient = @cacheFactory.build taskConfig.redisNamespace
+      redisClient = @redisFactory.build taskConfig.redisNamespace
 
     task = new Task {
       @uuidAliasResolver
