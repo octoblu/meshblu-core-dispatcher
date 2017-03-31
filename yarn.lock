@@ -1276,9 +1276,9 @@ meshblu-core-datastore@^4.5.0, meshblu-core-datastore@^4.6.0, meshblu-core-datas
     json-stable-stringify "^1.0.1"
     lodash "^4.11.1"
 
-meshblu-core-datastore@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-datastore/-/meshblu-core-datastore-5.0.0.tgz#6f2f1655725b2e65ec767c8546b89cb8046f02bc"
+meshblu-core-datastore@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-datastore/-/meshblu-core-datastore-5.1.0.tgz#ba8e126285aa2d8275909f1e391cc9527b8b2440"
   dependencies:
     async "^2.0.0-rc.3"
     coffee-script "^1.10.0"
