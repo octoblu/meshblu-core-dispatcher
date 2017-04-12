@@ -62,17 +62,17 @@ class TestDispatcherWorker
   stop: (callback) =>
     async.parallel [
       (next) =>
+        next()
         @dispatcherWorker.stop (error) =>
           console.error 'dispatcherWorker.stop error', error if error?
-          next()
       (next) =>
+        next()
         @jobManagerResponder.stop (error) =>
           console.error 'jobManagerResponder.stop error', error if error?
-          next()
       (next) =>
+        next()
         @jobManagerRequester.stop (error) =>
           console.error 'jobManagerRequester.stop error', error if error?
-          next()
     ], callback
 
   _clearDatastoreCache: (callback) =>
