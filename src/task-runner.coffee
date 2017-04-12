@@ -1,10 +1,11 @@
 _                      = require 'lodash'
-debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
-debugBenchmark         = require('debug')('meshblu-core-dispatcher:task-runner:benchmark')
+async                  = require 'async'
 moment                 = require 'moment'
 SimpleBenchmark        = require 'simple-benchmark'
-{Tasks}                = require './task-loader'
 RedisNS                = require '@octoblu/redis-ns'
+{Tasks}                = require './task-loader'
+debug                  = require('debug')('meshblu-core-dispatcher:task-runner')
+debugBenchmark         = require('debug')('meshblu-core-dispatcher:task-runner:benchmark')
 
 class TaskRunner
   @TASKS = Tasks
@@ -24,11 +25,18 @@ class TaskRunner
       @taskLogger
       @taskJobManager
       @firehoseClient
+      @timeoutSeconds
     } = options
     @todaySuffix = moment.utc().format('YYYY-MM-DD')
 
   run: (callback) =>
-    @_doTask @config.start, callback
+    @_doTaskWithTimeout @config.start, callback
+
+  _doTaskWithTimeout: (name, callback) =>
+    # give the job manager time to respond
+    timeoutSeconds = _.ceil @timeoutSeconds * 0.9
+    doTaskWithTimeout = async.timeout @_doTask, timeoutSeconds
+    doTaskWithTimeout name, callback
 
   _doTask: (name, callback) =>
     benchmark = new SimpleBenchmark label: 'task-runner'

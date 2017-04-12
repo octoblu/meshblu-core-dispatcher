@@ -67,7 +67,6 @@ class DispatcherWorker
     @indexTaskPrefix = "metric:meshblu-core-dispatcher-task"
     @indexTaskPrefix = "#{@indexTaskPrefix}:#{@jobLogNamespace}" unless _.isEmpty @jobLogNamespace
 
-
   catchErrors: =>
 
   reportError: =>
@@ -160,6 +159,7 @@ class DispatcherWorker
       @taskLogger
       @taskJobManager
       @firehoseClient
+      @timeoutSeconds
     }
     taskRunner.run (error, response) =>
       response = @_processErrorResponse {error, request, response}

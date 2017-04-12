@@ -106,6 +106,12 @@ async@^2.0.0-rc.2, async@^2.0.0-rc.3, async@^2.0.0-rc.5, async@^2.0.1, async@^2.
   dependencies:
     lodash "^4.14.0"
 
+async@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.3.0.tgz#1013d1051047dd320fe24e494d5c66ecaf6147d9"
+  dependencies:
+    lodash "^4.14.0"
+
 async@~0.2.6:
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
@@ -345,9 +351,13 @@ coffee-coverage@^1.0.1:
     minimatch "^3.0.0"
     pkginfo ">=0.2.3"
 
-coffee-script@>=1.6.2, coffee-script@^1.10.0, coffee-script@^1.11.1, coffee-script@^1.12.4:
+coffee-script@>=1.6.2, coffee-script@^1.10.0, coffee-script@^1.11.1:
   version "1.12.4"
   resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.4.tgz#fe1bced97fe1fb3927b998f2b45616e0658be1ff"
+
+coffee-script@^1.12.5:
+  version "1.12.5"
+  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.5.tgz#809f4585419112bbfe46a073ad7543af18c27346"
 
 colors@^1.1.2:
   version "1.1.2"
@@ -2270,13 +2280,14 @@ mocha-istanbul@^0.3.0:
   dependencies:
     istanbul "*"
 
-mocha-multi@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/mocha-multi/-/mocha-multi-0.10.0.tgz#b173a2236aeddf6391e11c991377bff9c0deab4e"
+mocha-multi@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/mocha-multi/-/mocha-multi-0.11.0.tgz#5cd48e04dbe7657d7e997880c4ccd021aaf51aa5"
   dependencies:
     debug "~0.7.4"
     is-string "^1.0.4"
     mkdirp "^0.5.1"
+    object-assign "^4.1.1"
 
 mocha-osx-reporter@^0.1.2:
   version "0.1.2"
@@ -2429,6 +2440,10 @@ oauth-sign@~0.8.1:
 object-assign@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
+
+object-assign@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
 object.omit@^2.0.0:
   version "2.0.1"

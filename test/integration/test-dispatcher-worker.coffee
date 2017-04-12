@@ -60,9 +60,20 @@ class TestDispatcherWorker
       callback()
 
   stop: (callback) =>
-    @dispatcherWorker.stop =>
-      @jobManagerResponder.stop =>
-        @jobManagerRequester.stop callback
+    async.parallel [
+      (next) =>
+        @dispatcherWorker.stop (error) =>
+          console.error 'dispatcherWorker.stop error', error if error?
+          next()
+      (next) =>
+        @jobManagerResponder.stop (error) =>
+          console.error 'jobManagerResponder.stop error', error if error?
+          next()
+      (next) =>
+        @jobManagerRequester.stop (error) =>
+          console.error 'jobManagerRequester.stop error', error if error?
+          next()
+    ], callback
 
   _clearDatastoreCache: (callback) =>
     @_prepareRedis @dispatcherWorker.cacheRedisUri, (error, client) =>
