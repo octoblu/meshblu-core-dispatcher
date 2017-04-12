@@ -305,7 +305,9 @@ class DispatcherWorker
   _processErrorResponse: ({error, request, response}) =>
     return @_processResponse {request, response} unless error?
     @reportError error, { request, response }
-    code = error.code ? 500
+    code = error.code
+    code = 504 if code == 'ETIMEDOUT'
+    code = 500 unless http.STATUS_CODES[code]?
     return {
       metadata:
         code: code

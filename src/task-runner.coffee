@@ -34,8 +34,8 @@ class TaskRunner
 
   _doTaskWithTimeout: (name, callback) =>
     # give the job manager time to respond
-    timeoutSeconds = _.ceil @timeoutSeconds * 0.9
-    doTaskWithTimeout = async.timeout @_doTask, timeoutSeconds
+    timeoutMs = _.ceil (@timeoutSeconds * 1000) * 0.9
+    doTaskWithTimeout = async.timeout @_doTask, timeoutMs
     doTaskWithTimeout name, callback
 
   _doTask: (name, callback) =>
