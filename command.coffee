@@ -130,6 +130,13 @@ options = [
     help: 'request queue name'
     env: 'REQUEST_QUEUE_NAME'
   }
+  {
+    name: 'concurrency'
+    type: 'integer'
+    default: 1
+    help: 'number of concurrent jobs to process'
+    env: 'CONCURRENCY'
+  }
 ]
 
 parser = dashdash.createParser(options: options)
@@ -174,12 +181,19 @@ options = {
   singleRun:           opts.single_run
   requestQueueName:    opts.request_queue_name
   datastoreCacheTTL:   opts.datastore_cache_ttl
+  concurrency:         opts.concurrency
 }
 
 dispatcherWorker = new DispatcherWorker options
 
 sigtermHandler = new SigtermHandler({ events: ['SIGTERM', 'SIGINT'] })
-sigtermHandler.register dispatcherWorker.stop
+sigtermHandler.register =>
+  dispatcherWorker.stop (error) =>
+    if error
+      dispatcherWorker.reportError error
+      console.error error.stack
+      process.exit 1
+    process.exit 0
 
 dispatcherWorker.catchErrors()
 
@@ -194,4 +208,4 @@ dispatcherWorker.prepare (error) =>
       dispatcherWorker.reportError error
       console.error error.stack
       process.exit 1
-    process.exit 0
+    console.log "dispatcher running."

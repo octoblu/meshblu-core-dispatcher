@@ -32,6 +32,7 @@ class TestDispatcherWorker
       publicKey:           'public'
       ignoreResponse:      false
       requestQueueName:    @requestQueueName
+      concurrency:         2
 
   clearAndGetCollection: (name, callback) =>
     db = mongojs @dispatcherWorker.mongoDBUri
@@ -52,7 +53,6 @@ class TestDispatcherWorker
       @dispatcherWorker.prepare
       @_prepareClient
       @_prepareGeneratorJobManagerRequester
-      @_prepareGeneratorJobManagerResponder
       @_clearDatastoreCache
     ], (error) =>
       return callback error if error?
@@ -65,10 +65,6 @@ class TestDispatcherWorker
         next()
         @dispatcherWorker.stop (error) =>
           console.error 'dispatcherWorker.stop error', error if error?
-      (next) =>
-        next()
-        @jobManagerResponder.stop (error) =>
-          console.error 'jobManagerResponder.stop error', error if error?
       (next) =>
         next()
         @jobManagerRequester.stop (error) =>
@@ -109,6 +105,7 @@ class TestDispatcherWorker
       queueTimeoutSeconds: 1
       jobLogSampleRate: 0
       requestQueueName: @requestQueueName
+      workerFunc: => console.log 'look ma, im working'
     }
     @jobManagerResponder.start callback
 

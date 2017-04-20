@@ -100,13 +100,7 @@ async@1.x, async@^1.4.0, async@^1.5.0, async@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.0-rc.2, async@^2.0.0-rc.3, async@^2.0.0-rc.5, async@^2.0.1, async@^2.1.2, async@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.2.0.tgz#c324eba010a237e4fbd55a12dee86367d5c0ef32"
-  dependencies:
-    lodash "^4.14.0"
-
-async@^2.3.0:
+async@^2.0.0-rc.2, async@^2.0.0-rc.3, async@^2.0.0-rc.5, async@^2.0.1, async@^2.2.0, async@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.3.0.tgz#1013d1051047dd320fe24e494d5c66ecaf6147d9"
   dependencies:
@@ -351,11 +345,7 @@ coffee-coverage@^1.0.1:
     minimatch "^3.0.0"
     pkginfo ">=0.2.3"
 
-coffee-script@>=1.6.2, coffee-script@^1.10.0, coffee-script@^1.11.1:
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.4.tgz#fe1bced97fe1fb3927b998f2b45616e0658be1ff"
-
-coffee-script@^1.12.5:
+coffee-script@>=1.6.2, coffee-script@^1.10.0, coffee-script@^1.11.1, coffee-script@^1.12.5:
   version "1.12.5"
   resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.5.tgz#809f4585419112bbfe46a073ad7543af18c27346"
 
@@ -442,11 +432,11 @@ debug@2.2.0:
   dependencies:
     ms "0.7.1"
 
-debug@^2.2.0, debug@^2.3.3, debug@^2.6.3:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
+debug@^2.2.0, debug@^2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.4.tgz#7586a9b3c39741c0282ae33445c4e8ac74734fe0"
   dependencies:
-    ms "0.7.2"
+    ms "0.7.3"
 
 debug@~0.7.4:
   version "0.7.4"
@@ -689,9 +679,9 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
 
-generic-pool@3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.1.4.tgz#38816268c374fd3aa731d5a1b9bde8fec4bcef92"
+generic-pool@^3.1.7:
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.1.7.tgz#dac22b2c7a7a04e41732f7d8d2d25a303c88f662"
 
 get-caller-file@^1.0.1:
   version "1.0.2"
@@ -874,7 +864,7 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-ioredis@^2.0.1, ioredis@^2.4.0, ioredis@^2.5.0:
+ioredis@^2.0.1, ioredis@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-2.5.0.tgz#fb6fdf0a1a7e0974614c67b6e5e11308a8cf95b9"
   dependencies:
@@ -1295,6 +1285,22 @@ meshblu-core-datastore@^5.1.0:
     json-stable-stringify "^1.0.1"
     lodash "^4.11.1"
 
+meshblu-core-job-manager@^10.0.2:
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-10.0.2.tgz#8b548e9c56b10048f2b1b8a88b4270aa0b2d5980"
+  dependencies:
+    async "^2.3.0"
+    coffee-script "^1.12.5"
+    debug "^2.6.4"
+    generic-pool "^3.1.7"
+    ioredis "^2.5.0"
+    lodash "^4.17.2"
+    moment "^2.18.1"
+    uuid "^3.0.0"
+    when "^3.7.8"
+  optionalDependencies:
+    hiredis "^0.5.0"
+
 meshblu-core-job-manager@^3.2.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-3.10.1.tgz#650d93ad89797f3619f9d4d61cac0f70a982cbc8"
@@ -1312,22 +1318,6 @@ meshblu-core-job-manager@^6.1.2:
     debug "^2.2.0"
     lodash "^4.11.1"
     uuid "^2.0.1"
-
-meshblu-core-job-manager@^9.2.5:
-  version "9.2.5"
-  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-9.2.5.tgz#b6449bc3cd2c763bd1fe872ef8d9fe41a955bec0"
-  dependencies:
-    async "^2.1.2"
-    coffee-script "^1.11.1"
-    debug "^2.3.3"
-    generic-pool "3.1.4"
-    ioredis "^2.4.0"
-    lodash "^4.17.2"
-    moment "^2.17.1"
-    uuid "^3.0.0"
-    when "^3.7.7"
-  optionalDependencies:
-    hiredis "^0.5.0"
 
 meshblu-core-manager-device@^2.5.0:
   version "2.5.0"
@@ -2326,7 +2316,7 @@ mocha@^3.1.2:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
-moment@^2.10.6, moment@^2.11.1, moment@^2.13.0, moment@^2.17.1, moment@^2.18.1:
+moment@^2.10.6, moment@^2.11.1, moment@^2.13.0, moment@^2.18.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
@@ -2362,9 +2352,9 @@ ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
 
-ms@0.7.2:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
+ms@0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.3.tgz#708155a5e44e33f5fd0fc53e81d0d40a91be1fff"
 
 nan@2.3.5, nan@^2.0.5, nan@^2.3.4:
   version "2.3.5"
@@ -2437,11 +2427,7 @@ oauth-sign@~0.8.1:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
-object-assign@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
-
-object-assign@^4.1.1:
+object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -3060,9 +3046,9 @@ verror@1.3.6:
   dependencies:
     extsprintf "1.0.2"
 
-when@^3.7.7:
-  version "3.7.7"
-  resolved "https://registry.yarnpkg.com/when/-/when-3.7.7.tgz#aba03fc3bb736d6c88b091d013d8a8e590d84718"
+when@^3.7.8:
+  version "3.7.8"
+  resolved "https://registry.yarnpkg.com/when/-/when-3.7.8.tgz#c7130b6a7ea04693e842cdc9e7a1f2aa39a39f82"
 
 which-module@^1.0.0:
   version "1.0.0"

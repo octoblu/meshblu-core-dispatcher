@@ -44,6 +44,7 @@ class DispatcherWorker
       @requestQueueName
       @responseQueueName
       @datastoreCacheTTL
+      @concurrency
     } = options
     throw new Error 'DispatcherWorker constructor is missing "@namespace"'        unless @namespace?
     throw new Error 'DispatcherWorker constructor is missing "@timeoutSeconds"'   unless @timeoutSeconds?
@@ -58,6 +59,7 @@ class DispatcherWorker
     throw new Error 'DispatcherWorker constructor is missing "@privateKey"'       unless @privateKey?
     throw new Error 'DispatcherWorker constructor is missing "@publicKey"'        unless @publicKey?
     throw new Error 'DispatcherWorker constructor is missing "@requestQueueName"' unless @requestQueueName?
+    throw new Error 'DispatcherWorker constructor is missing "@concurrency"'      unless @concurrency?
     @octobluRaven = new OctobluRaven
     @jobRegistry  = new JobRegistry().toJSON()
 
@@ -103,12 +105,7 @@ class DispatcherWorker
     ], callback
 
   run: (callback) =>
-    @stopRunning = false
-    @stopRunning = true if @singleRun
-    async.doUntil @_doWithNextTick, @_shouldStop, (error) =>
-      return callback error if error?
-      return callback @error if @error?
-      callback()
+    @jobManager.start callback
 
   stop: (callback) =>
     @stopRunning = true
@@ -116,30 +113,21 @@ class DispatcherWorker
     return callback() unless @jobManager?
     @taskJobManager.stop()
     @jobManager.stop(callback)
-
-  _doWithNextTick: (callback) =>
-    # give some time for garbage collection
-    process.nextTick =>
-      @_do (error) =>
-        process.nextTick =>
-          callback error
-
-  _do: (callback) =>
+  
+  do: (request, callback) =>
     dispatchBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:dispatch'
-    @jobManager.do (request, next) =>
-      return unless request?
-      jobBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:job'
-      @_logDispatch {dispatchBenchmark, request}, (logError) =>
-        console.error logError.stack if logError?
-        @_handleRequest request, (error, response) =>
-          console.error error.stack if error?
-          @_logJob {jobBenchmark, request, response}, (logError) =>
-            console.error logError.stack if logError?
-            jobType = _.get(request, 'metadata.jobType')
-            responseCode = _.get(response, 'metadata.code')
-            debugBenchmark("#{jobType}[#{responseCode}] #{jobBenchmark.elapsed()}ms (dispatch #{dispatchBenchmark.elapsed()}ms)")
-            next error, response
-    , callback
+    return unless request?
+    jobBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:job'
+    @_logDispatch {dispatchBenchmark, request}, (logError) =>
+      console.error logError.stack if logError?
+      @_handleRequest request, (error, response) =>
+        console.error error.stack if error?
+        @_logJob {jobBenchmark, request, response}, (logError) =>
+          console.error logError.stack if logError?
+          jobType = _.get(request, 'metadata.jobType')
+          responseCode = _.get(response, 'metadata.code')
+          debugBenchmark("#{jobType}[#{responseCode}] #{jobBenchmark.elapsed()}ms (dispatch #{dispatchBenchmark.elapsed()}ms)")
+          callback error, response
 
   _handleRequest: (request, callback) =>
     config = @jobRegistry[request.metadata.jobType]
@@ -230,17 +218,20 @@ class DispatcherWorker
       return callback error if error?
       @_prepareRedis @redisUri, (error, @jobManagerQueueClient) =>
         return callback error if error?
+
         @jobManager = new JobManagerResponder {
           @redisUri
           @namespace
+          @concurrency
           maxConnections: 2
           jobTimeoutSeconds: @timeoutSeconds
           queueTimeoutSeconds: @timeoutSeconds
           @jobLogSampleRate
           @requestQueueName
+          workerFunc: @do
         }
 
-        @jobManager.start callback
+        callback()
 
   _prepareTaskJobManager: (callback) =>
     cache = new RedisNS 'meshblu-token-one-time', @cacheClient # must be the same as the cache client
@@ -316,8 +307,4 @@ class DispatcherWorker
         error:
           message: error.message
     }
-
-  _shouldStop: =>
-    return @stopRunning ? false
-
 module.exports = DispatcherWorker
