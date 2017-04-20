@@ -132,7 +132,7 @@ options = [
   }
   {
     name: 'concurrency'
-    type: 'integer'
+    type: 'positiveInteger'
     default: 1
     help: 'number of concurrent jobs to process'
     env: 'CONCURRENCY'

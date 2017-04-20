@@ -113,7 +113,7 @@ class DispatcherWorker
     return callback() unless @jobManager?
     @taskJobManager.stop()
     @jobManager.stop(callback)
-  
+
   do: (request, callback) =>
     dispatchBenchmark = new SimpleBenchmark label: 'meshblu-core-dispatcher:dispatch'
     return unless request?

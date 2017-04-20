@@ -713,7 +713,7 @@ glob@3.2.11:
     inherits "2"
     minimatch "0.3"
 
-glob@7.0.5:
+glob@7.0.5, glob@^7.0.5:
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.0.5.tgz#b4202a69099bbb4d292a7c1b95b6682b67ebdc95"
   dependencies:
@@ -734,7 +734,7 @@ glob@^5.0.15:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-glob@^7.0.5, glob@^7.0.6:
+glob@^7.0.6:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.1.tgz#805211df04faaf1c63a3600306cdf5ade50b2ec8"
   dependencies:
@@ -1285,9 +1285,9 @@ meshblu-core-datastore@^5.1.0:
     json-stable-stringify "^1.0.1"
     lodash "^4.11.1"
 
-meshblu-core-job-manager@^10.0.2:
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-10.0.2.tgz#8b548e9c56b10048f2b1b8a88b4270aa0b2d5980"
+meshblu-core-job-manager@^10.0.4:
+  version "10.0.4"
+  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-10.0.4.tgz#6b7b90ef6c16c83229c16fabc2cb31a24c7a7b22"
   dependencies:
     async "^2.3.0"
     coffee-script "^1.12.5"
