@@ -32,7 +32,7 @@ class TestDispatcherWorker
       publicKey:           'public'
       ignoreResponse:      false
       requestQueueName:    @requestQueueName
-      concurrency:         2
+      concurrency:         1
 
   clearAndGetCollection: (name, callback) =>
     db = mongojs @dispatcherWorker.mongoDBUri
@@ -95,19 +95,6 @@ class TestDispatcherWorker
       responseQueueName: @responseQueueName
     }
     @jobManagerRequester.start callback
-
-  _prepareGeneratorJobManagerResponder: (callback) =>
-    @jobManagerResponder = new JobManagerResponder {
-      @namespace
-      @redisUri
-      maxConnections: 1
-      jobTimeoutSeconds: 1
-      queueTimeoutSeconds: 1
-      jobLogSampleRate: 0
-      requestQueueName: @requestQueueName
-      workerFunc: => console.log 'look ma, im working'
-    }
-    @jobManagerResponder.start callback
 
   _prepareRedis: (redisUri, callback) =>
     callback = _.once callback
