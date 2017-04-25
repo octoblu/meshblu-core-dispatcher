@@ -250,7 +250,7 @@ class DispatcherWorker
     datastore = @datastoreFactory.build 'tokens'
     @taskJobManager = new TaskJobManager {jobManager, cache, datastore, @pepper, @uuidAliasResolver, @ignoreResponse}
     @taskJobManager.start (error) =>
-      @taskJobManager._stopProcessing()
+      @taskJobManager._stopProcessing =>
       callback error
 
   _prepareTaskLogger: (callback) =>
