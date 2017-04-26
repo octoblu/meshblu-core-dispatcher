@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "19.0.2",
+  "version": "19.0.3",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -48,7 +48,7 @@
     "lodash": "^4.17.4",
     "meshblu-core-cache": "^1.9.1",
     "meshblu-core-datastore": "^5.1.0",
-    "meshblu-core-job-manager": "^11.0.7",
+    "meshblu-core-job-manager": "^11.0.8",
     "meshblu-core-manager-token": "^7.6.0",
     "meshblu-core-task-black-list-token": "^1.0.0",
     "meshblu-core-task-check-broadcast-received-whitelist": "^1.0.1",
