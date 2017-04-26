@@ -1280,9 +1280,9 @@ meshblu-core-datastore@^5.1.0:
     json-stable-stringify "^1.0.1"
     lodash "^4.11.1"
 
-meshblu-core-job-manager@^11.0.2:
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-11.0.2.tgz#ad8f558e13c41246541c8eec278aee464b3f2da7"
+meshblu-core-job-manager@^11.0.4:
+  version "11.0.4"
+  resolved "https://registry.yarnpkg.com/meshblu-core-job-manager/-/meshblu-core-job-manager-11.0.4.tgz#b3d1c590d6d2a7c5303d346221449a4e65912d66"
   dependencies:
     async "^2.3.0"
     coffee-script "^1.12.5"
