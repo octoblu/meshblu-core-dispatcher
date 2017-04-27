@@ -223,7 +223,7 @@ class DispatcherWorker
           @redisUri
           @namespace
           @concurrency
-          maxConnections: 2
+          maxConnections: @concurrency
           jobTimeoutSeconds: @timeoutSeconds
           queueTimeoutSeconds: @timeoutSeconds
           @jobLogSampleRate
@@ -238,7 +238,7 @@ class DispatcherWorker
     jobManager = new JobManagerRequester {
       @redisUri
       @namespace
-      maxConnections: 2
+      maxConnections: @concurrency
       jobTimeoutSeconds: @timeoutSeconds
       queueTimeoutSeconds: @timeoutSeconds
       @jobLogSampleRate
