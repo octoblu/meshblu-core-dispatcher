@@ -1,2 +1,2 @@
-FROM octoblu/node:7-worker-onbuild
+FROM octoblu/node:8-worker-onbuild
 MAINTAINER Octoblu <docker@octoblu.com>

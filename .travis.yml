@@ -1,17 +1,9 @@
 language: node_js
 node_js:
-  - '7'
+  - '8'
 services:
   - mongodb
   - redis
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-env:
-  - CXX=g++-4.8
 branches:
   only:
     - '/^v[0-9]/'
@@ -29,6 +21,6 @@ deploy:
   api_key:
     secure: >-
       rOmT57S7hEF+RsI8qG5zEK4nNcF/AtnAdw2JuPae6xfD51Iqru10CD8LBQJhrgFSl0py7O99VvFUgrDtqBuIuPqJSsNKocL0tK/yX6LC0rQkUQz1MkNe3zoNACpMUP4KdaXOPfRxcrkZTQ4KqaMJE+QB7jTgCmqFvn6Eo7nd1gZvDOBwaDUPQYepvkIR+LgZsM/OK1Ri9oCIBbzC4gYULI4rZy3hFMWt3SimMw5VeiEflxpMCUvrgVmwSKIMIzEyfVXrlr3Tpid2ehGLmLtgyRYyogRBnEE0INrrKpepuq//mlCVcUM6H4IKVSyykEj34vTKd3t+/0xZpKmdvoae33Vgt0gABho0qsrv9RqTu0+eXf5Ofarh5rA5FJ522OJMSxqzY9QAS48+sw27bM80QuXk7DvLjWlN/8DfeDRuCEYQYng0TnJ221NqMDuSy5HXdziX/x/sFX79UAeDOBKrSTq1Dhl5yVXTrF+uYv21opYroLIVGC0I3v3vHSSSL1b0K4gTzV9u4tfRxqTwUrmKMEkpw5+r8c5ITfb2/01+q8qKShi8LG6PuhNG95hcOeiMOsGgYofoEVlTKqG/grTt/TFMqGTINGBTZccQBNybId7ecKYPBRDKsxzZrltnX78zjlIAKaetD3XtriS8OfHxKJKgKA5WtrOFKKyhKeIEVTM=
-  'on':
+  on:
     tags: true
     branches: true
