@@ -10,7 +10,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
--env:
+env:
   - CXX=g++-4.8
 branches:
   only:
