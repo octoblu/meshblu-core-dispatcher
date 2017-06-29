@@ -8,7 +8,6 @@ subscriptions:
 devices:
   cacheAttributes: [
     'uuid'
-    'meshblu.hash'
   ]
 tokens:
   cacheAttributes: [
