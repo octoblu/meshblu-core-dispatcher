@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "20.0.6",
+  "version": "20.0.7",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -126,7 +126,7 @@
     "meshblu-core-task-publish-message-received": "^7.0.0",
     "meshblu-core-task-publish-subscriptions": "^4.0.2",
     "meshblu-core-task-publish-unregister-received": "^1.0.0",
-    "meshblu-core-task-register-device": "^3.0.0",
+    "meshblu-core-task-register-device": "^3.0.1",
     "meshblu-core-task-reject-your-as": "^1.0.0",
     "meshblu-core-task-remove-device-cache": "^2.0.2",
     "meshblu-core-task-remove-root-session-token": "^1.0.0",
@@ -146,7 +146,7 @@
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.18.1",
     "mongojs": "^2.4.0",
-    "octoblu-raven": "^6.0.1",
+    "octoblu-raven": "^6.0.2",
     "request": "^2.81.0",
     "sigterm-handler": "^2.0.0",
     "simple-benchmark": "^1.1.1"

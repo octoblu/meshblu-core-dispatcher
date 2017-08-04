@@ -1463,6 +1463,18 @@ meshblu-core-manager-device@^4.2.1:
     moment "^2.13.0"
     uuid "^2.0.1"
 
+meshblu-core-manager-device@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-device/-/meshblu-core-manager-device-4.2.2.tgz#dd45d8e3902059efa73228a114f9ecbe54ed3a00"
+  dependencies:
+    async "^1.5.2"
+    bcrypt "^0.8.5"
+    coffee-script "^1.10.0"
+    lodash "^4.13.1"
+    meshblu-core-manager-root-token "^1.0.0"
+    moment "^2.13.0"
+    uuid "^2.0.1"
+
 meshblu-core-manager-hydrant@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-hydrant/-/meshblu-core-manager-hydrant-2.0.0.tgz#03d6acda96a49600783dbc35651fa7a1a5816657"
@@ -2128,13 +2140,13 @@ meshblu-core-task-publish-unregister-received@^1.0.0:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
 
-meshblu-core-task-register-device@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/meshblu-core-task-register-device/-/meshblu-core-task-register-device-3.0.0.tgz#a3c0c5d84e9434e1db94efa59efec968bd5733e4"
+meshblu-core-task-register-device@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-register-device/-/meshblu-core-task-register-device-3.0.1.tgz#9d4c0607cf1c3d0914fc0a9764d0274b7c4509b8"
   dependencies:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
-    meshblu-core-manager-device "^3.0.1"
+    meshblu-core-manager-device "^4.2.2"
 
 meshblu-core-task-reject-your-as@^1.0.0:
   version "1.0.0"
@@ -2553,9 +2565,9 @@ object.omit@^2.0.0:
     for-own "^0.1.4"
     is-extendable "^0.1.1"
 
-octoblu-raven@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/octoblu-raven/-/octoblu-raven-6.0.1.tgz#cae82f7e32513b59eee85e91f918426b69a2cb7a"
+octoblu-raven@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/octoblu-raven/-/octoblu-raven-6.0.2.tgz#4a9cbaa0b9e9ef9ed08498cc51c891be92ab40b4"
   dependencies:
     coffee-script "^1.12.7"
     debug "^2.6.8"
