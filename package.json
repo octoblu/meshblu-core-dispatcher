@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-dispatcher",
-  "version": "20.0.7",
+  "version": "20.0.8",
   "description": "Meshblu Core Dispatcher",
   "main": "index.js",
   "scripts": {
@@ -25,15 +25,15 @@
   "homepage": "https://github.com/octoblu/meshblu-core-dispatcher#readme",
   "devDependencies": {
     "bcryptjs": "^2.4.3",
-    "chai": "^4.1.0",
+    "chai": "^4.1.1",
     "chai-subset": "^1.5.0",
     "meshblu-core-manager-hydrant": "^2.0.0",
     "mocha": "^3.5.0",
     "mocha-multi": "^0.11.0",
     "mocha-osx-reporter": "^0.1.2",
     "nyc": "^11.1.0",
-    "sinon": "^3.0.0",
-    "sinon-chai": "^2.12.0",
+    "sinon": "^3.2.1",
+    "sinon-chai": "^2.13.0",
     "uuid": "^3.1.0"
   },
   "dependencies": {
@@ -41,9 +41,9 @@
     "async": "^2.5.0",
     "coffee-script": "^1.12.7",
     "dashdash": "^1.14.0",
-    "debug": "^2.6.8",
+    "debug": "^3.0.0",
     "fs-cson": "^0.3.2",
-    "ioredis": "^3.1.2",
+    "ioredis": "^3.1.4",
     "job-logger": "^4.3.0",
     "lodash": "^4.17.4",
     "meshblu-core-cache": "^1.9.1",
@@ -145,7 +145,7 @@
     "meshblu-core-task-update-message-rate": "^1.0.4",
     "meshblu-uuid-alias-resolver": "^1.0.1",
     "moment": "^2.18.1",
-    "mongojs": "^2.4.0",
+    "mongojs": "^2.4.1",
     "octoblu-raven": "^6.0.2",
     "request": "^2.81.0",
     "sigterm-handler": "^2.0.0",
