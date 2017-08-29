@@ -626,6 +626,21 @@ RemoveSubscription:
       task: 'meshblu-core-task-remove-subscription'
       datastoreCollection: 'subscriptions'
 
+RemoveSubscriptions:
+  start: 'authenticate'
+  tasks:
+    'authenticate':
+      filter: 'AuthenticateWithRateLimit'
+      on:
+        204: 'enforce-configure-whitelists'
+    'enforce-configure-whitelists':
+      filter: 'EnforceConfigureWhitelists'
+      on:
+        204: 'remove-subscriptions'
+    'remove-subscriptions':
+      task: 'meshblu-core-task-remove-subscriptions'
+      datastoreCollection: 'subscriptions'
+
 ResetToken:
   start: 'authenticate'
   tasks:

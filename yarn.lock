@@ -1596,6 +1596,10 @@ meshblu-core-manager-subscription@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-5.1.0.tgz#e6f114c069766472a7da6fefb868bd8526e8cb95"
 
+meshblu-core-manager-subscription@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/meshblu-core-manager-subscription/-/meshblu-core-manager-subscription-5.2.0.tgz#77d8527c01808e47ff3dbcd2141e21d673b00386"
+
 meshblu-core-manager-token@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/meshblu-core-manager-token/-/meshblu-core-manager-token-4.4.1.tgz#c9a72ff2ffdbbe974ad7fbf42f64c065730f1501"
@@ -2260,6 +2264,14 @@ meshblu-core-task-remove-subscription@^2.0.1:
     coffee-script "^1.10.0"
     lodash "^4.6.1"
     meshblu-core-manager-subscription "^3.2.1"
+
+meshblu-core-task-remove-subscriptions@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/meshblu-core-task-remove-subscriptions/-/meshblu-core-task-remove-subscriptions-1.0.1.tgz#c2c97f6ac41fa233267e5e5da7e8078b1efa0f8b"
+  dependencies:
+    coffee-script "^1.10.0"
+    lodash "^4.6.1"
+    meshblu-core-manager-subscription "^5.2.0"
 
 meshblu-core-task-remove-token-cache@^1.1.2:
   version "1.1.2"
