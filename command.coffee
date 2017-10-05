@@ -20,8 +20,8 @@ options = [
     names: ['namespace', 'n']
     type: 'string'
     help: 'request/response queue namespace'
-    default: 'meshblu'
     env: 'NAMESPACE'
+    default: 'meshblu'
   }
   {
     names: ['single-run', 's']
@@ -75,6 +75,7 @@ options = [
     type: 'number'
     help: 'TTL of cache optimized datastore actions'
     env: 'DATASTORE_CACHE_TTL'
+    default: 216000
   }
   {
     name: 'worker-name'
@@ -93,6 +94,7 @@ options = [
     type: 'string'
     help: 'Job log queue name'
     env: 'JOB_LOG_QUEUE'
+    default: 'sample-rate:1.00'
   }
   {
     name: 'job-log-namespace'
@@ -105,6 +107,7 @@ options = [
     type: 'number'
     help: 'Job log sample rate (0.00 to 1.00)'
     env: 'JOB_LOG_SAMPLE_RATE'
+    default: 0
   }
   {
     name: 'job-log-sample-rate-override-uuids'
@@ -129,13 +132,14 @@ options = [
     type: 'string'
     help: 'request queue name'
     env: 'REQUEST_QUEUE_NAME'
+    default: 'v2:request:queue'
   }
   {
     name: 'concurrency'
     type: 'positiveInteger'
-    default: 1
     help: 'number of concurrent jobs to process'
     env: 'CONCURRENCY'
+    default: 10
   }
 ]
 
@@ -165,14 +169,14 @@ options = {
   namespace:           opts.namespace
   timeoutSeconds:      opts.timeout
   redisUri:            opts.redis_uri
-  cacheRedisUri:       opts.cache_redis_uri
-  firehoseRedisUri:    opts.firehose_redis_uri
+  cacheRedisUri:       opts.cache_redis_uri ? opts.redis_uri
+  firehoseRedisUri:    opts.firehose_redis_uri ? opts.redis_uri
   mongoDBUri:          opts.mongodb_uri
   pepper:              opts.pepper
   workerName:          opts.worker_name
   aliasServerUri:      opts.alias_server_uri
   jobLogNamespace:     opts.job_log_namespace
-  jobLogRedisUri:      opts.job_log_redis_uri
+  jobLogRedisUri:      opts.job_log_redis_uri ? opts.redis_uri
   jobLogQueue:         opts.job_log_queue
   jobLogSampleRate:    opts.job_log_sample_rate
   jobLogSampleRateOverrideUuids: _.split(opts.job_log_sample_rate_override_uuids, ',')
